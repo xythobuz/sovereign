@@ -23,7 +23,6 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Virtual domains for your email, backed by [PostgreSQL](http://www.postgresql.org/).
 -   Spam fighting via [Rspamd](https://www.rspamd.com/).
 -   Mail server verification using [DKIM](http://www.dkim.org/) and [DMARC](http://www.dmarc.org/) so the Internet knows your mailserver is legit.
--   Secure on-disk storage for email and more via [EncFS](http://www.arg0.net/encfs).
 -   Webmail via [Roundcube](http://www.roundcube.net/).
 -   Mobile push notifications via [Z-Push](http://z-push.sourceforge.net/soswp/index.php?pages_id=1&t=home).
 -   Email client [automatic configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
@@ -76,7 +75,7 @@ If you haven’t already, [download and install Tarsnap](https://www.tarsnap.com
 
 Create a new machine key for your server:
 
-    tarsnap-keygen --keyfile roles/tarsnap/files/decrypted_tarsnap.key --user me@example.com --machine example.com
+    tarsnap-keygen --keyfile roles/tarsnap/files/data_tarsnap.key --user me@example.com --machine example.com
 
 ### 3. Prep the server
 
@@ -195,14 +194,6 @@ Troubleshooting
 ---------------
 
 If you run into an errors, please check the [wiki page](https://github.com/sovereign/sovereign/wiki/Troubleshooting). If the problem you encountered, is not listed, please go ahead and [create an issue](https://github.com/sovereign/sovereign/issues/new). If you already have a bugfix and/or workaround, just put them in the issue and the wiki page.
-
-### Reboots
-
-You will need to manually enter the password for any encrypted volumes on reboot. This is not Sovereign-specific, but rather a function of how EncFS works. This will necessitate SSHing into your machine after reboot, or accessing it via a console interface if one is available to you. Once you're in, run this:
-
-    encfs /encrypted /decrypted --public
-
-It is possible that some daemons may need to be restarted after you enter your password for the encrypted volume(s). Some services may stall out while looking for resources that will only be available once the `/decrypted` volume is available and visible to daemon user accounts.
 
 IRC
 ===

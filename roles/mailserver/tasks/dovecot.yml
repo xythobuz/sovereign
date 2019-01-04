@@ -20,14 +20,14 @@
   group: name=vmail state=present gid=5000
 
 - name: Create vmail user
-  user: name=vmail group=vmail state=present uid=5000 home=/decrypted shell=/usr/sbin/nologin
+  user: name=vmail group=vmail state=present uid=5000 home=/data shell=/usr/sbin/nologin
 
 - name: Ensure mail domain directories are in place
-  file: state=directory path=/decrypted/{{ item.name }} owner=vmail group=dovecot mode=0770
+  file: state=directory path=/data/{{ item.name }} owner=vmail group=dovecot mode=0770
   with_items: '{{ mail_virtual_domains }}'
 
 - name: Ensure mail directories are in place
-  file: state=directory path=/decrypted/{{ item.domain }}/{{ item.account }} owner=vmail group=dovecot
+  file: state=directory path=/data/{{ item.domain }}/{{ item.account }} owner=vmail group=dovecot
   with_items: '{{ mail_virtual_users }}'
 
 - name: Copy dovecot.conf into place
