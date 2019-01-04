@@ -102,13 +102,6 @@
     group=www-data
     mode=0644
 
-- name: Install Google 2-factor authentication plugin configuration
-  copy: src=var_www_roundcube_plugins_twofactor_gauthenticator_config.inc.php
-    dest=/var/www/roundcube/plugins/twofactor_gauthenticator/config.inc.php
-    owner=root
-    group=www-data
-    mode=0644
-
 - name: Configure Apache for Roundcube
   template: src=etc_apache2_sites-available_roundcube.j2
     dest=/etc/apache2/sites-available/roundcube.conf

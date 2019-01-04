@@ -143,10 +143,6 @@
   template: src=etc_openvpn_server.conf.j2 dest=/etc/openvpn/server.conf
   notify: restart openvpn
 
-- name: Copy OpenVPN PAM configuration file into place
-  copy: src=etc_pam.d_openvpn dest=/etc/pam.d/openvpn
-  notify: restart openvpn
-
 - name: Enable OpenVPN server systemd service unit
   service: name=openvpn@server enabled=yes
 

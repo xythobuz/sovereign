@@ -10,7 +10,7 @@ The role installs roundcube from the source package released by the Roundcube te
 
 Roundcube is installed with sqlite3 for its persistence layer.  This eliminates dependency on a database server and likely improves performance given how little persistet data Roundcube keeps.  Roundcube automatically looks for the database file and intializes it if it is missing.  The file is kept on `/decrypted` since it contains user data, and the database will be backed up automatically if the tarsnap role is used.
 
-PHP composer is used for downloading and installing plugins.  Configuration files are kept with sovereign.  The configuration files for `twofactor_gauthentication` and `carddav` are not modified from their defaults.  I chose to do this so that maintainers could recognize when configuration files change in future plugin versions and decide whether or not to change new defaults.
+PHP composer is used for downloading and installing plugins.  Configuration files are kept with sovereign.  The configuration files for `carddav` are not modified from their defaults.  I chose to do this so that maintainers could recognize when configuration files change in future plugin versions and decide whether or not to change new defaults.
 
 # Upgrade
 

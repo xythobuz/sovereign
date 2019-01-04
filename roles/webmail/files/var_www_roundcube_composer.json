@@ -31,8 +31,7 @@
         "pear-pear.php.net/net_smtp": "~1.7.1",
         "pear-pear.php.net/crypt_gpg": "~1.4.2",
         "roundcube/net_sieve": "~1.5.0",
-        "alexandregz/twofactor_gauthenticator": "dev-master",
-	"roundcube/carddav": "dev-master"
+        "roundcube/carddav": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

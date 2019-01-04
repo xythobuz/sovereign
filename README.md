@@ -39,7 +39,6 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Firewall management via [Uncomplicated Firewall (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
 -   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit detection via [rkhunter](http://rkhunter.sourceforge.net).
 -   SSH configuration preventing root login and insecure password authentication
--   [RFC6238](http://tools.ietf.org/html/rfc6238) two-factor authentication compatible with [Google Authenticator](http://en.wikipedia.org/wiki/Google_Authenticator) and various hardware tokens
 -   Nightly backups to [Tarsnap](https://www.tarsnap.com/).
 -   Git hosting via [cgit](http://git.zx2c4.com/cgit/about/) and [gitolite](https://github.com/sitaramc/gitolite).
 -   Read-it-later via [Wallabag](https://www.wallabag.org/)
