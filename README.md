@@ -38,7 +38,6 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Firewall management via [Uncomplicated Firewall (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
 -   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit detection via [rkhunter](http://rkhunter.sourceforge.net).
 -   SSH configuration preventing root login and insecure password authentication
--   Git hosting via [cgit](http://git.zx2c4.com/cgit/about/) and [gitolite](https://github.com/sitaramc/gitolite).
 -   Read-it-later via [Wallabag](https://www.wallabag.org/)
 -   A bunch of nice-to-have tools like [mosh](http://mosh.mit.edu) and [htop](http://htop.sourceforge.net) that make life with a server a little easier.
 
@@ -103,10 +102,6 @@ Ansible (the tool setting up your server) runs locally on your computer and send
 Modify the settings in the `group_vars/sovereign` folder to your liking. If you want to see how they’re used in context, just search for the corresponding string.
 All of the variables in `group_vars/sovereign` must be set for sovereign to function.
 
-For Git hosting, copy your public key into place:
-
-	cp ~/.ssh/id_rsa.pub roles/git/files/gitolite.pub
-
 Finally, replace the `host.example.net` in the file `hosts`. If your SSH daemon listens on a non-standard port, add a colon and the port number after the IP address. In that case you also need to add your custom port to the task `Set firewall rules for web traffic and SSH` in the file `roles/common/tasks/ufw.yml`.
 
 ### 5. Set up DNS
@@ -122,7 +117,6 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `read.example.com` (for Wallabag)
 * `news.example.com` (for Selfoss)
 * `cloud.example.com` (for ownCloud)
-* `git.example.com` (for cgit)
 
 ### 6. Run the Ansible Playbooks
 
