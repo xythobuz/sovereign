@@ -12,8 +12,6 @@ A single certificate is created using Let's Encrypt with SANs used for the subdo
 
 Several packages need access to the private key. Not all are run as root. An example is Prosody (XMPP). Such users are added to the ssl-cert group, and /etc/letsencrypt is set up to allow keys to be read by ssl-cert.
 
-Certificates and private keys are backed up using tarsnap.
-
 Certificate renewal is done automatically using cron. The cron script must be aware of private key copies and update them as well. Services that depend on new keys must also be bounced. It is up to roles that rely on keys to modify the cron script (preferably using `lineinfile` or something similar) to accomplish this.
 
 ### Testing support
