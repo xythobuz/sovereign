@@ -16,5 +16,4 @@
     - owncloud
     - vpn
     - news
-    - readlater
     - monitoring  # Monitoring role should be last. See roles/monitoring/README.md

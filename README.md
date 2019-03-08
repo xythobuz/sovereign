@@ -38,7 +38,6 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Firewall management via [Uncomplicated Firewall (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
 -   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit detection via [rkhunter](http://rkhunter.sourceforge.net).
 -   SSH configuration preventing root login and insecure password authentication
--   Read-it-later via [Wallabag](https://www.wallabag.org/)
 -   A bunch of nice-to-have tools like [mosh](http://mosh.mit.edu) and [htop](http://htop.sourceforge.net) that make life with a server a little easier.
 
 Don’t want one or more of the above services? Comment out the relevant role in `site.yml`. Or get more granular and comment out the associated `include:` directive in one of the playbooks.
@@ -114,7 +113,6 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `mail.example.com`
 * `www.example.com` (for Web hosting)
 * `autoconfig.example.com` (for email client automatic configuration)
-* `read.example.com` (for Wallabag)
 * `news.example.com` (for Selfoss)
 * `cloud.example.com` (for ownCloud)
 
