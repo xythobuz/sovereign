@@ -10,8 +10,11 @@
     - dependencies
 
 - name: Install necessities and nice-to-haves
-  apt: pkg={{ item }} state=present
-  with_items:
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
     - apache2
     - apt-transport-https
     - apticron
