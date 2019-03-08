@@ -24,7 +24,7 @@
 
 - name: Ensure mail domain directories are in place
   file: state=directory path=/data/{{ item.name }} owner=vmail group=dovecot mode=0770
-  with_items: '{{ mail_virtual_domains }}'
+  with_items: '{{ virtual_domains }}'
 
 - name: Ensure mail directories are in place
   file: state=directory path=/data/{{ item.domain }}/{{ item.account }} owner=vmail group=dovecot

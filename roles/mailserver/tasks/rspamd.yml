@@ -53,7 +53,7 @@
   args:
     creates: /var/lib/rspamd/dkim/{{ item.name }}.default.key
     chdir: /var/lib/rspamd/dkim/
-  with_items: "{{ mail_virtual_domains }}"
+  with_items: "{{ virtual_domains }}"
 
 - name: Start redis
   service: name=redis-server state=started

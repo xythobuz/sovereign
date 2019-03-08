@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS "virtual_aliases" (
 
 CREATE INDEX source_idx ON virtual_aliases (source);
 
-{% for virtual_domain in mail_virtual_domains %}
+{% for virtual_domain in virtual_domains %}
 INSERT INTO "virtual_domains" ("id", "name")
         VALUES ('{{ virtual_domain.pk_id }}', '{{ virtual_domain.name }}');
 {% endfor %}

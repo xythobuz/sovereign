@@ -12,10 +12,11 @@ organization: (required)
 # fail2ban reports will be sent to this address
 admin_email: "{{ main_user_name }}@{{ domain }}"
 
-# mail
-mail_virtual_domains:
+virtual_domains:
   - name: "{{ domain }}"
     pk_id: 1
+
+# mail
 mail_virtual_users:
   - account: "{{ main_user_name }}"
     domain: "{{ domain }}"
