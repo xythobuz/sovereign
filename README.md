@@ -89,9 +89,13 @@ Your new account will be automatically set up for passwordless `sudo`. Or you ca
 
 ## On your local machine
 
-Ansible (the tool setting up your server) runs locally on your computer and sends commands to the remote server. Download this repository somewhere on your machine, either through `Clone or Download > Download ZIP` above, `wget`, or `git` as below
+Ansible (the tool setting up your server) runs locally on your computer and sends commands to the remote server. Install it as described in their [documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+
+Download this repository somewhere on your machine, either through `Clone or Download > Download ZIP` above, `wget`, or `git` as below. Also install the dependencies for password generation.
     
-    git clone https://github.com/sovereign/sovereign.git
+    git clone https://github.com/xythobuz/sovereign.git
+    cd sovereign
+    sudo pip install -r ./requirements.txt
 
 ### 4. Configure your installation
 
