@@ -15,6 +15,7 @@
     state: present
   vars:
     packages:
+    - acl
     - apache2
     - apt-transport-https
     - apticron
