@@ -31,6 +31,7 @@
     - ruby
     - screen
     - sudo
+    - tmux
     - unattended-upgrades
     - vim
     - zsh
@@ -63,9 +64,14 @@
 - name: Set data directory permissions
   file: state=directory path=/data group=mail mode=0775
 
-- name: Ensure locale en_US.UTF-8 locale is present
+- name: Ensure US English locale exists
   locale_gen:
     name: en_US.UTF-8
+    state: present
+
+- name: Ensure German locale exists
+  locale_gen:
+    name: de_DE.UTF-8
     state: present
 
 - include: users.yml tags=users
