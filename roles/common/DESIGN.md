@@ -14,14 +14,13 @@ Several packages need access to the private key. Not all are run as root. An exa
 
 Certificate renewal is done automatically using cron. The cron script must be aware of private key copies and update them as well. Services that depend on new keys must also be bounced. It is up to roles that rely on keys to modify the cron script (preferably using `lineinfile` or something similar) to accomplish this.
 
-### Testing support
+If you changed something that requires new domains or subdomains to be considered when generating the certificates, do not just delete the files in /etc/letsencrypt/live!
+Instead, use /root/letsencrypt/letsencrypt-auto delete to remove the old certificates and then re-run the common role in this playbook.
 
-An isolated VM deployed with Vagrant is used for testing. The Let's Encrypt service cannot be used to get keys for it, since it is not bound with DNS. A self-signed wildcard key is therefore used for testing. The wildcard key, certificate, and chain are installed in the same way that Let's Encrypt keys are installed.
+## Firewall
 
-### Alternative approaches
+ufw is used to provide a simpler iptables interface.
 
-Another way to generate certificates is to generate one certificate per domain and expect each module that uses a subdomain to generate its own certificate for the subdomain.
-
-This was prototyped. The common role included a parameterized task list that could be invoked by modules that needed to generate a key. The certificate renewal script run by cron could be modified to update all the certificates in the `live` directory.
-
-This approach was rejected due to complexity. This would have been the first time modules needed to invoke a task list from another module. Managing multiple certificates is also more complicated.
+You may run into some issues with enabling ufw. In my case, this was caused by installing
+updates, including a new kernel, but not rebooting before attempting to install ufw.
+A simple reboot fixed the problems.

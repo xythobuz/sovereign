@@ -1,2 +1,3 @@
 ansible>=2.2.2.0
 passlib
+jmespath>=0.9.4

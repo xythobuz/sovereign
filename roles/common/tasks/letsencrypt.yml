@@ -57,8 +57,8 @@
 - name: Create live directory for LetsEncrypt cron job
   file: state=directory path=/etc/letsencrypt/live group=root owner=root
 
-- name: Get an SSL certificate for {{ domain }} from Let's Encrypt
-  script: letsencrypt-gencert {{ domain }} creates=/etc/letsencrypt/live/{{ domain }}/privkey.pem
+- name: Get an SSL certificate for {{ virtual_domains | json_query('[*].name') | join(' ') }} from Let's Encrypt
+  script: letsencrypt-gencert {{ virtual_domains | json_query('[*].name') | join(' ') }} creates=/etc/letsencrypt/live/{{ domain }}/privkey.pem
 
 - name: Modify permissions to allow ssl-cert group access
   file: path=/etc/letsencrypt/archive owner=root group=ssl-cert mode=0750

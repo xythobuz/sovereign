@@ -1,10 +1,34 @@
 #!/bin/bash
-d="$1"
-for i in www mail autoconfig read news cloud; do
-  if (getent hosts $i.$1 > /dev/null); then
-    d="$d,$i.$1";
+
+# Call script like this:
+# letsencrypt-gencert foo.com bar.com baz.com
+
+# Build list of domains and subdomains we need a certificate for
+d=""
+for domain in "$@"; do
+  # domain itself - foo.com
+  # only add if the DNS entry for the domain does actually exist
+  if (getent hosts $domain > /dev/null); then
+    if [ -z "$d" ]; then
+      d="$domain";
+    else
+      d="$d,$domain";
+    fi
   fi
+
+  # subdomains - www.foo.com mail.foo.com ...
+  for sub in www mail autoconfig news cloud git; do
+    # only add if the DNS entry for the subdomain does actually exist
+    if (getent hosts $sub.$domain > /dev/null); then
+      if [ -z "$d" ]; then
+        d="$sub.$domain";
+      else
+        d="$d,$sub.$domain";
+      fi
+    fi
+  done
 done
+
 # We are using the "standalone" letsencrypt plugin, which runs its own
 # webserver, so we need to temporarily free up the HTTP(S) ports by stopping
 # our own Apache.
