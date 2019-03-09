@@ -1,64 +1,93 @@
-- name: Install required packages for z-push (PHP5 variant)
-  apt: pkg={{ item }} state=present
-  with_items:
-    - php-soap
-    - php5
-    - php5-cli
-    - php5-imap
-  when: (ansible_distribution_release != "xenial" and ansible_distribution_release != "bionic" and ansible_distribution_release != "stretch")
+---
+# Installs and configures the Z-Push "ActiveSync" push notifications.
+
+- name: Ensure repository key for Z-Push is in place
+  apt_key:
+    url=http://repo.z-hub.io/z-push:/final/Debian_9.0/Release.key
+    state=present
   tags:
     - dependencies
 
-- name: Install required packages for z-push
-  apt: pkg={{ item }} state=present
-  with_items:
-    - php-soap
-    - php
-    - php-cli
-    - php-imap
-  when: (ansible_distribution_release == "xenial" or ansible_distribution_release == "bionic" or ansible_distribution_release == "stretch")
+- name: Add Z-Push repository
+  apt_repository:
+    repo="deb http://repo.z-hub.io/z-push:/final/Debian_9.0/ /"
   tags:
     - dependencies
 
-- name: Download z-push release
-  get_url:
-    url=http://download.z-push.org/final/2.1/z-push-{{ zpush_version }}.tar.gz
-    dest=/root/z-push-{{ zpush_version }}.tar.gz
-
-- name: Decompress z-push source
-  unarchive: src=/root/z-push-{{ zpush_version }}.tar.gz
-             dest=/root copy=no
-             creates=/root/z-push-{{ zpush_version }}
-
-- name: Create /usr/share/z-push
-  file: state=directory path=/usr/share/z-push
-
-- name: Copy z-push source files to /usr/share/z-push
-  shell: cp -R z-push-{{ zpush_version }}/* /usr/share/z-push/ chdir=/root
+- name: Install Z-Push
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - z-push-common
+    - z-push-backend-combined
+    - z-push-backend-imap
+    - z-push-backend-carddav
+    - z-push-backend-caldav
+    - z-push-ipc-sharedmemory
+    - z-push-config-apache
+    - z-push-autodiscover
   tags:
-    - skip_ansible_lint
+    - dependencies
 
-- name: Remove downloaded, temporary z-push source files
-  shell: rm -rf z-push* chdir=/root
-  tags:
-    - skip_ansible_lint
-
-- name: Ensure z-push state and log directories are in place
-  file: state=directory path={{ item }} owner=www-data group=www-data mode=0755
+- name: Ensure Z-Push state and log directories are in place
+  file:
+    state=directory
+    path={{ item }}
+    owner=www-data
+    group=www-data
+    mode=0755
   with_items:
     - /data/zpush-state
     - /var/log/z-push
   notify: restart apache
 
-- name: Copy z-push's config.php into place
-  template: src=usr_share_z-push_config.php.j2 dest=/usr/share/z-push/config.php
+- name: Copy Z-Push common config.php into place
+  template:
+    src=usr_share_z-push_config.php.j2
+    dest=/usr/share/z-push/config.php
 
-- name: Create z-push apache alias and php configuration file
-  copy: src=etc_apache2_conf.d_z-push.conf dest=/etc/apache2/conf-available/z-push.conf
+- name: Copy Z-Push combined backend config.php into place
+  template:
+    src=usr_share_z-push_backend_combined_config.php.j2
+    dest=/usr/share/z-push/backend/combined/config.php
+
+- name: Copy Z-Push IMAP backend config.php into place
+  template:
+    src=usr_share_z-push_backend_imap_config.php.j2
+    dest=/usr/share/z-push/backend/imap/config.php
+
+- name: Copy Z-Push CardDAV backend config.php into place
+  template:
+    src=usr_share_z-push_backend_carddav_config.php.j2
+    dest=/usr/share/z-push/backend/carddav/config.php
+
+- name: Copy Z-Push CalDAV backend config.php into place
+  template:
+    src=usr_share_z-push_backend_caldav_config.php.j2
+    dest=/usr/share/z-push/backend/caldav/config.php
+
+- name: Copy Z-Push autodiscover config.php into place
+  template:
+    src=usr_share_z-push_autodiscover_config.php.j2
+    dest=/usr/share/z-push/autodiscover/config.php
+
+- name: Add Z-Push autodiscover to Apache config
+  lineinfile:
+    path: /etc/apache2/conf-available/z-push.conf
+    line: '    AliasMatch (?i)/Autodiscover/Autodiscover.xml$ "/usr/share/z-push/autodiscover/autodiscover.php"'
+    insertafter: 'Microsoft-Server-ActiveSync'
+  notify: restart apache
 
 - name: Enable z-push Apache alias and PHP configuration file
   command: a2enconf z-push creates=/etc/apache2/conf-enabled/z-push.conf
   notify: restart apache
 
 - name: Configure z-push logrotate
-  copy: src=etc_logrotate_z-push dest=/etc/logrotate.d/z-push owner=root group=root mode=0644
+  copy:
+    src=etc_logrotate_z-push
+    dest=/etc/logrotate.d/z-push
+    owner=root
+    group=root
+    mode=0644
