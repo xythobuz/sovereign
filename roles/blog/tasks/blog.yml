@@ -2,7 +2,7 @@
   file: state=directory path={{ item }} group=www-data owner={{ main_user_name }}
   with_items: "{{ virtual_domains | json_query('[*].doc_root') | unique }}"
 
-- name: Create the Apache sites config file
+- name: Create the Apache sites config files
   template:
     src=etc_apache2_sites-available_blog.j2
     dest=/etc/apache2/sites-available/{{ item.name }}.conf

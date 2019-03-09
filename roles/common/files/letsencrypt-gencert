@@ -17,7 +17,7 @@ for domain in "$@"; do
   fi
 
   # subdomains - www.foo.com mail.foo.com ...
-  for sub in www mail autoconfig news cloud git; do
+  for sub in www mail autoconfig fathom news cloud git; do
     # only add if the DNS entry for the subdomain does actually exist
     if (getent hosts $sub.$domain > /dev/null); then
       if [ -z "$d" ]; then

@@ -32,6 +32,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and alert you when it’s not).
 -   [collectd](http://collectd.org/) to collect system statistics.
 -   Web hosting (ex: for your blog) via [Apache](https://www.apache.org/).
+-   Statistics for the website using [Fathom](https://github.com/usefathom/fathom).
 -   Firewall management via [Uncomplicated Firewall (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
 -   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit detection via [rkhunter](http://rkhunter.sourceforge.net).
 -   SSH configuration preventing root login and insecure password authentication
@@ -114,6 +115,7 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `mail.example.com`
 * `www.example.com` (for Web hosting)
 * `autoconfig.example.com` (for email client automatic configuration)
+* `fathom.example.com` (for web stats)
 * `news.example.com` (for Selfoss)
 * `cloud.example.com` (for ownCloud)
 

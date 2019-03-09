@@ -1,0 +1,15 @@
+[Unit]
+Description=Starts the fathom server
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+User={{ main_user_name }}
+Restart=always
+RestartSec=3
+WorkingDirectory=/home/{{ main_user_name }}/fathom-stats
+ExecStart=/usr/local/bin/fathom server
+
+[Install]
+WantedBy=multi-user.target

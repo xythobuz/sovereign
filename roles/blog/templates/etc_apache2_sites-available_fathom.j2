@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+    ServerName fathom.{{ item.name }}
+
+    Redirect permanent / https://{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName fathom.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "{{ item.doc_root }}"
+    DirectoryIndex          index.html
+    Options                 -Indexes
+    HostnameLookups         Off
+
+    ProxyRequests           On
+    ProxyPreserveHost       On
+    ProxyPass               / http://localhost:{{ fathom_internal_port }}/
+    ProxyPassReverse        / http://localhost:{{ fathom_internal_port }}/
+</VirtualHost>
