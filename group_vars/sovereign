@@ -20,7 +20,7 @@ virtual_domains:
 mail_virtual_users:
   - account: "{{ main_user_name }}"
     domain: "{{ domain }}"
-    password: TODO
+    password: "{{ 'changeme' | doveadm_pw_hash }}"
     domain_pk_id: 1
 mail_virtual_aliases:
   - source: "root@{{ domain }}"

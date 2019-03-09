@@ -14,8 +14,10 @@ mail_server_hostname: "mail.{{ domain }}"
 mail_server_autoconfig_hostname: "autoconfig.{{ domain }}"
 mail_header_privacy: 1
 
-# virtual domains
-mail_virtual_domains: []
+friendly_networks:
+  - ""
+
+virtual_domains: []
 mail_virtual_users: []
 mail_virtual_aliases: []
 
