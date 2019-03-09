@@ -1,6 +1,12 @@
+---
+# Installs and configures the Dovecot IMAP/POP3 server.
+
 - name: Install Dovecot and related packages
-  apt: pkg={{ item }} update_cache=yes state=present
-  with_items:
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
     - dovecot-core
     - dovecot-imapd
     - dovecot-lmtpd
@@ -11,38 +17,65 @@
   tags:
     - dependencies
 
-- name: Install Postgres for Dovecot
-  apt: pkg=postgresql state=present
-  tags:
-    - dependencies
-
 - name: Create vmail group
-  group: name=vmail state=present gid=5000
+  group:
+    name=vmail
+    state=present
+    gid=5000
 
 - name: Create vmail user
-  user: name=vmail group=vmail state=present uid=5000 home=/data shell=/usr/sbin/nologin
+  user:
+    name=vmail
+    group=vmail
+    state=present
+    uid=5000
+    home=/data
+    shell=/usr/sbin/nologin
 
 - name: Ensure mail domain directories are in place
-  file: state=directory path=/data/{{ item.name }} owner=vmail group=dovecot mode=0770
+  file:
+    state=directory
+    path=/data/{{ item.name }}
+    owner=vmail
+    group=dovecot
+    mode=0770
   with_items: '{{ virtual_domains }}'
 
 - name: Ensure mail directories are in place
-  file: state=directory path=/data/{{ item.domain }}/{{ item.account }} owner=vmail group=dovecot
+  file:
+    state=directory
+    path=/data/{{ item.domain }}/{{ item.account }}
+    owner=vmail
+    group=dovecot
   with_items: '{{ mail_virtual_users }}'
 
 - name: Copy dovecot.conf into place
-  copy: src=etc_dovecot_dovecot.conf dest=/etc/dovecot/dovecot.conf
+  copy:
+    src=etc_dovecot_dovecot.conf
+    dest=/etc/dovecot/dovecot.conf
 
 - name: Create before.d sieve scripts directory
-  file: path=/etc/dovecot/sieve/before.d state=directory owner=vmail group=dovecot recurse=yes mode=0770
+  file:
+    path=/etc/dovecot/sieve/before.d
+    state=directory
+    owner=vmail
+    group=dovecot
+    recurse=yes
+    mode=0770
   notify: restart dovecot
 
 - name: Configure sieve script moving spam into Junk folder
-  copy: src=etc_dovecot_sieve_before.d_no-spam.sieve dest=/etc/dovecot/sieve/before.d/no-spam.sieve owner=vmail group=dovecot
+  copy:
+    src=etc_dovecot_sieve_before.d_no-spam.sieve
+    dest=/etc/dovecot/sieve/before.d/no-spam.sieve
+    owner=vmail
+    group=dovecot
   notify: restart dovecot
 
 - name: Copy additional Dovecot configuration files in place
-  copy: src=etc_dovecot_conf.d_{{ item }} dest=/etc/dovecot/conf.d/{{ item }}
+  copy:
+    src=etc_dovecot_conf.d_{{ item }}
+    dest=/etc/dovecot/conf.d/{{ item }}
   with_items:
     - 10-auth.conf
     - 10-mail.conf
@@ -53,25 +86,30 @@
     - auth-sql.conf.ext
   notify: restart dovecot
 
-- name: Template 10-ssl.conf
-  template: src=etc_dovecot_conf.d_10-ssl.conf.j2 dest=/etc/dovecot/conf.d/10-ssl.conf
-  notify: restart dovecot
-
-- name: Template 15-lda.conf
-  template: src=etc_dovecot_conf.d_15-lda.conf.j2 dest=/etc/dovecot/conf.d/15-lda.conf
-  notify: restart dovecot
-
-- name: Template 20-imap.conf
-  template: src=etc_dovecot_conf.d_20-imap.conf.j2 dest=/etc/dovecot/conf.d/20-imap.conf
+- name: Template additional Dovecot configuration files
+  template:
+    src=etc_dovecot_conf.d_{{ item }}.j2
+    dest=/etc/dovecot/conf.d/{{ item }}
+  with_items:
+    - 10-ssl.conf
+    - 15-lda.conf
+    - 20-imap.conf
   notify: restart dovecot
 
 - name: Template dovecot-sql.conf.ext
-  template: src=etc_dovecot_dovecot-sql.conf.ext.j2 dest=/etc/dovecot/dovecot-sql.conf.ext
+  template:
+    src=etc_dovecot_dovecot-sql.conf.ext.j2
+    dest=/etc/dovecot/dovecot-sql.conf.ext
   notify: restart dovecot
 
 - name: Ensure correct permissions on Dovecot config directory
-  file: state=directory path=/etc/dovecot
-          group=dovecot owner=vmail mode=0770 recurse=yes
+  file:
+    state=directory
+    path=/etc/dovecot
+    group=dovecot
+    owner=vmail
+    mode=0770
+    recurse=yes
   notify: restart dovecot
 
 - name: Set firewall rules for dovecot

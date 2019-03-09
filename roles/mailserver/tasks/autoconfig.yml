@@ -5,16 +5,32 @@
 #
 
 - name: Create directory for mail autoconfiguration virtualhost
-  file: state=directory path=/var/www/autoconfig group=www-data owner=root
+  file:
+    state=directory
+    path=/var/www/autoconfig
+    owner=root
+    group=www-data
 
 - name: Create directory holding the autoconfig XML file
-  file: state=directory path=/var/www/autoconfig/mail group=www-data owner=root
+  file:
+    state=directory
+    path=/var/www/autoconfig/mail
+    owner=root
+    group=www-data
 
 - name: Create the autoconfig XML file
-  template: src=var_www_autoconfig_mail_config-v1.1.j2 dest=/var/www/autoconfig/mail/config-v1.1.xml group=www-data owner=root
+  template:
+    src=var_www_autoconfig_mail_config-v1.1.j2
+    dest=/var/www/autoconfig/mail/config-v1.1.xml
+    owner=root
+    group=www-data
 
 - name: Configure the mail autoconfiguration virtualhost
-  template: src=etc_apache2_sites-available_autoconfig.j2 dest=/etc/apache2/sites-available/autoconfig.conf group=root owner=root
+  template:
+    src=etc_apache2_sites-available_autoconfig.j2
+    dest=/etc/apache2/sites-available/autoconfig.conf
+    owner=root
+    group=root
   notify: restart apache
 
 - name: Enable the mail autoconfiguration virtualhost
