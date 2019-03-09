@@ -14,6 +14,7 @@ admin_email: "{{ main_user_name }}@{{ domain }}"
 virtual_domains:
   - name: "{{ domain }}"
     pk_id: 1
+    doc_root: "/var/www/{{ domain }}"
 
 # mail
 mail_virtual_users:

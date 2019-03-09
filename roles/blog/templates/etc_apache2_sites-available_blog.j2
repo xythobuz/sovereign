@@ -1,19 +1,17 @@
 <VirtualHost *:80>
-    ServerName {{ domain }}
-    ServerAlias www.{{ domain }}
+    ServerName {{ item.name }}
+    ServerAlias www.{{ item.name }}
 
-    Redirect permanent / https://{{ domain }}/
+    Redirect permanent / https://{{ item.name }}/
 </VirtualHost>
 
-
 <VirtualHost *:443>
-    ServerName {{ domain }}
-    ServerAlias www.{{ domain }}
-    SSLEngine On
+    ServerName {{ item.name }}
+    ServerAlias www.{{ item.name }}
 
-    DocumentRoot            "/var/www/{{ domain }}"
+    SSLEngine               On
+    DocumentRoot            "{{ item.doc_root }}"
     DirectoryIndex          index.html
     Options                 -Indexes
-
     HostnameLookups         Off
 </VirtualHost>

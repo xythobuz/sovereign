@@ -1,16 +1,20 @@
-- name: Create directory for blog HTML
-  file: state=directory path=/var/www/{{ domain }} group=www-data owner={{ main_user_name }}
+- name: Create directories for HTML documents
+  file: state=directory path={{ item }} group=www-data owner={{ main_user_name }}
+  with_items: "{{ virtual_domains | json_query('[*].doc_root') | unique }}"
 
-- name: Rename existing Apache blog virtualhost
-  command: mv /etc/apache2/sites-available/{{ domain }} /etc/apache2/sites-available/{{ domain }}.conf removes=/etc/apache2/sites-available/{{ domain }}
+- name: Create the Apache sites config file
+  template:
+    src=etc_apache2_sites-available_blog.j2
+    dest=/etc/apache2/sites-available/{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
 
-- name: Remove old sites-enabled/{{ domain }} symlink (new one will be created by a2ensite)
-  file: path=/etc/apache2/sites-enabled/{{ domain }} state=absent
+- name: Remove old sites-enabled symlinks (new ones will be created by a2ensite)
+  file: path=/etc/apache2/sites-enabled/{{ item }}.conf state=absent
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
 
-- name: Configure the Apache HTTP server for the blog
-  template: src=etc_apache2_sites-available_blog.j2 dest=/etc/apache2/sites-available/{{ domain }}.conf group=root owner=root
-
-- name: Enable blog site
-  command: a2ensite {{ domain }}.conf creates=/etc/apache2/sites-enabled/{{ domain }}.conf
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite {{ item }}.conf creates=/etc/apache2/sites-enabled/{{ item }}.conf
   notify: restart apache
-
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
