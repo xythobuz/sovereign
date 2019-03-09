@@ -7,7 +7,7 @@
     state: present
   vars:
     packages:
-    - postgresql
+    - postgresql-9.6
     - python-psycopg2
   tags:
     - dependencies
