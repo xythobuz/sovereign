@@ -1,0 +1,8 @@
+check process prosody with pidfile /var/run/prosody/prosody.pid
+  group social
+  start program = "/bin/systemctl start prosody"
+  stop program = "/bin/systemctl stop prosody"
+  if failed port 5222 type tcp
+    with timeout 10 seconds
+    then restart
+  if 5 restarts within 5 cycles then timeout

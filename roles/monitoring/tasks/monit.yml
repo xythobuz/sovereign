@@ -20,10 +20,46 @@
   stat: path=/usr/lib/znc/configs/znc.conf
   register: znc_config_file
 
+- name: Determine if XMPP is installed
+  stat: path=/etc/prosody/prosody.cfg.lua
+  register: prosody_config_file
+
+- name: Determine if Fathom is installed
+  stat: path=/usr/local/bin/fathom
+  register: fathom_config_file
+
+- name: Determine if Redis is installed
+  stat: path=/etc/redis/redis.conf
+  register: redis_config_file
+
+- name: Determine if RSpamD is installed
+  stat: path=/etc/rspamd/rspamd.conf
+  register: rspamd_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
   when: znc_config_file.stat.exists == True
+
+- name: Copy XMPP monit service config files into place
+  copy: src=etc_monit_conf.d_prosody dest=/etc/monit/conf.d/prosody
+  notify: restart monit
+  when: prosody_config_file.stat.exists == True
+
+- name: Copy Fathom monit service config files into place
+  copy: src=etc_monit_conf.d_fathom dest=/etc/monit/conf.d/fathom
+  notify: restart monit
+  when: fathom_config_file.stat.exists == True
+
+- name: Copy Redis monit service config files into place
+  copy: src=etc_monit_conf.d_redis dest=/etc/monit/conf.d/redis
+  notify: restart monit
+  when: redis_config_file.stat.exists == True
+
+- name: Copy RSpamD monit service config files into place
+  copy: src=etc_monit_conf.d_rspamd dest=/etc/monit/conf.d/rspamd
+  notify: restart monit
+  when: rspamd_config_file.stat.exists == True
 
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
