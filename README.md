@@ -21,7 +21,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Spam fighting via [Rspamd](https://www.rspamd.com/).
 -   Mail server verification using [DKIM](http://www.dkim.org/) and [DMARC](http://www.dmarc.org/) so the Internet knows your mailserver is legit.
 -   Webmail via [Roundcube](http://www.roundcube.net/).
--   Mobile push notifications via [Z-Push](http://z-push.sourceforge.net/soswp/index.php?pages_id=1&t=home).
+-   Mobile push notifications and autodiscovery via [Z-Push](http://z-push.sourceforge.net/soswp/index.php?pages_id=1&t=home).
 -   Email client [automatic configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
 -   Jabber/[XMPP](http://xmpp.org/) instant messaging via [Prosody](http://prosody.im/).
 -   An RSS Reader via [Selfoss](http://selfoss.aditu.de/).
@@ -57,7 +57,7 @@ Installation
 
 The following steps are done on the remote server by `ssh`ing into it and running these commands.
 
-### 1. Install required packages e.g `aptitude` is required on Debian
+### 1. Install required packages
 
     apt-get install sudo python
 
