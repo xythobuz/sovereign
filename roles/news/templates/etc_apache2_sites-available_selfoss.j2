@@ -1,16 +1,15 @@
 <VirtualHost *:80>
-    ServerName {{ selfoss_domain }}
+    ServerName {{ selfoss_subdomain }}.{{ item.name }}
 
-    Redirect permanent / https://{{ selfoss_domain }}/
+    Redirect permanent / https://{{ selfoss_subdomain }}.{{ item.name }}/
 </VirtualHost>
 
 <VirtualHost *:443>
-    ServerName {{ selfoss_domain }}
-    SSLEngine On
+    ServerName {{ selfoss_subdomain }}.{{ item.name }}
 
+    SSLEngine               On
     DocumentRoot            /var/www/selfoss
     Options                 -Indexes
-
     ErrorLog                /var/log/apache2/selfoss.info-error_log
     CustomLog               /var/log/apache2/selfoss.info-access_log common
 
