@@ -6,7 +6,9 @@
   notify: restart apache
 
 - name: Install monit
-  apt: pkg=monit state=present
+  apt:
+    name: monit
+    state: present
   tags:
     - dependencies
 

@@ -1,6 +1,9 @@
 - name: Install logwatch
-  apt: pkg={{ item }} state=present
-  with_items:
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
     - libdate-manip-perl
     - logwatch
   tags:
