@@ -25,8 +25,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Email client [automatic configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
 -   Jabber/[XMPP](http://xmpp.org/) instant messaging via [Prosody](http://prosody.im/).
 -   An RSS Reader via [Selfoss](http://selfoss.aditu.de/).
--   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and contacts in sync, via [ownCloud](http://owncloud.org/).
--   Your own private storage cloud via [ownCloud](http://owncloud.org/).
+-   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and contacts in sync, via [NextCloud](http://nextcloud.com/).
 -   Your own VPN server via [OpenVPN](http://openvpn.net/index.php/open-source.html).
 -   An IRC bouncer via [ZNC](http://wiki.znc.in/ZNC).
 -   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and alert you when it’s not).
@@ -117,7 +116,7 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `autoconfig.example.com` (for email client automatic configuration)
 * `fathom.example.com` (for web stats)
 * `news.example.com` (for Selfoss)
-* `cloud.example.com` (for ownCloud)
+* `cloud.example.com` (for NextCloud)
 
 ### 6. Run the Ansible Playbooks
 
@@ -162,13 +161,6 @@ Similarly, to access the server monitoring page, use another SSH tunnel:
     ssh deploy@example.com -L 2812:localhost:2812
 
 Again proceeding to http://localhost:2812 in your web browser.
-
-Finally, sign into ownCloud with a new administrator account to set it
-up. You should select PostgreSQL as the configuration backend. Use
-`owncloud` as the database user and the database name. For the
-database password ansible has created a set of random passwords for
-each service and stores them in your local folder `secret`, use the
-one in the file `owncloud_db_password`.
 
 How To Use Your New Personal Cloud
 ----------------------------------

@@ -1,0 +1,39 @@
+<VirtualHost *:80>
+    ServerName {{ nextcloud_subdomain }}.{{ item.name }}
+
+    Redirect permanent / https://{{ nextcloud_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ nextcloud_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            /var/www/nextcloud
+    Options                 -Indexes
+    ErrorLog                /var/log/apache2/nextcloud.info-error_log
+    CustomLog               /var/log/apache2/nextcloud.info-access_log common
+
+    php_value session_cache_limiter "public"
+
+    <Directory "/var/www/nextcloud">
+        Options +FollowSymLinks
+        AllowOverride All
+
+        <IfModule mod_dav.c>
+          Dav off
+        </IfModule>
+
+        SetEnv HOME /var/www/nextcloud
+        SetEnv HTTP_HOME /var/www/nextcloud
+    </Directory>
+
+    <Directory "/var/www/nextcloud/data/">
+      # just in case if .htaccess gets disabled
+      Require all denied
+    </Directory>
+
+    ## Please enable this manually, if needed. See also
+    ## https://doc.owncloud.org/server/8.2/admin_manual/issues/index.html#apple-ios
+    Redirect 301 /.well-known/carddav /remote.php/carddav
+    Redirect 301 /.well-known/caldav  /remote.php/caldav
+</VirtualHost>

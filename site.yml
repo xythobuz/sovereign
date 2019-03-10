@@ -11,9 +11,9 @@
     - mailserver
     - webmail
     - blog
+    - nextcloud
     - ircbouncer
     - xmpp
-    - owncloud
     - vpn
     - news
     - monitoring  # Monitoring role should be last. See roles/monitoring/README.md

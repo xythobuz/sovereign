@@ -1,0 +1,22 @@
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
+nextcloud_subdomain: "cloud"
+nextcloud_domain: "{{ nextcloud_subdomain }}.{{ domain }}"
+
+# When you increase the version, run this manually after installing / upgrading:
+#  cd /var/www/nextcloud
+#  sudo -u www-data php occ upgrade
+nextcloud_version: "15.0.5"
+
+nextcloud_admin_username: "{{ main_user_name }}"
+nextcloud_admin_password: "{{ lookup('password', secret + '/' + 'nextcloud_admin_password length=32') }}"
+
+nextcloud_db_username: nextclouduser
+nextcloud_db_password: "{{ lookup('password', secret + '/' + 'nextcloud_db_password length=32') }}"
+nextcloud_db_database: nextcloud
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

@@ -1,0 +1,118 @@
+---
+# Installs the nextcloud personal cloud software.
+
+- name: Install NextCloud dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - php
+    - php-pgsql
+    - php-fpm
+    - php-apcu
+    - php-imap
+    - php-imagick
+    - php-redis
+    - php-mcrypt
+    - php-xml
+    - php-zip
+    - php-mbstring
+    - php-gd
+    - php-json
+    - php-curl
+    - php-intl
+    - curl
+    - unzip  
+  tags:
+    - dependencies
+
+- name: Create NextCloud temp directory
+  file: path=/root/nextcloud state=directory
+
+- name: Download NextCloud {{ nextcloud_version }}
+  get_url:
+    url=https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.zip
+    dest=/root/nextcloud/nextcloud-{{ nextcloud_version }}.zip
+
+- name: Create NextCloud unpack directory
+  file: path=/root/nextcloud/nextcloud-{{ nextcloud_version }} state=directory
+
+- name: Extract NextCloud archive
+  unarchive:
+    copy: no
+    src: /root/nextcloud/nextcloud-{{ nextcloud_version }}.zip
+    dest: /root/nextcloud/nextcloud-{{ nextcloud_version }}/
+    creates: /root/nextcloud-{{ nextcloud_version }}/index.php
+
+- name: Back-Up old NextCloud config
+  shell: cp -r /var/www/nextcloud/config/config.php /root/nextcloud/config.php.bak || true
+
+- name: Delete old NextCloud document root
+  file: path=/var/www/nextcloud state=absent
+
+- name: Copy NextCloud source to document root
+  shell: cp -r /root/nextcloud/nextcloud-{{ nextcloud_version }}/nextcloud /var/www/nextcloud
+
+- name: Delete empty NextCloud config
+  file: path=/var/www/nextcloud/config/config.php state=absent
+
+- name: Restore old NextCloud config
+  shell: cp -r /root/nextcloud/config.php.bak /var/www/nextcloud/config/config.php || true
+
+- name: Delete old NextCloud source
+  file: path=/root/nextcloud state=absent
+
+- name: Create database user for NextCloud
+  postgresql_user:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ nextcloud_db_username }}
+    password="{{ nextcloud_db_password }}"
+    role_attr_flags=CREATEDB
+    state=present
+
+- name: Create NextCloud data directory
+  file: path=/data/nextcloud-data state=directory owner=www-data group=www-data
+
+- name: Set NextCloud ownership
+  action: file owner=www-data group=www-data path=/var/www/nextcloud recurse=yes state=directory
+
+- name: Run NextCloud installer
+  become: true
+  become_user: www-data
+  command: php occ maintenance:install --no-interaction --data-dir "/data/nextcloud-data" --database "pgsql" --database-name "{{ nextcloud_db_database }}" --database-user "{{ nextcloud_db_username }}" --database-pass "{{ nextcloud_db_password }}" --admin-user "{{ nextcloud_admin_username }}" --admin-pass "{{ nextcloud_admin_password }}"
+  args:
+    chdir: /var/www/nextcloud
+    creates: /var/www/nextcloud/config/config.php
+
+- name: Add our domains to the NextCloud trusted domains
+  lineinfile:
+    path: /var/www/nextcloud/config/config.php
+    insertafter: 'instanceid'
+    line: "  'trusted_domains' => array ('localhost', {{ virtual_domains | json_query('[*].name') | map('regex_replace', '(.*)', \"'cloud.\\1'\") | join(', ') }}),"
+
+- name: Create the Apache sites config files
+  template:
+    src=etc_apache2_sites-available_nextcloud.j2
+    dest=/etc/apache2/sites-available/nextcloud_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+
+- name: Remove old sites-enabled symlinks (new ones will be created by a2ensite)
+  file: path=/etc/apache2/sites-enabled/nextcloud_{{ item }}.conf state=absent
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite nextcloud_{{ item }}.conf creates=/etc/apache2/sites-enabled/nextcloud_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
+
+- name: Install NextCloud cronjob
+  cron:
+    name="nextcloud"
+    user="www-data"
+    minute="*/5"
+    job="php -f /var/www/nextcloud/cron.php > /dev/null"
