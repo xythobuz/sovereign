@@ -4,10 +4,10 @@ secret: '{{ secret_root + "/" + secret_name }}'
 
 # must match values in roles/common
 db_admin_username: 'postgres'
-db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password', length=32) }}"
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
 
 mail_db_username: 'mailuser'
-mail_db_password: "{{ lookup('password', secret + '/' + 'mail_db_password', length=32) }}"
+mail_db_password: "{{ lookup('password', secret + '/' + 'mail_db_password length=32') }}"
 mail_db_database: 'mailserver'
 
 mail_server_hostname: "mail.{{ domain }}"

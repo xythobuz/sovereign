@@ -69,7 +69,7 @@ $config['product_name'] = '{{ domain }} Webmail';
 // in the session record (and the client cookie if remember password is enabled).
 // please provide a string of exactly 24 chars.
 // YOUR KEY MUST BE DIFFERENT THAN THE SAMPLE VALUE FOR SECURITY REASONS
-$config['des_key'] = '{{ lookup('password', secret + '/' + 'roundcube_des_key', length=24) }}';
+$config['des_key'] = '{{ lookup('password', secret + '/' + 'roundcube_des_key length=24') }}';
 
 // List of active plugins (in plugins/ directory)
 // Debian: install roundcube-plugins first to have any

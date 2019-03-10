@@ -5,14 +5,14 @@ secret: '{{ secret_root + "/" + secret_name }}'
 
 # must match values in roles/common
 db_admin_username: 'postgres'
-db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password', length=32) }}"
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
 
 fathom_db_username: 'fathom'
-fathom_db_password: "{{ lookup('password', secret + '/' + 'fathom_db_password', length=32) }}"
+fathom_db_password: "{{ lookup('password', secret + '/' + 'fathom_db_password length=32') }}"
 fathom_db_database: 'fathom'
 fathom_admin_username: "{{ admin_email }}"
-fathom_admin_password: "{{ lookup('password', secret + '/' + 'fathom_admin_password', length=32) }}"
+fathom_admin_password: "{{ lookup('password', secret + '/' + 'fathom_admin_password length=32') }}"
 fathom_internal_port: '9000'
-fathom_secret: "{{ lookup('password', secret + '/' + 'fathom_secret', length=32) }}"
+fathom_secret: "{{ lookup('password', secret + '/' + 'fathom_secret length=32') }}"
 fathom_version: '1.2.1'
 fathom_release: "https://github.com/usefathom/fathom/releases/download/v{{ fathom_version }}/fathom_{{ fathom_version }}_linux_amd64.tar.gz"
