@@ -108,10 +108,6 @@
     group=root
   with_items: "{{ virtual_domains }}"
 
-- name: Remove old sites-enabled symlinks (new ones will be created by a2ensite)
-  file: path=/etc/apache2/sites-enabled/selfoss_{{ item }}.conf state=absent
-  with_items: "{{ virtual_domains | json_query('[*].name') }}"
-
 - name: Enable Apache sites (creates new sites-enabled symlinks)
   command: a2ensite selfoss_{{ item }}.conf creates=/etc/apache2/sites-enabled/selfoss_{{ item }}.conf
   notify: restart apache
