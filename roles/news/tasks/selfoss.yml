@@ -49,7 +49,7 @@
   file: path=/root/selfoss state=absent
 
 - name: Set selfoss ownership
-  action: file owner=root group=www-data path=/var/www/selfoss recurse=yes state=directory
+  action: file owner=www-data group=www-data path=/var/www/selfoss recurse=yes state=directory
 
 - name: Set selfoss permission
   action: file path=/var/www/selfoss/{{ item }} mode=0775
