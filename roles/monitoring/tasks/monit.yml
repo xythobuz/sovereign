@@ -13,7 +13,7 @@
     - dependencies
 
 - name: Copy monit master config file into place
-  copy: src=etc_monit_monitrc dest=/etc/monit/monitrc
+  template: src=etc_monit_monitrc.j2 dest=/etc/monit/monitrc
   notify: restart monit
 
 - name: Determine if ZNC is installed
