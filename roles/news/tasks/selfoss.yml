@@ -45,8 +45,8 @@
 - name: Restore old Selfoss data
   shell: cp -r /root/selfoss/data_bak /var/www/selfoss/data || cp -r /root/selfoss/selfoss-{{ selfoss_version }}/data /var/www/selfoss/data
 
-- name: Delete old Selfoss source
-  file: path=/root/selfoss state=absent
+- name: Delete old Selfoss data
+  file: path=/root/selfoss/data_bak state=absent
 
 - name: Set selfoss ownership
   action: file owner=www-data group=www-data path=/var/www/selfoss recurse=yes state=directory

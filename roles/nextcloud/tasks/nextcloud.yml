@@ -60,8 +60,8 @@
 - name: Restore old NextCloud config
   shell: cp -r /root/nextcloud/config.php.bak /var/www/nextcloud/config/config.php || true
 
-- name: Delete old NextCloud source
-  file: path=/root/nextcloud state=absent
+- name: Delete old NextCloud config
+  file: path=/root/nextcloud/config.php.bak state=absent
 
 - name: Create database user for NextCloud
   postgresql_user:
