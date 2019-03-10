@@ -152,7 +152,9 @@ data_path = "/data/prosody"
 -- You need to add a VirtualHost entry for each domain you wish Prosody to serve.
 -- Settings under each VirtualHost entry apply *only* to that host.
 
-VirtualHost "{{ prosody_virtual_domain }}"
+{% for vd in virtual_domains %}
+VirtualHost "{{ vd.name }}"
+{% endfor %}
 
 ------ Components ------
 -- You can specify components to add hosts that provide special services,

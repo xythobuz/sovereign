@@ -9,8 +9,12 @@
     - dependencies
 
 - name: Install Prosody and dependencies from official repository
-  apt: pkg={{ item }} update_cache=yes
-  with_items:
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
     - prosody
     - lua-sec
   tags:
@@ -30,7 +34,7 @@
   notify: restart prosody
 
 - name: Create Prosody accounts
-  command: prosodyctl register {{ item.name }} {{ prosody_virtual_domain }} "{{ item.password }}"
+  command: prosodyctl register {{ item.name }} {{ item.domain }} "{{ item.password }}"
   with_items: "{{ prosody_accounts }}"
 
 - name: Set firewall rules for Prosody
