@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+
+spawn /usr/bin/znc --makepass
+
+expect "Enter password:"
+send -- "{{ irc_admin_password }}\r"
+
+expect "Confirm password:"
+send -- "{{ irc_admin_password }}\r"
+
+interact

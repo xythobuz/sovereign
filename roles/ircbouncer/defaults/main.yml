@@ -1,1 +1,14 @@
-irc_timezone: "{{ common_timezone|default('Etc/UTC') }}"
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
+irc_admin_username: "{{ main_user_name }}"
+irc_admin_password: "{{ lookup('password', secret + '/' + 'irc_admin_password length=32') }}"
+
+irc_nick: "{{ main_user_name }}"
+irc_altnick: "{{ irc_nick }}_"
+irc_ident: "{{ main_user_name }}"
+irc_realname: "{{ main_user_name }}"
+irc_quitmsg: "Bye folks"
+
+irc_timezone: "{{ common_timezone | default('Etc/UTC') }}"

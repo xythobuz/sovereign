@@ -1,9 +1,14 @@
+---
 # more or less as per http://wiki.znc.in/Running_ZNC_as_a_system_daemon
 
 - name: Install znc
-  apt: pkg={{ item }} state=present
-  with_items:
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
     - znc
+    - expect
   tags:
     - dependencies
 
@@ -22,6 +27,7 @@
     - moddata
     - modules
     - users
+    - configs
 
 - name: Copy znc service file into place
   copy: src=etc_systemd_system_znc.service dest=/etc/systemd/system/znc.service mode=0644
@@ -51,13 +57,29 @@
   ignore_errors: True
   changed_when: False  # never report as "changed"
 
-- name: Create znc config directory
-  file: state=directory path=/usr/lib/znc/configs group=znc owner=znc
-
 - name: Copy znc configuration file into place
   template: src=usr_lib_znc_configs_znc.conf.j2 dest=/usr/lib/znc/configs/znc.conf owner=znc group=znc
   when: znc_config.rc != 0
   notify: restart znc
+
+- name: Copy expect script for znc password generation
+  template: src=root_znc_pw.j2 dest=/root/znc_pw mode=0777
+  when: znc_config.rc != 0
+
+- name: Run script to generate znc hash and salt
+  shell: /root/znc_pw | head --lines=-1 | tail --lines=+7
+  register: znc_config_pass
+  when: znc_config.rc != 0
+
+- name: Put generated hash and salt into configuration file
+  blockinfile:
+    block: "{{ znc_config_pass.stdout }}"
+    path: /usr/lib/znc/configs/znc.conf
+    marker: "// {mark} ANSIBLE MANAGED BLOCK"
+  when: znc_config.rc != 0
+
+- name: Remove expect script
+  file: path=/root/znc_pw state=absent
 
 - name: Set firewall rule for znc
   ufw: rule=allow port=6697 proto=tcp

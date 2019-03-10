@@ -40,10 +40,10 @@ Version = 1.0
 	SSL = false
 </Listener>
 
-<User {{ irc_nick }}>
+<User {{ irc_admin_username }}>
 	Admin = true
 	Allow = *
-	AltNick = {{ irc_nick }}_
+	AltNick = {{ irc_altnick }}
 	AppendTimestamp = false
 	AutoClearChanBuffer = true
 	Buffer = 5000
@@ -56,7 +56,7 @@ Version = 1.0
 	LoadModule = perform
 	LoadModule = block_motd
 	LoadModule = clientnotify
-	MaxNetworks = 1
+	MaxNetworks = 5
 	MultiClients = true
 	Nick = {{ irc_nick }}
 	PrependTimestamp = true
@@ -65,11 +65,8 @@ Version = 1.0
 	TimestampFormat = [%H:%M:%S]
 	Timezone = {{ irc_timezone }}
 
-	<Pass password>
-	        Method = sha256
-	        Hash = {{ irc_password | znc_pw_hash }}
-	        Salt = {{ irc_password | znc_pw_salt }}
-	</Pass>
+// BEGIN ANSIBLE MANAGED BLOCK
+// END ANSIBLE MANAGED BLOCK
 
 	<Network freenode>
 		BindHost = 0.0.0.0
