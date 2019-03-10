@@ -87,6 +87,22 @@
     chdir: /var/www/nextcloud
     creates: /var/www/nextcloud/config/config.php
 
+- name: Install NextCloud contacts app
+  become: true
+  become_user: www-data
+  command: php occ app:install contacts
+  args:
+    chdir: /var/www/nextcloud
+    creates: /var/www/nextcloud/apps/contacts/COPYING
+
+- name: Install NextCloud calendar app
+  become: true
+  become_user: www-data
+  command: php occ app:install calendar
+  args:
+    chdir: /var/www/nextcloud
+    creates: /var/www/nextcloud/apps/calendar/COPYING
+
 - name: Add our domains to the NextCloud trusted domains
   lineinfile:
     path: /var/www/nextcloud/config/config.php
