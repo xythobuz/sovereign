@@ -1,15 +1,18 @@
 <VirtualHost *:80>
-    ServerName {{ webmail_domain }}
+    ServerName {{ webmail_subdomain }}.{{ item.name }}
 
-    Redirect permanent / https://{{ webmail_domain }}/
+    Redirect permanent / https://{{ webmail_subdomain }}.{{ item.name }}/
 </VirtualHost>
 
 <VirtualHost *:443>
-    ServerName {{ webmail_domain }}
-    SSLEngine On
+    ServerName {{ webmail_subdomain }}.{{ item.name }}
 
-    DocumentRoot            /var/www/roundcube
+    SSLEngine               On
+    DocumentRoot            /var/lib/roundcube
     Options                 -Indexes
+    LogLevel		        warn
+    ErrorLog                /var/log/apache2/roundcube.info-error_log
+    CustomLog               /var/log/apache2/roundcube.info-access_log common
 
     <Directory /var/www/roundcube>
         AllowOverride All
@@ -19,20 +22,16 @@
 
     <Directory /opt/roundcube/config>
         AllowOverride None
-	Require all denied
+        Require all denied
     </Directory>
 
     <Directory /opt/roundcube/temp>
         AllowOverride None
-	Require all denied
+        Require all denied
     </Directory>
 
     <Directory /opt/roundcube/logs>
         AllowOverride None
-	Require all denied
+        Require all denied
     </Directory>
-
-    LogLevel		    warn
-    ErrorLog                /var/log/apache2/roundcube.info-error_log
-    CustomLog               /var/log/apache2/roundcube.info-access_log common
 </VirtualHost>
