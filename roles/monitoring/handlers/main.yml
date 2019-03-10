@@ -1,8 +1,8 @@
 - name: restart monit
   service: name=monit state=restarted
 
-- name: restart collectd
-  service: name=collectd state=restarted
+- name: restart apache
+  service: name=apache2 state=restarted
 
 - name: restart rspamd
   service: name=rspamd state=restarted
