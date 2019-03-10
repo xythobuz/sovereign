@@ -32,10 +32,18 @@
     home=/data
     shell=/usr/sbin/nologin
 
+- name: Ensure mail directory is in place
+  file:
+    state=directory
+    path=/data/mail
+    owner=vmail
+    group=dovecot
+    mode=0770
+
 - name: Ensure mail domain directories are in place
   file:
     state=directory
-    path=/data/{{ item.name }}
+    path=/data/mail/{{ item.name }}
     owner=vmail
     group=dovecot
     mode=0770
@@ -44,7 +52,7 @@
 - name: Ensure mail directories are in place
   file:
     state=directory
-    path=/data/{{ item.domain }}/{{ item.account }}
+    path=/data/mail/{{ item.domain }}/{{ item.account }}
     owner=vmail
     group=dovecot
   with_items: '{{ mail_virtual_users }}'
