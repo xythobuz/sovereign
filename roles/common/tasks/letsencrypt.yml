@@ -55,10 +55,13 @@
     mode: 0755
 
 - name: Create live directory for LetsEncrypt cron job
-  file: state=directory path=/etc/letsencrypt/live group=root owner=root
+  file: state=directory path=/etc/letsencrypt/live group=ssl-cert owner=root
 
 - name: Get an SSL certificate for {{ virtual_domains | json_query('[*].name') | join(' ') }} from Let's Encrypt
   script: letsencrypt-gencert {{ virtual_domains | json_query('[*].name') | join(' ') }} creates=/etc/letsencrypt/live/{{ domain }}/privkey.pem
 
-- name: Modify permissions to allow ssl-cert group access
-  file: path=/etc/letsencrypt/archive owner=root group=ssl-cert mode=0750
+- name: Modify permissions to allow ssl-cert group access to archive
+  file: path=/etc/letsencrypt/archive owner=root group=ssl-cert mode=0750 recurse=yes
+
+- name: Modify permissions to allow ssl-cert group access to live
+  file: path=/etc/letsencrypt/live owner=root group=ssl-cert mode=0750 recurse=yes
