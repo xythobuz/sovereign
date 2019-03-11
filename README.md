@@ -28,6 +28,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and contacts in sync, via [NextCloud](http://nextcloud.com/).
 -   Your own VPN server via [OpenVPN](http://openvpn.net/index.php/open-source.html).
 -   An IRC bouncer via [ZNC](http://wiki.znc.in/ZNC).
+-   Git Repo hosting via [gitea](https://gitea.io/en-us/).
 -   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and alert you when it’s not).
 -   Web hosting (ex: for your blog) via [Apache](https://www.apache.org/).
 -   Statistics for the website using [Fathom](https://github.com/usefathom/fathom).
@@ -116,6 +117,7 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `fathom.example.com` (for web stats)
 * `news.example.com` (for Selfoss)
 * `cloud.example.com` (for NextCloud)
+* `git.example.com` (for gitea)
 
 ### 6. Run the Ansible Playbooks
 

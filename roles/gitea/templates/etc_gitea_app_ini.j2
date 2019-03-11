@@ -1,0 +1,47 @@
+; sovereign gitea config file
+; see https://github.com/go-gitea/gitea/blob/master/custom/conf/app.ini.sample
+
+APP_NAME = {{ domain }} Gitea
+RUN_MODE = prod
+
+[repository]
+ROOT = /data/gitea/repos
+
+[ui]
+DEFAULT_THEME = arc-green
+
+[server]
+PROTOCOL = http
+DOMAIN = {{ gitea_domain }}
+HTTP_ADDR = 127.0.0.1
+HTTP_PORT = 3000
+
+[database]
+DB_TYPE = postgres
+HOST = 127.0.0.1:5432
+NAME = {{ gitea_db_database }}
+USER = {{ gitea_db_username }}
+PASSWD = `{{ gitea_db_password }}`
+SSL_MODE = disable
+
+[security]
+INSTALL_LOCK = true
+SECRET_KEY = {{ gitea_secret }}
+
+[mailer]
+ENABLED = true
+FROM = gitea@{{ domain }}
+MAILER_TYPE = sendmail
+
+[log]
+ROOT_PATH = /data/gitea/log
+MODE = file
+LEVEL = Info
+
+[log.file]
+LEVEL = Info
+LOG_ROTATE = true
+MAX_LINES = 1000000
+MAX_SIZE_SHIFT = 28
+DAILY_ROTATE = true
+MAX_DAYS = 7

@@ -36,6 +36,10 @@
   stat: path=/etc/rspamd/rspamd.conf
   register: rspamd_config_file
 
+- name: Determine if gitea is installed
+  stat: path=/etc/gitea/app.ini
+  register: gitea_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -60,6 +64,11 @@
   copy: src=etc_monit_conf.d_rspamd dest=/etc/monit/conf.d/rspamd
   notify: restart monit
   when: rspamd_config_file.stat.exists == True
+
+- name: Copy gitea monit service config files into place
+  copy: src=etc_monit_conf.d_gitea dest=/etc/monit/conf.d/gitea
+  notify: restart monit
+  when: gitea_config_file.stat.exists == True
 
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}

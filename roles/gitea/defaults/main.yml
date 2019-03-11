@@ -1,0 +1,22 @@
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
+gitea_subdomain: "git"
+gitea_domain: "{{ gitea_subdomain }}.{{ domain }}"
+
+gitea_version: "1.7.3"
+gitea_release: "https://github.com/go-gitea/gitea/releases/download/v{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
+
+gitea_admin_username: "{{ main_user_name }}"
+gitea_admin_password: "{{ lookup('password', secret + '/' + 'gitea_admin_password length=32') }}"
+
+gitea_db_username: giteauser
+gitea_db_password: "{{ lookup('password', secret + '/' + 'gitea_db_password length=32') }}"
+gitea_db_database: gitea
+
+gitea_secret: "{{ lookup('password', secret + '/' + 'db_admin_password length=14') }}"
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

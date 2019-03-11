@@ -1,0 +1,17 @@
+[Unit]
+Description=Starts the gitea server
+Requires=network.target
+After=network.target
+After=syslog.target
+
+[Service]
+Type=simple
+User=git
+Restart=always
+RestartSec=3
+WorkingDirectory=/data/gitea
+ExecStart=/usr/local/bin/gitea web -c /etc/gitea/app.ini
+Environment=USER=git HOME=/home/git GITEA_WORK_DIR=/data/gitea
+
+[Install]
+WantedBy=multi-user.target

@@ -8,12 +8,13 @@
 
   roles:
     - common
+    - blog
     - mailserver
     - webmail
-    - blog
+    - news
     - nextcloud
+    - gitea
     - ircbouncer
     - xmpp
     - vpn
-    - news
     - monitoring  # Monitoring role should be last. See roles/monitoring/README.md
