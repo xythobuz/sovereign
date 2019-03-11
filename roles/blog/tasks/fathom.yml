@@ -16,12 +16,10 @@
 
 - name: Stop old fathom instance
   service: name=fathom-stats state=stopped
+  ignore_errors: True
 
 - name: Copy fathom binary to /usr/local/bin
   shell: cp fathom/fathom /usr/local/bin/fathom chdir=/root
-
-- name: Remove downloaded temporary fathom files
-  file: state=absent path=/root/fathom
 
 - name: Create fathom working directory
   file: state=directory path=/home/{{ main_user_name }}/fathom-stats

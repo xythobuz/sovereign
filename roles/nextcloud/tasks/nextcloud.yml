@@ -23,7 +23,7 @@
     - php-curl
     - php-intl
     - curl
-    - unzip  
+    - unzip
   tags:
     - dependencies
 

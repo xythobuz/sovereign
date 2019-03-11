@@ -1,7 +1,7 @@
 check process fathom matching fathom
   group www
-  start program = "/bin/systemctl start fathom"
-  stop program = "/bin/systemctl stop fathom"
+  start program = "/bin/systemctl start fathom-stats"
+  stop program = "/bin/systemctl stop fathom-stats"
   if failed port 9000 protocol http
     with timeout 10 seconds
     then restart
