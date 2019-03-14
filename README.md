@@ -119,6 +119,7 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `news.example.com` (for Selfoss)
 * `cloud.example.com` (for NextCloud)
 * `git.example.com` (for gitea)
+* `status.example.com` (for monit)
 * `matrix.example.com` (for riot)
 
 ### 6. Run the Ansible Playbooks

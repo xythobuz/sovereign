@@ -89,3 +89,18 @@
     - sshd
     - tomcat
   notify: restart monit
+
+- name: Create the Apache monit sites config files
+  template:
+    src=etc_apache2_sites-available_monit.j2
+    dest=/etc/apache2/sites-available/monit_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+  when: monit_page_public == 1
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite monit_{{ item }}.conf creates=/etc/apache2/sites-enabled/monit_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
+  when: monit_page_public == 1
