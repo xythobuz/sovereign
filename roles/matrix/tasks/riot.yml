@@ -1,0 +1,28 @@
+- name: Create temporary Riot directory
+  file: state=directory path=/root/riot
+
+- name: Download Riot {{ riot_version }} release
+  get_url:
+    url="{{ riot_release }}"
+    dest=/root/riot/riot-{{ riot_version }}.tar.gz
+
+- name: Extract Riot archive
+  unarchive:
+    copy: no
+    src: /root/riot/riot-{{ riot_version }}.tar.gz
+    dest: /root/riot/
+    creates: /root/riot/riot-v{{ riot_version }}/index.html
+
+- name: Delete old Riot webroot directory
+  file: state=absent path=/var/www/riot
+
+- name: Configure Riot
+  template:
+    src=root_riot_config.j2
+    dest=/root/riot/riot-v{{ riot_version }}/config.json
+
+- name: Copy Riot to document root
+  shell: cp -r /root/riot/riot-v{{ riot_version }} /var/www/riot
+
+- name: Set Riot ownership
+  action: file owner=www-data group=www-data path=/var/www/riot recurse=yes state=directory

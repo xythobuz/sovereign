@@ -1,0 +1,25 @@
+matrix_subdomain: "matrix"
+matrix_domain: "{{ matrix_subdomain }}.{{ domain }}"
+
+riot_version: "1.0.3"
+riot_release: "https://github.com/vector-im/riot-web/releases/download/v{{ riot_version }}/riot-v{{ riot_version }}.tar.gz"
+
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
+synapse_admin: "{{ admin_email }}"
+synapse_registration_secret: "{{ lookup('password', secret + '/' + 'synapse_registration_secret length=32 chars=ascii_letters,digits') }}"
+synapse_pw_pepper: "{{ lookup('password', secret + '/' + 'synapse_pw_pepper length=32 chars=ascii_letters,digits') }}"
+
+synapse_accounts:
+  - name: "{{ main_user_name }}"
+    password: "{{ lookup('password', secret + '/' + 'matrix_main_user_password length=32') }}"
+
+synapse_db_username: synapseuser
+synapse_db_password: "{{ lookup('password', secret + '/' + 'synapse_db_password length=32') }}"
+synapse_db_database: synapse
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

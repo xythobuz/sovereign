@@ -1,0 +1,8 @@
+check process synapse matching /opt/venvs/matrix-synapse/bin/python
+  group social
+  start program = "/bin/systemctl start matrix-synapse"
+  stop program = "/bin/systemctl stop matrix-synapse"
+  if failed port 8448 type tcp
+    with timeout 10 seconds
+    then restart
+  if 5 restarts within 5 cycles then timeout

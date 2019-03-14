@@ -1,0 +1,104 @@
+- name: Ensure repository key for Synapse is in place
+  apt_key: url=https://matrix.org/packages/debian/repo-key.asc state=present
+  tags:
+    - dependencies
+
+- name: Add Synapse repository
+  apt_repository: repo="deb https://matrix.org/packages/debian/ {{ ansible_distribution_release }} main"
+  tags:
+    - dependencies
+
+- name: Install Synapse and dependencies from official repository
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - python-psycopg2
+    - matrix-synapse
+  tags:
+    - dependencies
+
+- name: Add Synapse user to ssl-cert group
+  user: name=matrix-synapse group=ssl-cert
+
+- name: Create Synapse data directory
+  file: state=directory path=/data/{{ item }} owner=matrix-synapse group=root
+  with_items:
+    - matrix-synapse
+    - matrix-synapse/uploads
+    - matrix-synapse/media
+
+- name: Configure Synapse homeserver
+  template:
+    src=etc_matrix-synapse_homeserver.j2
+    dest=/etc/matrix-synapse/homeserver.yaml
+    owner=matrix-synapse
+    group=root
+  notify: restart synapse
+
+- name: Configure Synapse server name
+  template:
+    src=etc_matrix-synapse_conf.d_server_name.j2
+    dest=/etc/matrix-synapse/conf.d/server_name.yaml
+    owner=matrix-synapse
+    group=root
+  notify: restart synapse
+
+- name: Add Synapse postgres user
+  postgresql_user:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ synapse_db_username }}
+    password="{{ synapse_db_password }}"
+    encrypted=yes
+    state=present
+
+- name: Create Synapse database
+  postgresql_db:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ synapse_db_database }}
+    state=present
+    owner={{ synapse_db_username }}
+    encoding='UTF8'
+    lc_collate='C'
+    lc_ctype='C'
+    template='template0'
+
+- name: Add cert postrenew task
+  copy: src=etc_letsencrypt_postrenew_synapse.sh dest=/etc/letsencrypt/postrenew/synapse.sh mode=0755
+
+- name: Set firewall rules for Synapse
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+    - 8448  # matrix federation
+  tags: ufw
+
+- name: Register new Synapse service
+  systemd: name=matrix-synapse daemon_reload=yes enabled=yes
+
+- name: Start new Synapse instance
+  service: name=matrix-synapse state=started
+
+- name: Create the Apache Matrix sites config files
+  template:
+    src=etc_apache2_sites-available_matrix.j2
+    dest=/etc/apache2/sites-available/matrix_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+  notify: restart apache
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite matrix_{{ item }}.conf creates=/etc/apache2/sites-enabled/matrix_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
+
+- name: Create Matrix / Synapse accounts
+  command: register_new_matrix_user -u {{ item.name }} -p {{ item.password }} -t support -a -c /etc/matrix-synapse/homeserver.yaml http://localhost:8008
+  with_items: "{{ synapse_accounts }}"
+  ignore_errors: True

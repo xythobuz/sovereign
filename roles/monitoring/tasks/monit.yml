@@ -40,6 +40,10 @@
   stat: path=/etc/gitea/app.ini
   register: gitea_config_file
 
+- name: Determine if Synapse is installed
+  stat: path=/etc/matrix-synapse/homeserver.yaml
+  register: synapse_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -69,6 +73,11 @@
   copy: src=etc_monit_conf.d_gitea dest=/etc/monit/conf.d/gitea
   notify: restart monit
   when: gitea_config_file.stat.exists == True
+
+- name: Copy Synapse monit service config files into place
+  copy: src=etc_monit_conf.d_matrix dest=/etc/monit/conf.d/matrix
+  notify: restart monit
+  when: synapse_config_file.stat.exists == True
 
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}

@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+    ServerName {{ matrix_subdomain }}.{{ item.name }}
+
+    Redirect permanent / https://{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ matrix_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "/var/www/riot"
+    DirectoryIndex          index.html
+    Options                 -Indexes
+    HostnameLookups         Off
+
+    ProxyRequests           Off
+    ProxyPreserveHost       On
+    ProxyPass               /_matrix http://localhost:8008/_matrix nocanon
+    ProxyPassReverse        /_matrix http://localhost:8008/_matrix
+</VirtualHost>
