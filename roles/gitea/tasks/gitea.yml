@@ -39,6 +39,8 @@
   with_items:
     - gitea
     - gitea/custom
+    - gitea/custom/templates
+    - gitea/custom/templates/custom
     - gitea/data
     - gitea/log
     - gitea/repos
@@ -101,6 +103,38 @@
     dest=/etc/systemd/system/gitea.service
     owner=root
     group=root
+
+- name: Add homepage template to gitea
+  copy:
+    src=data_gitea_custom_templates_home.tmpl
+    dest=/data/gitea/custom/templates/home.tmpl
+    owner=git
+    group=root
+    mode=0644
+
+- name: Add extra links to gitea
+  template:
+    src=data_gitea_custom_templates_custom_extra_links.j2
+    dest=/data/gitea/custom/templates/custom/extra_links.tmpl
+    owner=git
+    group=root
+    mode=0644
+
+- name: Add robots.txt to gitea
+  copy:
+    src=data_gitea_custom_robots.txt
+    dest=/data/gitea/custom/robots.txt
+    owner=git
+    group=root
+    mode=0644
+
+- name: Add custom footer to gitea
+  copy:
+    src=data_gitea_custom_templates_custom_footer.tmpl
+    dest=/data/gitea/custom/templates/custom/footer.tmpl
+    owner=git
+    group=root
+    mode=0644
 
 - name: Register new gitea service
   systemd: name=gitea daemon_reload=yes enabled=yes
