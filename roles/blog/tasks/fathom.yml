@@ -50,19 +50,13 @@
     state=present
     owner={{ fathom_db_username }}
 
-- name: Delete old fathom admin user account
-  become: true
-  become_user: "{{ main_user_name }}"
-  shell: fathom user delete --email="{{ fathom_admin_username }}"
-  args:
-    chdir: /home/{{ main_user_name }}/fathom-stats
-
 - name: Create fathom admin user account
   become: true
   become_user: "{{ main_user_name }}"
   shell: fathom user add --email="{{ fathom_admin_username }}" --password="{{ fathom_admin_password }}"
   args:
     chdir: /home/{{ main_user_name }}/fathom-stats
+  ignore_errors: True
 
 - name: Add systemd service to start fathom automatically
   template:
@@ -83,6 +77,7 @@
     dest=/etc/apache2/sites-available/fathom_{{ item.name }}.conf
     owner=root
     group=root
+  notify: restart apache
   with_items: "{{ virtual_domains }}"
 
 - name: Enable Apache sites (creates new sites-enabled symlinks)
