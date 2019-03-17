@@ -84,6 +84,16 @@
 - name: Start new Synapse instance
   service: name=matrix-synapse state=started
 
+- name: Create matrix well-known directory
+  file: state=directory path=/var/www/well-known/matrix owner=www-data group=www-data
+
+- name: Add redirect to well-known
+  template:
+    src=var_www_well-known_matrix_server.j2
+    dest=/var/www/well-known/matrix/server
+    owner=www-data
+    group=www-data
+
 - name: Create the Apache Matrix sites config files
   template:
     src=etc_apache2_sites-available_matrix.j2

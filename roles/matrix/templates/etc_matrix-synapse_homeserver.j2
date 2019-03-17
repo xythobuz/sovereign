@@ -162,7 +162,7 @@ listeners:
       - '::'
     
     resources:
-      - names: [client, federation]
+      - names: [client, federation, webclient]
 
   # Unsecure HTTP listener: for when matrix traffic passes through a reverse proxy
   # that unwraps TLS.
@@ -177,7 +177,7 @@ listeners:
     x_forwarded: true
 
     resources:
-      - names: [client, federation]
+      - names: [client, federation, webclient]
         compress: false
 
     # example additonal_resources:
