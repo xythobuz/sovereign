@@ -10,7 +10,8 @@ mail_db_username: 'mailuser'
 mail_db_password: "{{ lookup('password', secret + '/' + 'mail_db_password length=32') }}"
 mail_db_database: 'mailserver'
 
-mail_server_hostname: "mail.{{ domain }}"
+mail_server_subdomain: "mail"
+mail_server_hostname: "{{ mail_server_subdomain }}.{{ domain }}"
 mail_server_autoconfig_hostname: "autoconfig.{{ domain }}"
 mail_header_privacy: 1
 

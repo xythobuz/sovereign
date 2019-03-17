@@ -2,28 +2,28 @@
 #
 # Autoconfig XML file for email clients
 # https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration
-#
 
-- name: Create directory for mail autoconfiguration virtualhost
+- name: Create directories holding the autoconfig XML file
   file:
     state=directory
-    path=/var/www/autoconfig
+    path={{ item }}
     owner=root
     group=www-data
-
-- name: Create directory holding the autoconfig XML file
-  file:
-    state=directory
-    path=/var/www/autoconfig/mail
-    owner=root
-    group=www-data
+  with_items:
+    - "/var/www/autoconfig"
+    - "/var/www/autoconfig/mail"
+    - "/var/www/well-known/autoconfig"
+    - "/var/www/well-known/autoconfig/mail"
 
 - name: Create the autoconfig XML file
   template:
     src=var_www_autoconfig_mail_config-v1.1.j2
-    dest=/var/www/autoconfig/mail/config-v1.1.xml
+    dest={{ item }}
     owner=root
     group=www-data
+  with_items:
+    - "/var/www/autoconfig/mail/config-v1.1.xml"
+    - "/var/www/well-known/autoconfig/mail/config-v1.1.xml"
 
 - name: Configure the mail autoconfiguration virtualhost
   template:
