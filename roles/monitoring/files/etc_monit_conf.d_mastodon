@@ -1,0 +1,22 @@
+check process mastodon-web matching "puma [0-9.]* \(tcp://0.0.0.0:4220\) \[mastodon\]"
+  group social
+  start program = "/bin/systemctl start mastodon-web"
+  stop program = "/bin/systemctl stop mastodon-web"
+  if failed port 4220 type tcp
+    with timeout 10 seconds
+    then restart
+  if 5 restarts within 5 cycles then timeout
+
+check process mastodon-streaming matching "/home/mastodon/mastodon/streaming/index.js"
+  group social
+  start program = "/bin/systemctl start mastodon-streaming"
+  stop program = "/bin/systemctl stop mastodon-streaming"
+  if failed port 4210 type tcp
+    with timeout 10 seconds
+    then restart
+  if 5 restarts within 5 cycles then timeout
+
+check process mastodon-sidekiq matching "sidekiq [0-9.]* mastodon"
+  group social
+  start program = "/bin/systemctl start mastodon-sidekiq"
+  stop program = "/bin/systemctl stop mastodon-sidekiq"

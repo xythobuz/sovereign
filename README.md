@@ -25,6 +25,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Email client [automatic configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
 -   Jabber/[XMPP](http://xmpp.org/) instant messaging via [Prosody](http://prosody.im/).
 -   [Matrix](https://matrix.org/) via [Riot.im](https://about.riot.im).
+-   The [Mastodon](https://mastodon.social/about) social network.
 -   An RSS Reader via [Selfoss](http://selfoss.aditu.de/).
 -   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and contacts in sync, via [NextCloud](http://nextcloud.com/).
 -   Your own VPN server via [OpenVPN](http://openvpn.net/index.php/open-source.html).
@@ -121,6 +122,7 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `git.example.com` (for gitea)
 * `status.example.com` (for monit)
 * `matrix.example.com` (for riot)
+* `social.example.com` (for mastodon)
 
 ### 6. Run the Ansible Playbooks
 

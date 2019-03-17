@@ -1,0 +1,45 @@
+<VirtualHost *:80>
+    ServerName {{ mastodon_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ mastodon_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ mastodon_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "/home/mastodon/mastodon/public"
+    Alias                   "/system" "/data/mastodon/public-system"
+
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Strict-Transport-Security "max-age=31536000"
+
+    <LocationMatch "^/(assets|avatars|emoji|headers|packs|sounds|system)>
+        Header always set Cache-Control "public, max-age=31536000, immutable"
+        Require all granted
+    </LocationMatch>
+
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto "https"
+
+    ProxyPass /500.html !
+    ProxyPass /sw.js !
+    ProxyPass /robots.txt !
+    ProxyPass /manifest.json !
+    ProxyPass /browserconfig.xml !
+    ProxyPass /mask-icon.svg !
+    ProxyPassMatch ^(/.*\.(png|ico)$) !
+    ProxyPassMatch ^/(assets|avatars|emoji|headers|packs|sounds|system|.well-known/acme-challenge) !
+
+    ProxyPass /api/v1/streaming/ ws://localhost:4210/
+    ProxyPassReverse /api/v1/streaming/ ws://localhost:4210/
+
+    ProxyPass / http://localhost:4220/
+    ProxyPassReverse / http://localhost:4220/
+
+    ErrorDocument 500 /500.html
+    ErrorDocument 501 /500.html
+    ErrorDocument 502 /500.html
+    ErrorDocument 503 /500.html
+    ErrorDocument 504 /500.html
+</VirtualHost>

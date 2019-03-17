@@ -1,0 +1,329 @@
+- name: Install Mastodon dependency repository keys
+  apt_key: url={{ item }} state=present
+  with_items:
+    - "https://dl.yarnpkg.com/debian/pubkey.gpg"
+    - "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+  tags:
+    - dependencies
+
+- name: Install Mastodon dependency repositories
+  apt_repository: repo={{ item }} state=present
+  become: yes
+  with_items:
+    - "deb https://dl.yarnpkg.com/debian/ stable main"
+    - "deb https://deb.nodesource.com/node_8.x {{ ansible_distribution_release }} main"
+  tags:
+    - dependencies
+
+- name: Install Mastodon dependencies from official repositories
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - autoconf
+    - bison
+    - build-essential
+    - curl
+    - cron
+    - ffmpeg
+    - file
+    - g++
+    - gcc
+    - git
+    - python
+    - imagemagick
+    - libffi-dev
+    - libgdbm-dev
+    - libicu-dev
+    - libidn11-dev
+    - libncurses5-dev
+    - libpq-dev
+    - libprotobuf-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - libyaml-dev
+    - nodejs
+    - pkg-config
+    - protobuf-compiler
+    - yarn
+    - zlib1g-dev
+    - python-psycopg2
+    - redis-server
+    - redis-tools
+  tags:
+    - dependencies
+
+- name: nodejs alternative
+  alternatives:
+    name: node
+    link: /usr/bin/node
+    path: /usr/bin/nodejs
+  tags:
+    - dependencies
+
+- name: Create Mastodon user
+  user:
+    name: mastodon
+    createhome: true
+    shell: /bin/bash
+    home: /home/mastodon
+
+- name: Stop old mastodon services
+  service: name={{ item }} state=stopped
+  with_items:
+    - mastodon-web
+    - mastodon-streaming
+    - mastodon-sidekiq
+  ignore_errors: True
+
+- name: Clone rbenv
+  git:
+    repo: "https://github.com/rbenv/rbenv.git"
+    dest: "~/.rbenv"
+    clone: true
+    version: "{{ rbenv_version }}"
+  become: true
+  become_user: mastodon
+
+- name: Clone ruby-build
+  git:
+    repo: "https://github.com/rbenv/ruby-build.git"
+    dest: "~/.rbenv/plugins/ruby-build"
+    clone: true
+    version: "{{ ruby_build_version }}"
+  register: ruby_build
+  become: true
+  become_user: mastodon
+
+- name: Configure rbenv
+  command: ./configure
+  args:
+    chdir: "~/.rbenv/src"
+  register: rbenv_configure
+  become: true
+  become_user: mastodon
+
+- name: Build rbenv
+  command: make
+  args:
+    chdir: "~/.rbenv/src"
+  when: rbenv_configure is succeeded
+  become: true
+  become_user: mastodon
+
+- name: Update profile settings
+  copy:
+    dest: "~/.bashrc"
+    content: |
+      export PATH="~/.rbenv/bin:${PATH}"
+      eval "$(rbenv init -)"
+  become: true
+  become_user: mastodon
+
+- name: Check if the Ruby version is already installed
+  shell: "~/.rbenv/bin/rbenv versions | grep -q {{ ruby_version }}"
+  register: ruby_installed
+  ignore_errors: yes
+  check_mode: no
+  become: true
+  become_user: mastodon
+
+- name: Install Ruby {{ ruby_version }}
+  shell: "~/.rbenv/bin/rbenv install {{ ruby_version }}"
+  args:
+    executable: /bin/bash
+  when: ruby_installed is failed
+  become: true
+  become_user: mastodon
+
+- name: Set the default Ruby version to {{ ruby_version }}
+  shell: "~/.rbenv/bin/rbenv global {{ ruby_version }}"
+  args:
+    executable: /bin/bash
+  register: default_ruby_version
+  become: true
+  become_user: mastodon
+
+- name: Install bundler
+  shell: 'export PATH="$HOME/.rbenv/bin:$PATH"; eval "$(rbenv init -)"; gem install bundler'
+  args:
+    executable: /bin/bash
+  when: default_ruby_version is succeeded
+  become: true
+  become_user: mastodon
+
+- name: Clone mastodon
+  git:
+    repo: "https://github.com/tootsuite/mastodon.git"
+    dest: "/home/mastodon/mastodon"
+    clone: true
+  become: true
+  become_user: mastodon
+
+- name: Update to latest version
+  shell: "git fetch; git checkout $(git tag -l | grep -v 'rc[0-9]*$' | sort -V | tail -n 1)"
+  args:
+    chdir: "/home/mastodon/mastodon"
+  become: true
+  become_user: mastodon
+
+- name: Bundle install
+  shell: "~/.rbenv/shims/bundle install -j$(getconf _NPROCESSORS_ONLN) --deployment --with development --without test"
+  args:
+    chdir: "/home/mastodon/mastodon"
+  become: true
+  become_user: mastodon
+
+- name: Yarn install
+  command: yarn install --pure-lockfile
+  args:
+    chdir: "/home/mastodon/mastodon"
+  become: true
+  become_user: mastodon
+
+- name: Install systemd sidekiq Service Files
+  copy:
+    src: etc_systemd_system_mastodon-sidekiq.service
+    dest: /etc/systemd/system/mastodon-sidekiq.service
+    owner: root
+    group: root
+
+- name: Install systemd web Service Files
+  copy:
+    src: etc_systemd_system_mastodon-web.service
+    dest: /etc/systemd/system/mastodon-web.service
+    owner: root
+    group: root
+
+- name: Install systemd streaming Service Files
+  copy:
+    src: etc_systemd_system_mastodon-streaming.service
+    dest: /etc/systemd/system/mastodon-streaming.service
+    owner: root
+    group: root
+
+- name: Media cleanup cronjob
+  cron:
+    name: "media cleanup"
+    minute: "15"
+    hour: "1"
+    job: '/bin/bash -c ''export PATH="$HOME/.rbenv/bin:$PATH"; eval "$(rbenv init -)"; cd /home/mastodon/mastodon && RAILS_ENV=production ./bin/tootctl media remove'''
+  become: true
+  become_user: mastodon
+
+- name: Add mastodon postgres user
+  postgresql_user:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ mastodon_db_username }}
+    password="{{ mastodon_db_password }}"
+    role_attr_flags=CREATEDB
+    encrypted=yes
+    state=present
+
+- name: Create mastodon database
+  postgresql_db:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ mastodon_db_database }}
+    state=present
+    owner={{ mastodon_db_username }}
+
+- name: Create mastodon data directory
+  file: state=directory path=/data/{{ item }} owner=mastodon group=www-data
+  with_items:
+    - mastodon
+    - mastodon/public-system
+
+- name: Generate VAPID keys
+  shell: "RAILS_ENV=production ~/.rbenv/shims/bundle exec rake mastodon:webpush:generate_vapid_key > /home/mastodon/vapid_keys_generated"
+  args:
+    chdir: /home/mastodon/mastodon
+    creates: /home/mastodon/vapid_keys_generated
+  become: true
+  become_user: mastodon
+
+- name: Remove previous mastodon config
+  file: state=absent path=/home/mastodon/mastodon/.env.production
+
+- name: Install mastodon config
+  template:
+    src: home_mastodon_mastodon_env.j2
+    dest: /home/mastodon/mastodon/.env.production
+    owner: mastodon
+    group: mastodon
+  notify: restart mastodon
+
+- name: Append VAPID keys to new config
+  shell: "cat /home/mastodon/vapid_keys_generated >> /home/mastodon/mastodon/.env.production"
+  become: true
+  become_user: mastodon
+
+- name: Set mastodon ownership
+  action: file owner=mastodon group=www-data path=/home/mastodon/mastodon recurse=yes state=directory
+
+# This is a no-op in case nothing has to be upgraded
+- name: Migrate database
+  shell: "RAILS_ENV=production ~/.rbenv/shims/bundle exec rails db:migrate"
+  args:
+    chdir: "/home/mastodon/mastodon"
+  become: true
+  become_user: mastodon
+
+# MAY be needed on upgrades, but takes a long time, so commented out for now. See:
+# https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/Updating-Mastodon-Guide.md#pre-compiling-updated-assets
+#- name: Precompile assets
+#  shell: "RAILS_ENV=production ~/.rbenv/shims/bundle exec rails assets:precompile"
+#  args:
+#    chdir: "/home/mastodon/mastodon"
+#  become: true
+#  become_user: mastodon
+
+- name: Register new Mastodon services
+  systemd: name={{ item }} daemon_reload=yes enabled=yes
+  with_items:
+    - mastodon-web
+    - mastodon-streaming
+    - mastodon-sidekiq
+
+- name: Start new Mastodon services
+  service: name={{ item }} state=restarted
+  with_items:
+    - mastodon-web
+    - mastodon-streaming
+    - mastodon-sidekiq
+
+- name: Add redirect to well-known
+  template:
+    src=var_www_well-known_host-meta.j2
+    dest=/var/www/well-known/host-meta
+    owner=www-data
+    group=www-data
+
+- name: Enable Apache websockets proxy module
+  command: a2enmod proxy_wstunnel creates=/etc/apache2/mods-enabled/proxy_wstunnel.load
+  notify: restart apache
+
+- name: Enable Apache alias module
+  command: a2enmod alias creates=/etc/apache2/mods-enabled/alias.load
+  notify: restart apache
+
+- name: Create the Apache Matrix sites config files
+  template:
+    src=etc_apache2_sites-available_mastodon.j2
+    dest=/etc/apache2/sites-available/mastodon_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+  notify: restart apache
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite mastodon_{{ item }}.conf creates=/etc/apache2/sites-enabled/mastodon_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"

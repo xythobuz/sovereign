@@ -44,6 +44,10 @@
   stat: path=/etc/matrix-synapse/homeserver.yaml
   register: synapse_config_file
 
+- name: Determine if Mastodon is installed
+  stat: path=/home/mastodon/mastodon
+  register: mastodon_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -79,6 +83,11 @@
   notify: restart monit
   when: synapse_config_file.stat.exists == True
 
+- name: Copy Mastodon monit service config files into place
+  copy: src=etc_monit_conf.d_mastodon dest=/etc/monit/conf.d/mastodon
+  notify: restart monit
+  when: mastodon_config_file.stat.exists == True
+
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
   with_items:
@@ -89,6 +98,8 @@
     - sshd
     - tomcat
   notify: restart monit
+
+# TODO add to fail2ban when monit_page_public == 1
 
 - name: Create the Apache monit sites config files
   template:
