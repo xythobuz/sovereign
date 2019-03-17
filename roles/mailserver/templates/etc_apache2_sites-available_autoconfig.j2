@@ -1,15 +1,14 @@
 <VirtualHost *:80>
     ServerName {{ mail_server_autoconfig_hostname }}
 
-    Redirect permanent / https://{{ mail_server_autoconfig_hostname }}/
+    Redirect temp / https://{{ mail_server_autoconfig_hostname }}/
 </VirtualHost>
 
 <VirtualHost *:443>
     ServerName {{ mail_server_autoconfig_hostname }}
-    SSLEngine On
 
+    SSLEngine               On
     DocumentRoot            "/var/www/autoconfig"
     Options                 -Indexes
-
     HostnameLookups         Off
 </VirtualHost>

@@ -2,7 +2,7 @@
     ServerName {{ item.name }}
     ServerAlias www.{{ item.name }}
 
-    Redirect permanent / https://{{ item.name }}/
+    Redirect temp / https://www.{{ item.name }}/
 </VirtualHost>
 
 <VirtualHost *:443>

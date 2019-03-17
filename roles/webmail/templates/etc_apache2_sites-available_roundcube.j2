@@ -1,7 +1,7 @@
 <VirtualHost *:80>
     ServerName {{ webmail_subdomain }}.{{ item.name }}
 
-    Redirect permanent / https://{{ webmail_subdomain }}.{{ item.name }}/
+    Redirect temp / https://{{ webmail_subdomain }}.{{ item.name }}/
 </VirtualHost>
 
 <VirtualHost *:443>

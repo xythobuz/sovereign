@@ -1,7 +1,7 @@
 <VirtualHost *:80>
     ServerName {{ selfoss_subdomain }}.{{ item.name }}
 
-    Redirect permanent / https://{{ selfoss_subdomain }}.{{ item.name }}/
+    Redirect temp / https://{{ selfoss_subdomain }}.{{ item.name }}/
 </VirtualHost>
 
 <VirtualHost *:443>

@@ -1,7 +1,7 @@
 <VirtualHost *:80>
     ServerName fathom.{{ item.name }}
 
-    Redirect permanent / https://{{ item.name }}/
+    Redirect temp / https://fathom.{{ item.name }}/
 </VirtualHost>
 
 <VirtualHost *:443>

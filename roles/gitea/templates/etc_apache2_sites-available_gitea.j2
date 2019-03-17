@@ -1,7 +1,7 @@
 <VirtualHost *:80>
     ServerName {{ gitea_subdomain }}.{{ item.name }}
 
-    Redirect permanent / https://{{ item.name }}/
+    Redirect temp / https://{{ gitea_subdomain }}.{{ item.name }}/
 </VirtualHost>
 
 <VirtualHost *:443>
