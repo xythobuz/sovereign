@@ -2,15 +2,31 @@
   file: state=directory path={{ item }} group=www-data owner={{ main_user_name }}
   with_items: "{{ virtual_domains | json_query('[*].doc_root') | unique }}"
 
-- name: Create the Apache sites config files
+- name: Create directory for well-known configs
+  file: state=directory path=/var/www/well-known group=www-data owner=www-data
+
+- name: Create the Apache well-known config
+  template:
+    src=etc_apache2_conf-available_well-known.j2
+    dest=/etc/apache2/conf-available/well-known.conf
+    owner=root
+    group=root
+  notify: restart apache
+
+- name: Enable the Apache well-known config
+  command: a2enconf well-known.conf creates=/etc/apache2/conf-enabled/well-known.conf.conf
+  notify: restart apache
+
+- name: Create the Apache blog sites config files
   template:
     src=etc_apache2_sites-available_blog.j2
     dest=/etc/apache2/sites-available/{{ item.name }}.conf
     owner=root
     group=root
+  notify: restart apache
   with_items: "{{ virtual_domains }}"
 
-- name: Enable Apache sites (creates new sites-enabled symlinks)
+- name: Enable Apache blog sites (creates new sites-enabled symlinks)
   command: a2ensite {{ item }}.conf creates=/etc/apache2/sites-enabled/{{ item }}.conf
   notify: restart apache
   with_items: "{{ virtual_domains | json_query('[*].name') }}"
