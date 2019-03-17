@@ -6,10 +6,6 @@ Make sure you agree with the license (GPLv3). See [LICENSE.md](./LICENSE.md) for
 
 Code that is committed to the master branch should work with both Debian 8 "Jessie" and Ubuntu 16.04 LTS "Xenial".
 
-## Development environment
-
-You'll want to set up a [local development environment](https://github.com/sovereign/sovereign/wiki/Development-Environment) so that you don't have to test on a remote server.
-
 ## Module design principles
 
 Sovereign is an Ansible playbook that uses the modules in this repository to configure a server. Modules should conform to the following design principles.
@@ -41,10 +37,6 @@ A module's design should anticipate upgrades to the services it provides. Config
 ### Performance
 
 A module should be designed and implemented to run as quickly as possible in order to minimize the time to run an entire playbook or even the role itself. A small performance penalty here and a small penalty there eventually adds to a very slow deployment system. Performance is important.
-
-### Tests
-
-A module should have tests. TBD: more about this and what the expectation is.
 
 ### Design document
 

@@ -47,7 +47,7 @@ What You’ll Need
 ----------------
 
 1.  A VPS (or bare-metal server if you wanna ball hard). My VPS is hosted at [Linode](http://www.linode.com/?r=45405878277aa04ee1f1d21394285da6b43f963b). You’ll probably want at least 512 MB of RAM between Apache, Solr, and PostgreSQL. Mine has 1024.
-2.  [64-bit Debian 8.3](http://www.debian.org/) or an equivalent Linux distribution. (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
+2.  [64-bit Debian 9](http://www.debian.org/). (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
 
 You do not need to acquire an SSL certificate.  The SSL certificates you need will be obtained from [Let's Encrypt](https://letsencrypt.org/) automatically when you deploy your server.
 
@@ -124,7 +124,7 @@ Create `A` or `CNAME` records which point to your server's IP address:
 
 ### 6. Run the Ansible Playbooks
 
-First, make sure you’ve [got Ansible 1.9.3+ installed](http://docs.ansible.com/intro_installation.html#getting-ansible).
+First, make sure you’ve [got Ansible installed](http://docs.ansible.com/intro_installation.html#getting-ansible).
 
 To run the whole dang thing:
 
@@ -159,24 +159,3 @@ Sign in to the ZNC web interface and set things up to your liking. It isn’t ex
 	ssh deploy@example.com -L 6643:localhost:6643
 
 Then proceed to http://localhost:6643 in your web browser.
-
-Similarly, to access the server monitoring page, use another SSH tunnel:
-
-    ssh deploy@example.com -L 2812:localhost:2812
-
-Again proceeding to http://localhost:2812 in your web browser.
-
-How To Use Your New Personal Cloud
-----------------------------------
-
-We’re collecting known-good client setups [on our wiki](https://github.com/sovereign/sovereign/wiki/Usage).
-
-Troubleshooting
----------------
-
-If you run into an errors, please check the [wiki page](https://github.com/sovereign/sovereign/wiki/Troubleshooting). If the problem you encountered, is not listed, please go ahead and [create an issue](https://github.com/sovereign/sovereign/issues/new). If you already have a bugfix and/or workaround, just put them in the issue and the wiki page.
-
-IRC
-===
-
-Ask questions and provide feedback in `#sovereign` on [Freenode](http://freenode.net).
