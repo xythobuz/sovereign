@@ -72,12 +72,6 @@
 - name: Add cert postrenew task
   copy: src=etc_letsencrypt_postrenew_synapse.sh dest=/etc/letsencrypt/postrenew/synapse.sh mode=0755
 
-- name: Set firewall rules for Synapse
-  ufw: rule=allow port={{ item }} proto=tcp
-  with_items:
-    - 8448  # matrix federation
-  tags: ufw
-
 - name: Register new Synapse service
   systemd: name=matrix-synapse daemon_reload=yes enabled=yes
 

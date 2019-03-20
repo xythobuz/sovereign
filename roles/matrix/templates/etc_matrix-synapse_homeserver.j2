@@ -155,14 +155,14 @@ listeners:
   # will also need to give Synapse a TLS key and certificate: see the TLS section
   # below.)
   #
-  - port: 8448
-    type: http
-    tls: true
-    bind_addresses:
-      - '::'
-    
-    resources:
-      - names: [client, federation, webclient]
+  #- port: 8448
+  #  type: http
+  #  tls: true
+  #  bind_addresses:
+  #    - '::'
+  #
+  #  resources:
+  #    - names: [client, federation, webclient]
 
   # Unsecure HTTP listener: for when matrix traffic passes through a reverse proxy
   # that unwraps TLS.
