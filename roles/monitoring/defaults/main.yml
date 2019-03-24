@@ -4,7 +4,7 @@ secret: '{{ secret_root + "/" + secret_name }}'
 
 # must match values in roles/common
 monit_admin_username: "{{ main_user_name }}"
-monit_admin_password: "{{ lookup('password', secret + '/' + 'monit_admin_password length=16') }}"
+monit_admin_password: "{{ lookup('password', secret + '/' + 'monit_admin_password length=16 chars=hexdigits') }}"
 
 monit_page_public: 1
 monit_subdomain: status

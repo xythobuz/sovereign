@@ -224,6 +224,14 @@ set httpd port 2812 and
 #    if inode usage > 99% then stop
 #    group server
 #
+
+check filesystem rootfs with path /
+    if space usage > 80% for 5 times within 15 cycles then alert
+    if space usage > 99% then alert
+    if inode usage > 80% for 5 times within 15 cycles then alert
+    if inode usage > 99% then alert
+    group server
+
 #
 ## Check a file's timestamp. In this example, we test if a file is older
 ## than 15 minutes and assume something is wrong if its not updated. Also,
@@ -266,5 +274,6 @@ set httpd port 2812 and
 ## It is possible to include additional configuration parts from other files or
 ## directories.
 #
-   include /etc/monit/conf.d/*
 
+include /etc/monit/conf.d/*
+include /etc/monit/monitrc.d/*
