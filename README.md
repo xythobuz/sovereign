@@ -1,16 +1,17 @@
-Introduction
-============
+# Sovereign
+# Introduction
 
 Sovereign is a set of [Ansible](http://ansible.com) playbooks that you can use to build and maintain your own [personal cloud](http://www.urbandictionary.com/define.php?term=clown%20computing) based entirely on open source software, so you’re in control.
 
 If you’ve never used Ansible before, you might find these playbooks useful to learn from, since they show off a fair bit of what the tool can do.
 
-The original author's [background and motivations](https://github.com/sovereign/sovereign/wiki/Background-and-Motivations) might be of interest. tl;dr: frustrations with Google Apps and concerns about privacy and long-term support.
+The original author's [background and motivations](https://github.com/sovereign/sovereign/wiki/Background-and-Motivations) might be of interest.
+tl;dr: frustrations with Google Apps and concerns about privacy and long-term support.
 
-Sovereign offers useful cloud services while being reasonably secure and low-maintenance. Use it to set up your server, SSH in every couple weeks, but mostly forget about it.
+Sovereign offers useful cloud services while being reasonably secure and low-maintenance.
+Use it to set up your server, SSH in every couple weeks, but mostly forget about it.
 
-Services Provided
------------------
+## Services Provided
 
 What do you get if you point Sovereign at a server? All kinds of good stuff!
 
@@ -24,7 +25,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Mobile push notifications and autodiscovery via [Z-Push](http://z-push.sourceforge.net/soswp/index.php?pages_id=1&t=home).
 -   Email client [automatic configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
 -   Jabber/[XMPP](http://xmpp.org/) instant messaging via [Prosody](http://prosody.im/).
--   [Matrix](https://matrix.org/) via [Riot.im](https://about.riot.im).
+-   [Matrix](https://matrix.org/) via [Riot.im](https://about.riot.im) and [Synapse](https://matrix.org/docs/projects/server/synapse.html).
 -   The [Mastodon](https://mastodon.social/about) social network.
 -   An RSS Reader via [Selfoss](http://selfoss.aditu.de/).
 -   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and contacts in sync, via [NextCloud](http://nextcloud.com/).
@@ -41,32 +42,29 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   SSH configuration preventing root login and insecure password authentication
 -   A bunch of nice-to-have tools like [mosh](http://mosh.mit.edu) and [htop](http://htop.sourceforge.net) that make life with a server a little easier.
 
-Don’t want one or more of the above services? Comment out the relevant role in `site.yml`. Or get more granular and comment out the associated `include:` directive in one of the playbooks.
+Don’t want one or more of the above services? Comment out the relevant role in `site.yml`.
+Or get more granular and comment out the associated `include:` directive in one of the playbooks.
 
-Usage
-=====
+# Usage
 
-What You’ll Need
-----------------
+## What You’ll Need
 
 1.  A VPS (or bare-metal server if you wanna ball hard). My VPS is hosted at [Linode](http://www.linode.com/?r=45405878277aa04ee1f1d21394285da6b43f963b). You’ll probably want at least 512 MB of RAM between Apache, Solr, and PostgreSQL. Mine has 1024.
 2.  [64-bit Debian 9](http://www.debian.org/). (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
 
 You do not need to acquire an SSL certificate.  The SSL certificates you need will be obtained from [Let's Encrypt](https://letsencrypt.org/) automatically when you deploy your server.
 
+## Installation
 
-Installation
-------------
-
-## On the remote server
+### On the remote server
 
 The following steps are done on the remote server by `ssh`ing into it and running these commands.
 
-### 1. Install required packages
+#### 1. Install required packages
 
     apt-get install sudo python
 
-### 2. Prep the server
+#### 2. Prep the server
 
 For goodness sake, change the root password:
 
@@ -87,30 +85,39 @@ Authorize your ssh key if you want passwordless ssh login (optional):
     chown deploy:deploy /home/deploy -R
     echo 'deploy ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/deploy
 
-Your new account will be automatically set up for passwordless `sudo`. Or you can just add your `deploy` user to the sudo group.
+Your new account will be automatically set up for passwordless `sudo`.
+Or you can just add your `deploy` user to the sudo group.
 
     adduser deploy sudo
 
-## On your local machine
+### On your local machine
 
-Ansible (the tool setting up your server) runs locally on your computer and sends commands to the remote server. Install it as described in their [documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+Ansible (the tool setting up your server) runs locally on your computer and sends commands to the remote server.
 
-Download this repository somewhere on your machine, either through `Clone or Download > Download ZIP` above, `wget`, or `git` as below. Also install the dependencies for password generation.
+#### 3. Software
+
+Download this repository somewhere on your machine, either through `Clone or Download > Download ZIP` above, `wget`, or `git` as below.
+Also install the dependencies for password generation as well as ansible itself.
     
     git clone https://github.com/xythobuz/sovereign.git
     cd sovereign
     sudo pip install -r ./requirements.txt
 
-### 4. Configure your installation
+#### 4. Configure your installation
 
-Modify the settings in the `group_vars/sovereign` folder to your liking. If you want to see how they’re used in context, just search for the corresponding string.
+Modify the settings in the `group_vars/sovereign` folder to your liking.
+If you want to see how they’re used in context, just search for the corresponding string.
 All of the variables in `group_vars/sovereign` must be set for sovereign to function.
 
-Finally, replace the `host.example.net` in the file `hosts`. If your SSH daemon listens on a non-standard port, add a colon and the port number after the IP address. In that case you also need to add your custom port to the task `Set firewall rules for web traffic and SSH` in the file `roles/common/tasks/ufw.yml`.
+Finally, replace the `host.example.net` in the file `hosts`.
+If your SSH daemon listens on a non-standard port, add a colon and the port number after the IP address.
+In that case you also need to add your custom port to the task `Set firewall rules for web traffic and SSH` in the file `roles/common/tasks/ufw.yml`.
 
-### 5. Set up DNS
+#### 5. Set up DNS
 
-If you’ve just bought a new domain name, point it at [Linode’s DNS Manager](https://library.linode.com/dns-manager) or similar. Most VPS services (and even some domain registrars) offer a managed DNS service that you can use for this at no charge. If you’re using an existing domain that’s already managed elsewhere, you can probably just modify a few records.
+If you’ve just bought a new domain name, point it at [Linode’s DNS Manager](https://library.linode.com/dns-manager) or similar.
+Most VPS services (and even some domain registrars) offer a managed DNS service that you can use for this at no charge.
+If you’re using an existing domain that’s already managed elsewhere, you can probably just modify a few records.
 
 Create `A` or `CNAME` records which point to your server's IP address:
 
@@ -125,10 +132,13 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `status.example.com` (for monit)
 * `matrix.example.com` (for riot)
 * `social.example.com` (for mastodon)
+* `comments.example.com` (for commento)
+* `iot.example.com` (for grafana)
 
-### 6. Run the Ansible Playbooks
+#### 6. Run the Ansible Playbooks
 
 First, make sure you’ve [got Ansible installed](http://docs.ansible.com/intro_installation.html#getting-ansible).
+This should already be done by running the pip requirements.txt from above.
 
 To run the whole dang thing:
 
@@ -136,30 +146,51 @@ To run the whole dang thing:
     
 If you chose to make a passwordless sudo deploy user, you can omit the `--ask-sudo-pass` argument.
 
-To run just one or more piece, use tags. I try to tag all my includes for easy isolated development. For example, to focus in on your firewall setup:
+To run just one or more piece, use tags.
+I try to tag all my includes for easy isolated development.
+For example, to focus in on your firewall setup:
 
     ansible-playbook -i ./hosts --tags=ufw site.yml
 
-You might find that it fails at one point or another. This is probably because something needs to be done manually, usually because there’s no good way of automating it. Fortunately, all the tasks are clearly named so you should be able to find out where it stopped. I’ve tried to add comments where manual intervention is necessary.
+You might find that it fails at one point or another.
+This is probably because something needs to be done manually, usually because there’s no good way of automating it,
+or because something changed in the upstream packages or you're not using Debian 9.
+Fortunately, all the tasks are clearly named so you should be able to find out where it stopped.
+I’ve tried to add comments where manual intervention is necessary.
+In the best case scenario, no manual steps should be needed, everything is done via the sovereign config vars.
 
-The `dependencies` tag just installs dependencies, performing no other operations. The tasks associated with the `dependencies` tag do not rely on the user-provided settings that live in `group_vars/sovereign`. Running the playbook with the `dependencies` tag is particularly convenient for working with Docker images.
+The `dependencies` tag just installs dependencies, performing no other operations.
+The tasks associated with the `dependencies` tag do not rely on the user-provided settings that live in `group_vars/sovereign`.
+Running the playbook with the `dependencies` tag is particularly convenient for working with Docker images.
 
-### 7. Finish DNS set-up
+#### 7. Finish DNS set-up
 
 Create an `MX` record for `example.com` which assigns `mail.example.com` as the domain’s mail server.
+To ensure your emails pass DKIM checks you need to add a `txt` record.
+The name field will be `mail._domainkey.EXAMPLE.COM.`
+The value field contains the public key used by DKIM.
+The exact value needed can be found in the file `/var/lib/rspamd/dkim/EXAMPLE.COM.mail.txt`.
+For DMARC you'll also need to add a `txt` record.
+The name field should be `_dmarc.EXAMPLE.COM` and the value should be `v=DMARC1; p=reject`.
+We will also add a `txt` record for SPF. This is now legacy, but some providers need it, so we provide an empty policy.
 
-To ensure your emails pass DKIM checks you need to add a `txt` record. The name field will be `default._domainkey.EXAMPLE.COM.` The value field contains the public key used by DKIM. The exact value needed can be found in the file `/var/lib/rspamd/dkim/EXAMPLE.COM.default.txt`. It will look something like this:
+For my DNS provider, that zonefile looks like this:
 
-    v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKKAQfMwKVx+oJripQI+Ag4uTwYnsXKjgBGtl7Tk6UMTUwhMqnitqbR/ZQEZjcNolTkNDtyKZY2Z6LqvM4KsrITpiMbkV1eX6GKczT8Lws5KXn+6BHCKULGdireTAUr3Id7mtjLrbi/E3248Pq0Zs39hkDxsDcve12WccjafJVwIDAQAB
+    @               IN MX 10 mail
+    @               IN TXT   "v=spf1 a:mail.example.com ?all"
+    _dmarc          IN TXT   "v=DMARC1; p=reject;"
+    mail._domainkey IN TXT   "v=DKIM1; k=rsa; p=INSERT_PUBLIC_KEY_HERE"
 
-For DMARC you'll also need to add a `txt` record. The name field should be `_dmarc.EXAMPLE.COM` and the value should be `v=DMARC1; p=none`. More info on DMARC can be found [here](https://dmarc.org).
+Correctly set up reverse DNS for your server and make sure to validate that it’s all working,
+for example by sending an email to <a href="mailto:check-auth@verifier.port25.com">check-auth@verifier.port25.com</a>
+and reviewing the report that will be emailed back to you.
 
-Set up SPF and reverse DNS [as per this post](http://sealedabstract.com/code/nsa-proof-your-e-mail-in-2-hours/). Make sure to validate that it’s all working, for example, by sending an email to <a href="mailto:check-auth@verifier.port25.com">check-auth@verifier.port25.com</a> and reviewing the report that will be emailed back to you.
+#### 8. Miscellaneous Configuration
 
-### 8. Miscellaneous Configuration
-
-Sign in to the ZNC web interface and set things up to your liking. It isn’t exposed through the firewall, so you must first set up an SSH tunnel:
+Sign in to the ZNC web interface and set things up to your liking.
+It isn’t exposed through the firewall, so you must first set up an SSH tunnel:
 
 	ssh deploy@example.com -L 6643:localhost:6643
 
 Then proceed to http://localhost:6643 in your web browser.
+The same goes for the RSpamD web interface on port 11334.
