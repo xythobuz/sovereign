@@ -113,6 +113,13 @@
   notify: restart apache
   with_items: "{{ virtual_domains | json_query('[*].name') }}"
 
+- name: Set selfoss cron mail target
+  cron:
+    name: MAILTO
+    env: yes
+    value: "{{ admin_email }}"
+    user: www-data
+
 - name: Install selfoss cronjob
   cron:
     name="selfoss"

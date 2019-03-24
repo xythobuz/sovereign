@@ -38,6 +38,13 @@
     group=www-data
     mode=0644
 
+- name: Install roundcube logrotate
+  copy: src=etc_logrotate.d_roundcube-core
+    dest=/etc/logrotate.d/roundcube-core
+    owner=root
+    group=root
+    mode=0644
+
 - name: Set server parameter for Roundcube
   debconf:
     name: roundcube-core

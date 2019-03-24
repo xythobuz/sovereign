@@ -206,6 +206,13 @@
     owner: root
     group: root
 
+- name: Set mastodon cron mail target
+  cron:
+    name: MAILTO
+    env: yes
+    value: "{{ admin_email }}"
+    user: mastodon
+
 - name: Media cleanup cronjob
   cron:
     name: "media cleanup"

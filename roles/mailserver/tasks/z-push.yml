@@ -87,7 +87,7 @@
 - name: Configure z-push logrotate
   copy:
     src=etc_logrotate_z-push
-    dest=/etc/logrotate.d/z-push
+    dest=/etc/logrotate.d/z-push.lr
     owner=root
     group=root
     mode=0644

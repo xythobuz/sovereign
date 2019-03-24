@@ -15,6 +15,7 @@
     - php-imagick
     - php-redis
     - php-mcrypt
+    - php-mysql
     - php-xml
     - php-zip
     - php-mbstring
@@ -121,6 +122,13 @@
   command: a2ensite nextcloud_{{ item }}.conf creates=/etc/apache2/sites-enabled/nextcloud_{{ item }}.conf
   notify: restart apache
   with_items: "{{ virtual_domains | json_query('[*].name') }}"
+
+- name: Set nextcloud cron mail target
+  cron:
+    name: MAILTO
+    env: yes
+    value: "{{ admin_email }}"
+    user: www-data
 
 - name: Install NextCloud cronjob
   cron:
