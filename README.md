@@ -31,6 +31,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   Your own VPN server via [OpenVPN](http://openvpn.net/index.php/open-source.html).
 -   An IRC bouncer via [ZNC](http://wiki.znc.in/ZNC).
 -   Git Repo hosting via [gitea](https://gitea.io/en-us/).
+-   IoT Dashboard via [Grafana](https://grafana.com).
 -   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and alert you when it’s not).
 -   Web hosting (ex: for your blog) via [Apache](https://www.apache.org/).
 -   Statistics for the website using [Fathom](https://github.com/usefathom/fathom).

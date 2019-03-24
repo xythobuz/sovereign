@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+    ServerName {{ grafana_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ grafana_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ grafana_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "{{ item.doc_root }}"
+    DirectoryIndex          index.html
+    Options                 -Indexes
+    HostnameLookups         Off
+
+    ProxyRequests           Off
+    ProxyPreserveHost       On
+    ProxyPass               / http://localhost:{{ grafana_internal_port }}/
+    ProxyPassReverse        / http://localhost:{{ grafana_internal_port }}/
+</VirtualHost>

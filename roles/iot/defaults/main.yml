@@ -1,0 +1,21 @@
+grafana_subdomain: "iot"
+grafana_domain: "{{ grafana_subdomain }}.{{ domain }}"
+
+grafana_internal_port: '2942'
+
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
+grafana_main_user: "{{ main_user_name }}"
+grafana_main_user_password: "{{ lookup('password', secret + '/' + 'grafana_main_user_password length=20 chars=hexdigits') }}"
+
+grafana_signing_key: "{{ lookup('password', secret + '/' + 'grafana_signing_key length=20 chars=hexdigits') }}"
+
+grafana_db_username: grafanauser
+grafana_db_password: "{{ lookup('password', secret + '/' + 'grafana_db_password length=32 chars=hexdigits') }}"
+grafana_db_database: grafana
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

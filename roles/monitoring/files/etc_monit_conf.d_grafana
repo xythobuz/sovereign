@@ -1,0 +1,6 @@
+check process grafana with pidfile /var/run/grafana/grafana-server.pid
+  group iot
+  start program = "/bin/systemctl start grafana-server"
+  stop program = "/bin/systemctl stop grafana-server"
+  if failed host localhost port 2942 protocol http then restart
+  if 5 restarts within 5 cycles then timeout

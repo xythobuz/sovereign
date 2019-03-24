@@ -52,6 +52,10 @@
   stat: path=/home/{{ main_user_name }}/commento/commento
   register: commento_config_file
 
+- name: Determine if Grafana is installed
+  stat: path=/etc/grafana/grafana.ini
+  register: grafana_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -96,6 +100,11 @@
   copy: src=etc_monit_conf.d_commento dest=/etc/monit/conf.d/commento
   notify: restart monit
   when: commento_config_file.stat.exists == True
+
+- name: Copy Grafana monit service config files into place
+  copy: src=etc_monit_conf.d_grafana dest=/etc/monit/conf.d/grafana
+  notify: restart monit
+  when: grafana_config_file.stat.exists == True
 
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
