@@ -1,0 +1,8 @@
+check process commento matching "commento"
+  group www
+  start program = "/bin/systemctl start commento"
+  stop program = "/bin/systemctl stop commento"
+  if failed port 9100 protocol http
+    with timeout 10 seconds
+    then restart
+  if 5 restarts within 5 cycles then timeout

@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+    ServerName {{ commento_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ commento_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ commento_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "{{ item.doc_root }}"
+    DirectoryIndex          index.html
+    Options                 -Indexes
+    HostnameLookups         Off
+
+    ProxyRequests           On
+    ProxyPreserveHost       On
+    ProxyPass               / http://localhost:{{ commento_internal_port }}/
+    ProxyPassReverse        / http://localhost:{{ commento_internal_port }}/
+</VirtualHost>

@@ -17,6 +17,15 @@
   command: a2enconf well-known.conf creates=/etc/apache2/conf-enabled/well-known.conf.conf
   notify: restart apache
 
+- name: Create an example blog index page
+  template:
+    src=var_www_blog_index.j2
+    dest={{ item.doc_root }}/index.html
+    owner=www-data
+    group=www-data
+    force=no
+  with_items: "{{ virtual_domains }}"
+
 - name: Create the Apache blog sites config files
   template:
     src=etc_apache2_sites-available_blog.j2

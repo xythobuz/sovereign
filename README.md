@@ -34,6 +34,7 @@ What do you get if you point Sovereign at a server? All kinds of good stuff!
 -   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and alert you when it’s not).
 -   Web hosting (ex: for your blog) via [Apache](https://www.apache.org/).
 -   Statistics for the website using [Fathom](https://github.com/usefathom/fathom).
+-   Comments for the website using [Commento](https://gitlab.com/commento/commento).
 -   Firewall management via [Uncomplicated Firewall (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
 -   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit detection via [rkhunter](http://rkhunter.sourceforge.net).
 -   SSH configuration preventing root login and insecure password authentication

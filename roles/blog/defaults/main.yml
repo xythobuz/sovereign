@@ -3,16 +3,29 @@ secret_root: '{{ inventory_dir | realpath }}'
 secret_name: 'secret'
 secret: '{{ secret_root + "/" + secret_name }}'
 
-# must match values in roles/common
-db_admin_username: 'postgres'
-db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
+fathom_admin_username: "{{ admin_email }}"
+fathom_admin_password: "{{ lookup('password', secret + '/' + 'fathom_admin_password length=32') }}"
+
+fathom_version: '1.2.1'
+fathom_release: "https://github.com/usefathom/fathom/releases/download/v{{ fathom_version }}/fathom_{{ fathom_version }}_linux_amd64.tar.gz"
 
 fathom_db_username: 'fathom'
 fathom_db_password: "{{ lookup('password', secret + '/' + 'fathom_db_password length=32') }}"
 fathom_db_database: 'fathom'
-fathom_admin_username: "{{ admin_email }}"
-fathom_admin_password: "{{ lookup('password', secret + '/' + 'fathom_admin_password length=32') }}"
+
 fathom_internal_port: '9000'
 fathom_secret: "{{ lookup('password', secret + '/' + 'fathom_secret length=32') }}"
-fathom_version: '1.2.1'
-fathom_release: "https://github.com/usefathom/fathom/releases/download/v{{ fathom_version }}/fathom_{{ fathom_version }}_linux_amd64.tar.gz"
+
+commento_version: '1.6.2'
+commento_release: "https://commento-release.s3.amazonaws.com/commento-linux-amd64-v{{ commento_version }}.tar.gz"
+
+commento_subdomain: 'comments'
+commento_internal_port: '9100'
+
+commento_db_username: 'commentouser'
+commento_db_password: "{{ lookup('password', secret + '/' + 'commento_db_password length=32') }}"
+commento_db_database: 'commento'
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

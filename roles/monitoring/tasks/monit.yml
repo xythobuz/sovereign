@@ -48,6 +48,10 @@
   stat: path=/home/mastodon/mastodon
   register: mastodon_config_file
 
+- name: Determine if Commento is installed
+  stat: path=/home/{{ main_user_name }}/commento/commento
+  register: commento_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -87,6 +91,11 @@
   copy: src=etc_monit_conf.d_mastodon dest=/etc/monit/conf.d/mastodon
   notify: restart monit
   when: mastodon_config_file.stat.exists == True
+
+- name: Copy Commento monit service config files into place
+  copy: src=etc_monit_conf.d_commento dest=/etc/monit/conf.d/commento
+  notify: restart monit
+  when: commento_config_file.stat.exists == True
 
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}

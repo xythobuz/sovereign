@@ -1,2 +1,3 @@
 - include: blog.yml tags=blog
 - include: fathom.yml tags=blog
+- include: commento.yml tags=blog

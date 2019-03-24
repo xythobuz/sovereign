@@ -1,0 +1,24 @@
+[Unit]
+Description=Commento daemon service
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User={{ main_user_name }}
+Restart=always
+RestartSec=3
+WorkingDirectory=/home/{{ main_user_name }}/commento
+ExecStart=/home/{{ main_user_name }}/commento/commento
+Environment=COMMENTO_ORIGIN=https://{{ commento_subdomain }}.{{ domain }}
+Environment=COMMENTO_PORT={{ commento_internal_port }}
+Environment=COMMENTO_POSTGRES=postgres://{{ commento_db_username }}:{{ commento_db_password }}@localhost:5432/{{ commento_db_database }}?sslmode=disable
+Environment=COMMENTO_STATIC=/home/{{ main_user_name }}/commento
+Environment=COMMENTO_BIND_ADDRESS=127.0.0.1
+Environment=COMMENTO_SMTP_HOST=localhost
+Environment=COMMENTO_SMTP_PORT=25
+Environment=COMMENTO_SMTP_USERNAME=example@gmail.com
+Environment=COMMENTO_SMTP_PASSWORD=hunter2
+Environment=COMMENTO_SMTP_FROM_ADDRESS=no-reply@{{ commento_subdomain }}.{{ domain }}
+
+[Install]
+WantedBy=multi-user.target
