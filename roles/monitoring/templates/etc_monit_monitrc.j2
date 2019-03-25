@@ -106,16 +106,9 @@ set mailserver localhost
 
 set mail-format {
      from: monit@{{ domain }}
-  subject: monit alert --  $EVENT $SERVICE
-  message: $EVENT Service $SERVICE
-
-    Date:        $DATE
-    Action:      $ACTION
-    Host:        $HOST
-    Description: $DESCRIPTION
-
-Your faithful employee,
-Monit from Sovereign
+  subject: monit alert $HOST
+  message: $EVENT $SERVICE
+$DESCRIPTION
 }
 
 #
@@ -128,7 +121,9 @@ Monit from Sovereign
 #                                                # timeout alert
 #
 
-set alert {{ admin_email }}
+{% for mail in monit_alert_emails %}
+set alert {{ mail }}
+{% endfor %}
 
 #
 ## Monit has an embedded web server which can be used to view status of

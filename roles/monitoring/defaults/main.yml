@@ -6,5 +6,9 @@ secret: '{{ secret_root + "/" + secret_name }}'
 monit_admin_username: "{{ main_user_name }}"
 monit_admin_password: "{{ lookup('password', secret + '/' + 'monit_admin_password length=16 chars=hexdigits') }}"
 
+# could be used for example with the pushover.net e-mail notification API
+monit_alert_emails:
+  - "{{ admin_email }}"
+
 monit_page_public: 1
 monit_subdomain: status

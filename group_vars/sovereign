@@ -46,6 +46,10 @@ irc_ident: (required)
 irc_realname: (required)
 irc_quitmsg: (required)
 
+monit_alert_emails:
+  - "{{ admin_email }}"
+#  - "PUSHOVER_KEY@pomail.net"
+
 # openvpn
 openvpn_clients:
   - laptop
