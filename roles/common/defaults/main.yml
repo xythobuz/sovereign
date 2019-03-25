@@ -23,14 +23,7 @@ macs: "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@
 
 # ntp
 ntp_servers:
-  # use nearby ntp servers by default
   - 0.pool.ntp.org
   - 1.pool.ntp.org
   - 2.pool.ntp.org
   - 3.pool.ntp.org
-  # use servers tailored to the server location
-  # See http://www.pool.ntp.org/en/use.html
-  # - 0.north-america.pool.ntp.org
-  # - 1.north-america.pool.ntp.org
-  # - 2.north-america.pool.ntp.org
-  # - 3.north-america.pool.ntp.org

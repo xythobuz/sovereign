@@ -3,12 +3,10 @@
 # Set your variables here.
 ################################################################################
 
-# common
 domain: (required)
+server_fqdn: (required)
 main_user_name: (required)
-
-# admin email
-# fail2ban reports will be sent to this address
+main_user_shell: "/usr/bin/zsh"
 admin_email: "{{ main_user_name }}@{{ domain }}"
 
 virtual_domains:
@@ -16,12 +14,12 @@ virtual_domains:
     pk_id: 1
     doc_root: "/var/www/{{ domain }}"
 
-# mail
 mail_virtual_users:
   - account: "{{ main_user_name }}"
     domain: "{{ domain }}"
     password: "{{ 'changeme' | doveadm_pw_hash }}"
     domain_pk_id: 1
+
 mail_virtual_aliases:
   - source: "root@{{ domain }}"
     destination: "{{ admin_email }}"
@@ -36,12 +34,10 @@ mail_virtual_aliases:
     destination: "{{ admin_email }}"
     domain_pk_id: 1
 
-# timezone
-# common_timezone will be used in the common and mailserver roles
 common_timezone: 'Etc/UTC'
 
-# znc
 irc_nick: (required)
+irc_altnick: (required)
 irc_ident: (required)
 irc_realname: (required)
 irc_quitmsg: (required)
@@ -50,8 +46,15 @@ monit_alert_emails:
   - "{{ admin_email }}"
 #  - "PUSHOVER_KEY@pomail.net"
 
-# openvpn
 openvpn_clients:
   - laptop
   - phone
   - tablet
+
+# use servers tailored to the server location
+# See http://www.pool.ntp.org/en/use.html
+#ntp_servers:
+#  - 0.de.pool.ntp.org
+#  - 1.de.pool.ntp.org
+#  - 2.de.pool.ntp.org
+#  - 3.de.pool.ntp.org
