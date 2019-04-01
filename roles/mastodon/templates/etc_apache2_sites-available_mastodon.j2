@@ -10,6 +10,9 @@
     SSLEngine               On
     DocumentRoot            "/home/mastodon/mastodon/public"
     Alias                   "/system" "/data/mastodon/public-system"
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/mastodon.info-error_log
+    CustomLog               /var/log/apache2/mastodon.info-access_log common
 
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Strict-Transport-Security "max-age=31536000"

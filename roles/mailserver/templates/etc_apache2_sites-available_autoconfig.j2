@@ -11,4 +11,7 @@
     DocumentRoot            "/var/www/autoconfig"
     Options                 -Indexes
     HostnameLookups         Off
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/autoconfig.info-error_log
+    CustomLog               /var/log/apache2/autoconfig.info-access_log common
 </VirtualHost>

@@ -12,6 +12,9 @@
     DirectoryIndex          index.html
     Options                 -Indexes
     HostnameLookups         Off
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/grafana.info-error_log
+    CustomLog               /var/log/apache2/grafana.info-access_log common
 
     ProxyRequests           Off
     ProxyPreserveHost       On
