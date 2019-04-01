@@ -1,1 +1,4 @@
 - include: grafana.yml tags=iot
+- include: influx.yml tags=iot
+- include: mosquitto.yml tags=iot
+- include: mqtt_admin.yml tags=iot

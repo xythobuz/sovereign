@@ -1,0 +1,18 @@
+- name: Create temporary mqtt-admin directory
+  file: state=directory path=/root/mqtt-admin
+
+- name: Download mqtt-admin {{ mqtt_admin_version }} release
+  get_url:
+    url="{{ mqtt_admin_release }}"
+    dest=/root/mqtt-admin/mqtt-admin-{{ mqtt_admin_version }}.zip
+
+- name: Decompress mqtt-admin release
+  unarchive: src=/root/mqtt-admin/mqtt-admin-{{ mqtt_admin_version }}.zip
+             dest=/root/mqtt-admin/ copy=no
+             creates=/root/mqtt-admin/mqtt-admin
+
+- name: Create mqtt-admin webserver directory
+  file: state=directory path=/var/www/mqtt-admin
+
+- name: Copy mqtt-admin to webserver directory
+  shell: cp -R /root/mqtt-admin/mqtt-admin/* /var/www/mqtt-admin

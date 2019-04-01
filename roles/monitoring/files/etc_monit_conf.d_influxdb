@@ -1,0 +1,8 @@
+check process influxdb matching "influxd"
+  group iot
+  start program = "/bin/systemctl start influxdb"
+  stop program = "/bin/systemctl stop influxdb"
+  if failed port 8086 type tcp
+    with timeout 10 seconds
+    then restart
+  if 5 restarts within 5 cycles then timeout

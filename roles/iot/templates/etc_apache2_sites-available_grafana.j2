@@ -16,6 +16,9 @@
     ErrorLog                /var/log/apache2/grafana.info-error_log
     CustomLog               /var/log/apache2/grafana.info-access_log common
 
+    Alias                   /mqtt /var/www/mqtt-admin
+    ProxyPassMatch          ^/mqtt !
+
     ProxyRequests           Off
     ProxyPreserveHost       On
     ProxyPass               / http://localhost:{{ grafana_internal_port }}/

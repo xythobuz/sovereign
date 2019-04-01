@@ -56,6 +56,18 @@
   stat: path=/etc/grafana/grafana.ini
   register: grafana_config_file
 
+- name: Determine if InfluxDB is installed
+  stat: path=/etc/influxdb/influxdb.conf
+  register: influxdb_config_file
+
+- name: Determine if Telegraf is installed
+  stat: path=/etc/telegraf/telegraf.conf
+  register: telegraf_config_file
+
+- name: Determine if Mosquitto is installed
+  stat: path=/etc/mosquitto/mosquitto.conf
+  register: mosquitto_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -105,6 +117,21 @@
   copy: src=etc_monit_conf.d_grafana dest=/etc/monit/conf.d/grafana
   notify: restart monit
   when: grafana_config_file.stat.exists == True
+
+- name: Copy InfluxDB monit service config files into place
+  copy: src=etc_monit_conf.d_influxdb dest=/etc/monit/conf.d/influxdb
+  notify: restart monit
+  when: influxdb_config_file.stat.exists == True
+
+- name: Copy Telegraf monit service config files into place
+  copy: src=etc_monit_conf.d_telegraf dest=/etc/monit/conf.d/telegraf
+  notify: restart monit
+  when: telegraf_config_file.stat.exists == True
+
+- name: Copy Mosquitto monit service config files into place
+  copy: src=etc_monit_conf.d_mosquitto dest=/etc/monit/conf.d/mosquitto
+  notify: restart monit
+  when: mosquitto_config_file.stat.exists == True
 
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}

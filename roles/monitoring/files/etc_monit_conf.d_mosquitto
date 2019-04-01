@@ -1,0 +1,8 @@
+check process mosquitto matching mosquitto
+  group iot
+  start program = "/bin/systemctl start mosquitto"
+  stop program = "/bin/systemctl stop mosquitto"
+  if failed host localhost port 1883 type tcp then restart
+  if failed host localhost port 8883 type tcp then restart
+  if failed host localhost port 8083 type tcp then restart
+  if 5 restarts within 5 cycles then timeout

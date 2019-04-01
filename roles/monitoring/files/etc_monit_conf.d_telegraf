@@ -1,0 +1,4 @@
+check process telegraf matching "telegraf"
+  group iot
+  start program = "/bin/systemctl start telegraf"
+  stop program = "/bin/systemctl stop telegraf"

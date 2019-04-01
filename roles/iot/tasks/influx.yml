@@ -1,0 +1,64 @@
+---
+# Installs InfluxDB and Telegraf as described in:
+# https://docs.influxdata.com/influxdb/v1.7/introduction/installation
+# https://docs.influxdata.com/influxdb/v1.7/administration/config/
+# https://docs.influxdata.com/telegraf/v1.10/introduction/installation/
+# https://docs.influxdata.com/telegraf/v1.10/administration/configuration/
+
+- name: Ensure repository key for InfluxDB is in place
+  apt_key: url=https://repos.influxdata.com/influxdb.key state=present
+  tags:
+    - dependencies
+
+- name: Add InfluxDB repository
+  apt_repository: repo="deb https://repos.influxdata.com/debian {{ ansible_distribution_release }} stable"
+  tags:
+    - dependencies
+
+- name: Install InfluxDB and Telegraf from official repository
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - influxdb
+    - telegraf
+  tags:
+    - dependencies
+
+- name: Configure InfluxDB
+  template:
+    src=etc_influxdb_influxdb.j2
+    dest=/etc/influxdb/influxdb.conf
+    owner=root
+    group=root
+  notify: restart influxdb
+
+- name: Create InfluxDB data directories
+  file: state=directory path={{ item }} owner=influxdb group=influxdb
+  with_items:
+    - /data/influxdb
+    - /data/influxdb/meta
+    - /data/influxdb/data
+    - /data/influxdb/wal
+
+- name: Configure Telegraf
+  template:
+    src=etc_telegraf_telegraf.j2
+    dest=/etc/telegraf/telegraf.conf
+    owner=root
+    group=root
+  notify: restart telegraf
+
+- name: Register new InfluxDB and Telegraf service
+  systemd: name={{ item }} daemon_reload=yes enabled=yes
+  with_items:
+    - influxdb
+    - telegraf
+
+- name: Start new InfluxDB and Telegraf instance
+  service: name={{ item }} state=started
+  with_items:
+    - influxdb
+    - telegraf

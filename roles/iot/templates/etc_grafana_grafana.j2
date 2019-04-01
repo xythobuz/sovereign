@@ -198,7 +198,7 @@ cookie_samesite = strict
 #################################### Users ###############################
 [users]
 # disable user signup / registration
-;allow_sign_up = true
+allow_sign_up = false
 
 # Allow non admin users to create organizations
 ;allow_org_create = true
@@ -252,7 +252,7 @@ cookie_samesite = strict
 #################################### Anonymous Auth ######################
 [auth.anonymous]
 # enable anonymous access
-;enabled = false
+enabled = true
 
 # specify organization name that should be used for unauthenticated users
 ;org_name = Main Org.
@@ -345,11 +345,11 @@ enabled = true
 ;password =
 ;cert_file =
 ;key_file =
-;skip_verify = false
-from_address = admin@{{ grafana_domain }}
+skip_verify = true
+from_address = grafana@{{ domain }}
 ;from_name = Grafana
 # EHLO identity in SMTP dialog (defaults to instance_name)
-ehlo_identity = {{ grafana_domain }}
+ehlo_identity = {{ domain }}
 
 [emails]
 welcome_email_on_sign_up = true
