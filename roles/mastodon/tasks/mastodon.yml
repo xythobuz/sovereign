@@ -218,7 +218,7 @@
     name: "media cleanup"
     minute: "15"
     hour: "1"
-    job: '/bin/bash -c ''export PATH="$HOME/.rbenv/bin:$PATH"; eval "$(rbenv init -)"; cd /home/mastodon/mastodon && RAILS_ENV=production ./bin/tootctl media remove'''
+    job: '/bin/bash -c ''export PATH="$HOME/.rbenv/bin:$PATH"; eval "$(rbenv init -)"; cd /home/mastodon/mastodon && RAILS_ENV=production ./bin/tootctl media remove > /dev/null'''
   become: true
   become_user: mastodon
 
