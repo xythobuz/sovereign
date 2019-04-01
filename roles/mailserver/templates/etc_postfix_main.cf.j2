@@ -84,6 +84,7 @@ alias_database = hash:/etc/aliases
 mydestination = localhost
 relayhost =
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 {{ ' '.join(friendly_networks) }}
+smtpd_sasl_exceptions_networks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 {{ ' '.join(friendly_networks) }}
 #mailbox_command = procmail -a "$EXTENSION"
 mailbox_size_limit = 0
 recipient_delimiter = +

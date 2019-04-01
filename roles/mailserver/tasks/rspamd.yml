@@ -60,11 +60,12 @@
     group=_rspamd
 
 - name: Generate DKIM keys
-  shell: rspamadm dkim_keygen -s default -d {{ item.name }} -k {{ item.name }}.default.key > {{ item.name }}.default.txt
+  shell: rspamadm dkim_keygen -b 1024 -s mail -d {{ item.name }} -k {{ item.name }}.mail.key > {{ item.name }}.mail.txt
   args:
-    creates: /var/lib/rspamd/dkim/{{ item.name }}.default.key
+    creates: /var/lib/rspamd/dkim/{{ item.name }}.mail.key
     chdir: /var/lib/rspamd/dkim/
   with_items: "{{ virtual_domains }}"
+  notify: restart rspamd
 
 - name: Start redis
   service:
