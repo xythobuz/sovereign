@@ -3,8 +3,14 @@
 # Set your variables here.
 ################################################################################
 
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
 domain: (required)
-server_fqdn: (required)
+server_name: (required)
+server_fqdn: "{{ server_name }}.{{ domain }}"
+
 main_user_name: (required)
 main_user_shell: "/usr/bin/zsh"
 admin_email: "{{ main_user_name }}@{{ domain }}"

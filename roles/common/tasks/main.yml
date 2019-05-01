@@ -1,4 +1,11 @@
 ---
+
+- name: Set hostname
+  hostname: name="{{ server_fqdn }}"
+
+- name: Replace /etc/hosts
+  template: src=etc_hosts.j2 dest=/etc/hosts
+
 - name: Update apt cache
   apt: update_cache=yes
   tags:
