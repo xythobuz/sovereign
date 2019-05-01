@@ -20,6 +20,7 @@ submission inet  n       -       -       -       -       smtpd
   -o smtpd_client_restrictions=permit_sasl_authenticated,reject_unauth_destination,reject
   -o smtpd_sasl_security_options=noanonymous,noplaintext
   -o smtpd_sasl_tls_security_options=noanonymous
+  -o smtpd_sender_login_maps=pgsql:/etc/postfix/pgsql-sender-login-maps.cf
 
 # SMTP over SSL/TLS on port 465.
 #smtps     inet  n       -       -       -       -       smtpd

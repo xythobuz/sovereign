@@ -20,27 +20,22 @@ friendly_networks:
 
 virtual_domains:
   - name: "{{ domain }}"
-    pk_id: 1
     doc_root: "/var/www/{{ domain }}"
 
 mail_virtual_users:
   - account: "{{ main_user_name }}"
     domain: "{{ domain }}"
     password: "{{ lookup('password', secret + '/' + 'mail_main_user_password length=20') | doveadm_pw_hash }}"
-    domain_pk_id: 1
+    sendonly: 0
 
 mail_virtual_aliases:
   - source: "root@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
   - source: "postmaster@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
   - source: "webmaster@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
   - source: "abuse@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
 
 zpush_timezone: "{{ common_timezone | default('Etc/UTC') }}"

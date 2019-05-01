@@ -89,6 +89,8 @@
     - pgsql-virtual-alias-maps.cf
     - pgsql-virtual-mailbox-domains.cf
     - pgsql-virtual-mailbox-maps.cf
+    - pgsql-recipient-access.cf
+    - pgsql-sender-login-maps.cf
   notify: restart postfix
 
 - name: Set firewall rules for postfix

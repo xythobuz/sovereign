@@ -11,28 +11,27 @@ admin_email: "{{ main_user_name }}@{{ domain }}"
 
 virtual_domains:
   - name: "{{ domain }}"
-    pk_id: 1
     doc_root: "/var/www/{{ domain }}"
 
 mail_virtual_users:
   - account: "{{ main_user_name }}"
     domain: "{{ domain }}"
-    password: "{{ 'changeme' | doveadm_pw_hash }}"
-    domain_pk_id: 1
+    password: "{{ lookup('password', secret + '/' + 'mail_main_user_password length=20') | doveadm_pw_hash }}"
+    sendonly: 0
+  - account: "noreply"
+    domain: "{{ domain }}"
+    password: "{{ lookup('password', secret + '/' + 'mail_noreply_password length=20') | doveadm_pw_hash }}"
+    sendonly: 1
 
 mail_virtual_aliases:
   - source: "root@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
   - source: "postmaster@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
   - source: "webmaster@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
   - source: "abuse@{{ domain }}"
     destination: "{{ admin_email }}"
-    domain_pk_id: 1
 
 common_timezone: 'Etc/UTC'
 

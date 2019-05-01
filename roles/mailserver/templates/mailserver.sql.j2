@@ -14,44 +14,45 @@ CREATE UNIQUE INDEX name_idx ON virtual_domains (name);
 
 CREATE TABLE IF NOT EXISTS "virtual_users" (
         "id" SERIAL,
-        "domain_id" int NOT NULL,
+        "username" TEXT NOT NULL,
+        "domain" TEXT NOT NULL,
         "password" TEXT NOT NULL,
-        "email" TEXT NOT NULL UNIQUE,
-        PRIMARY KEY ("id"),
-        FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+        "sendonly" boolean DEFAULT FALSE,
+        PRIMARY KEY ("id")
 );
 
-
-CREATE UNIQUE INDEX email_idx ON virtual_users (email);
+CREATE UNIQUE INDEX email_idx ON virtual_users (username, domain);
 
 CREATE TABLE IF NOT EXISTS "virtual_aliases" (
         "id" SERIAL,
-        "domain_id" int NOT NULL,
         "source" TEXT NOT NULL,
         "destination" TEXT NOT NULL,
-        PRIMARY KEY ("id"),
-        FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+        PRIMARY KEY ("id")
 );
 
 CREATE INDEX source_idx ON virtual_aliases (source);
 
 {% for virtual_domain in virtual_domains %}
-INSERT INTO "virtual_domains" ("id", "name")
-        VALUES ('{{ virtual_domain.pk_id }}', '{{ virtual_domain.name }}');
+INSERT INTO "virtual_domains" ("name")
+        VALUES ('{{ virtual_domain.name }}');
 {% endfor %}
 
 {% for virtual_user in mail_virtual_users %}
-INSERT INTO "virtual_users"  ("domain_id", "password" , "email")
+INSERT INTO "virtual_users"  ("username", "domain", "password" , "sendonly")
 	VALUES (
-		'{{ virtual_user.domain_pk_id }}',
+		'{{ virtual_user.account }}',
+		'{{ virtual_user.domain }}',
 		'{{ virtual_user.password }}',
-		'{{ virtual_user.account }}@{{ virtual_user.domain }}'
+		'{{ virtual_user.sendonly }}'
 	);
 {% endfor %}
 
 {% if mail_virtual_aliases is defined %}
 {% for virtual_alias in mail_virtual_aliases %}
-INSERT INTO "virtual_aliases" ("domain_id", "source", "destination")
-    VALUES ('{{ virtual_alias.domain_pk_id }}', '{{ virtual_alias.source }}', '{{virtual_alias.destination }}');
+INSERT INTO "virtual_aliases" ("source", "destination")
+    VALUES (
+        '{{ virtual_alias.source }}',
+        '{{ virtual_alias.destination }}'
+    );
 {% endfor %}
 {% endif %}
