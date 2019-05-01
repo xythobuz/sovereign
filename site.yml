@@ -6,18 +6,29 @@
   become: True
   gather_facts: True
 
+  # This is what I'm using on my minimal web & mail server
   roles:
     - common
     - blog
     - mailserver
     - webmail
-    - news
-    - nextcloud
     - gitea
-    - ircbouncer
-    - xmpp
-    - matrix
-    - mastodon
-    - iot
-    - vpn
-    - monitoring  # Monitoring role should be last. See roles/monitoring/README.md
+  #  - vpn
+    - monitoring
+
+  # These are all roles in one
+  #roles:
+  #  - common
+  #  - blog
+  #  - mailserver
+  #  - webmail
+  #  - news
+  #  - nextcloud
+  #  - gitea
+  #  - ircbouncer
+  #  - xmpp
+  #  - matrix
+  #  - mastodon
+  #  - iot
+  #  - vpn
+  #  - monitoring  # Monitoring role should be last. See roles/monitoring/README.md
