@@ -24,6 +24,10 @@ USER = {{ gitea_db_username }}
 PASSWD = `{{ gitea_db_password }}`
 SSL_MODE = disable
 
+[service]
+DISABLE_REGISTRATION = true
+ENABLE_NOTIFY_MAIL = true
+
 [security]
 INSTALL_LOCK = true
 SECRET_KEY = {{ gitea_secret }}
