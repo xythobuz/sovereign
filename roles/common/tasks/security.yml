@@ -4,10 +4,17 @@
     state: present
   vars:
     packages:
-    - fail2ban
     - whois
     - lynis
     - rkhunter
+  tags:
+    - dependencies
+
+- name: Install newer fail2ban with IPv6 support
+  apt:
+    name: "fail2ban"
+    state: present
+    default_release: stretch-backports
   tags:
     - dependencies
 
