@@ -13,6 +13,7 @@ fathom_db_username: 'fathom'
 fathom_db_password: "{{ lookup('password', secret + '/' + 'fathom_db_password length=32') }}"
 fathom_db_database: 'fathom'
 
+fathom_subdomain: 'stats'
 fathom_internal_port: '9000'
 fathom_secret: "{{ lookup('password', secret + '/' + 'fathom_secret length=32') }}"
 
