@@ -17,6 +17,14 @@
   command: a2enconf well-known.conf creates=/etc/apache2/conf-enabled/well-known.conf.conf
   notify: restart apache
 
+- name: Setup PHP config
+  template:
+    src=etc_php_7.0_apache2_php.ini.j2
+    dest=/etc/php/7.0/apache2/php.ini
+    owner=root
+    group=root
+  notify: restart apache
+
 - name: Create an example blog index page
   template:
     src=var_www_blog_index.j2
