@@ -25,6 +25,25 @@
     group=root
   notify: restart apache
 
+- name: Add custom postgres user
+  postgresql_user:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ custom_db_username }}
+    password="{{ custom_db_password }}"
+    encrypted=yes
+    state=present
+
+- name: Create custom database
+  postgresql_db:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ custom_db_database }}
+    state=present
+    owner={{ custom_db_username }}
+
 - name: Create an example blog index page
   template:
     src=var_www_blog_index.j2

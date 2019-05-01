@@ -27,6 +27,10 @@ commento_db_username: 'commentouser'
 commento_db_password: "{{ lookup('password', secret + '/' + 'commento_db_password length=32') }}"
 commento_db_database: 'commento'
 
+custom_db_username: 'pageuser'
+custom_db_password: "{{ lookup('password', secret + '/' + 'custom_db_password length=32') }}"
+custom_db_database: 'page'
+
 # must match values in roles/common
 db_admin_username: 'postgres'
 db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
