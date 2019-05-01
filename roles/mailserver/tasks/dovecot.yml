@@ -80,6 +80,22 @@
     group=dovecot
   notify: restart dovecot
 
+- name: Configure learning spam sieve script
+  copy:
+    src=etc_dovecot_sieve_learn_spam.sieve
+    dest=/etc/dovecot/sieve/learn_spam.sieve
+    owner=vmail
+    group=dovecot
+  notify: restart dovecot
+
+- name: Configure learning ham sieve script
+  copy:
+    src=etc_dovecot_sieve_learn_ham.sieve
+    dest=/etc/dovecot/sieve/learn_ham.sieve
+    owner=vmail
+    group=dovecot
+  notify: restart dovecot
+
 - name: Copy additional Dovecot configuration files in place
   copy:
     src=etc_dovecot_conf.d_{{ item }}
