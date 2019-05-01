@@ -53,6 +53,15 @@
     force=no
   with_items: "{{ virtual_domains }}"
 
+- name: Create an example blog 404 error page
+  template:
+    src=var_www_blog_404.j2
+    dest={{ item.doc_root }}/404.html
+    owner=www-data
+    group=www-data
+    force=no
+  with_items: "{{ virtual_domains }}"
+
 - name: Create the Apache blog sites config files
   template:
     src=etc_apache2_sites-available_blog.j2
