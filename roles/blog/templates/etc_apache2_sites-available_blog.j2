@@ -7,6 +7,11 @@
 
 <VirtualHost *:443>
     ServerName {{ item.name }}
+
+    Redirect temp / https://www.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
     ServerAlias www.{{ item.name }}
 
     SSLEngine               On
