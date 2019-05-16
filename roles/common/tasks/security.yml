@@ -10,6 +10,9 @@
   tags:
     - dependencies
 
+- name: add stretch-backport for fail2ban with IPv6 support
+  apt_repository: repo='deb http://deb.debian.org/debian stretch-backports main' state=present update_cache=yes
+
 - name: Install newer fail2ban with IPv6 support
   apt:
     name: "fail2ban"
