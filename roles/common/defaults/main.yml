@@ -13,7 +13,7 @@ db_admin_username: 'postgres'
 db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
 
 # let's encrypt
-letsencrypt_server: "https://acme-v01.api.letsencrypt.org/directory"
+letsencrypt_server: "https://acme-v02.api.letsencrypt.org/directory"
 
 # ssh
 # Following https://infosec.mozilla.org/guidelines/openssh

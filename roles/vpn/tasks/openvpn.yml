@@ -3,8 +3,11 @@
 # ref: https://library.linode.com/networking/openvpn/debian-6-squeeze
 
 - name: Install OpenVPN and dependencies
-  apt: pkg={{ item }} state=present
-  with_items:
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
     - dnsmasq
     - openvpn
     - udev
@@ -41,13 +44,13 @@
   command: openssl req -nodes -batch -new -x509 -key {{ openvpn_ca }}.key -out {{ openvpn_ca }}.crt -days {{ openvpn_days_valid }} -subj "{{ openssl_request_subject }}/CN=sovereign-ca-certificate"
            creates={{ openvpn_ca }}.crt
 
-- name: Generate the OpenSSL configuration that will be used for the Server certificate's req and ca commands
   # Properly sets the attributes that are described here:
   # openvpn.net/index.php/open-source/documentation/howto.html#mitm
   #
   # This is required in order for the 'ns-cert-type server' option to
   # work, which is enabled by default in most standard client.conf
   # files.
+- name: Generate the OpenSSL configuration that will be used for the Server certificate's req and ca commands
   template: src=openssl-server-certificate.cnf.j2
             dest={{ openvpn_path }}/openssl-server-certificate.cnf
 
@@ -146,12 +149,12 @@
 - name: Enable OpenVPN server systemd service unit
   service: name=openvpn@server enabled=yes
 
-# OpenVPN must restart first so the 10.8.0.0 interface is available
+# OpenVPN must restart first so the VPN interface is available
 # to dnsmasq
 - meta: flush_handlers
 
 - name: Copy dnsmasq configuration file into place
-  copy: src=etc_dnsmasq.conf dest=/etc/dnsmasq.conf
+  template: src=etc_dnsmasq.conf.j2 dest=/etc/dnsmasq.conf
   notify: restart dnsmasq
 
 - name: Copy the ca.crt and ta.key files that clients will need in order to connect to the OpenVPN server
@@ -164,11 +167,12 @@
 
 - name: Retrieve the files that clients will need in order to connect to the OpenVPN server
   fetch: src={{ openvpn_path }}/{{ item[0] }}/{{ item[1] }}
-         dest=/tmp/sovereign-openvpn-files fail_on_missing=yes
+         dest="{{ secret }}/sovereign-openvpn-files"
+         fail_on_missing=yes
   with_nested:
     - "{{ openvpn_clients }}"
     - ["client.crt", "client.key", "ca.crt", "ta.key", "{{ openvpn_server }}.ovpn"]
 
 - name: Pause 5s seconds for OpenVPN ready
   pause: seconds=5
-         prompt="You are ready to set up your OpenVPN clients. The files that you need are in /tmp/sovereign-openvpn-files. Make sure LZO compression is enabled and that you provide the ta.key file for the TLS-Auth option with a direction of '1'. Press any key to continue..."
+         prompt="You are ready to set up your OpenVPN clients. The files that you need are in {{ secret }}/sovereign-openvpn-files. Make sure LZO compression is enabled and that you provide the ta.key file for the TLS-Auth option with a direction of '1'. Press any key to continue..."

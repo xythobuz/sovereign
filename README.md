@@ -104,6 +104,10 @@ Also install the dependencies for password generation as well as ansible itself.
     cd sovereign
     sudo pip install -r ./requirements.txt
 
+Or, if you're on Arch, instead of using pip, install the required stuff manually:
+
+    sudo pacman -Syu ansible python-jmespath python-passlib
+
 #### 4. Configure your installation
 
 Modify the settings in the `group_vars/sovereign` folder to your liking.

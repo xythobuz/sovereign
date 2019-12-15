@@ -1,8 +1,8 @@
 - name: Download check-rbl
   get_url:
-    url=https://raw.githubusercontent.com/lukecyca/check-rbl/e2bd60f5e5175375cd2f7f1b1b752473e3a23640/check-rbl.pl
+    url=https://raw.githubusercontent.com/lukecyca/check-rbl/479c1d5aa57543ba4c495ef06028fd9092ffdf43/check-rbl.pl
     dest=/opt/check-rbl.pl
-    sha256sum=22093bd59ed84cb7ee6e336fb2a4ab73dbe3a05837d2bab9b491a21df16b35d8
+    sha256sum=0968ea1991b500a2bb39b4aefb05c6bf42a62994774f2c46de5d426d5094508b
 
 - name: Install nightly check-rbl cronjob
   cron:

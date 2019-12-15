@@ -1,0 +1,6 @@
+check process dnsmasq with pidfile "/run/dnsmasq/dnsmasq.pid"
+  group system
+  start program = "/bin/systemctl start dnsmasq"
+  stop program = "/bin/systemctl stop dnsmasq"
+  if failed port 53 type udp protocol dns then alert
+  if failed port 53 type udp protocol dns for 5 cycles then restart

@@ -96,7 +96,7 @@ dh dh{{ openvpn_key_size }}.pem
 # Each client will be able to reach the server
 # on 10.8.0.1. Comment this line out if you are
 # ethernet bridging. See the man page for more info.
-server 10.8.0.0 255.255.255.0
+server {{ openvpn_ip_start }}.0 255.255.255.0
 
 # Maintain a record of client <-> virtual IP address
 # associations in this file.  If OpenVPN goes down or
@@ -188,7 +188,7 @@ ifconfig-pool-persist ipp.txt
 # or bridge the TUN/TAP interface to the internet
 # in order for this to work properly).
 push "redirect-gateway def1"
-push "dhcp-option DNS 10.8.0.1"
+push "dhcp-option DNS {{ openvpn_ip_start }}.1"
 
 # Certain Windows-specific network settings
 # can be pushed to clients, such as DNS

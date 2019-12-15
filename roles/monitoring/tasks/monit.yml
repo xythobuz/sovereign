@@ -68,6 +68,10 @@
   stat: path=/etc/mosquitto/mosquitto.conf
   register: mosquitto_config_file
 
+- name: Determine if OpenVPN is installed
+  stat: path=/etc/openvpn/server.conf
+  register: openvpn_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -132,6 +136,16 @@
   copy: src=etc_monit_conf.d_mosquitto dest=/etc/monit/conf.d/mosquitto
   notify: restart monit
   when: mosquitto_config_file.stat.exists == True
+
+- name: Copy OpenVPN monit service config files into place
+  copy: src=etc_monit_conf.d_openvpn dest=/etc/monit/conf.d/openvpn
+  notify: restart monit
+  when: openvpn_config_file.stat.exists == True
+
+- name: Copy dnsmasq monit service config files into place
+  copy: src=etc_monit_conf.d_dnsmasq dest=/etc/monit/conf.d/dnsmasq
+  notify: restart monit
+  when: openvpn_config_file.stat.exists == True
 
 - name: Copy monit service config files into place
   copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
