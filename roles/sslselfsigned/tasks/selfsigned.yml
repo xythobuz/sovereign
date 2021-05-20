@@ -1,0 +1,42 @@
+
+- name: Install Self Signed Cert stuff
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - openssl
+  tags:
+    - dependencies
+
+- name: Add group name ssl-cert for SSL certificates
+  group:
+    name: ssl-cert
+    state: present
+
+- name: Create directory for certificates
+  file: state=directory path=/etc/letsencrypt group=root owner=root
+
+- name: Create live directory for certificates
+  file: state=directory path=/etc/letsencrypt/live/{{ domain }} group=ssl-cert owner=root
+
+- name: Add script for cert creation
+  template:
+    src=home_deploy_ssl-self-signed.sh.j2
+    dest=/home/deploy/ssl-self-signed.sh
+    owner=deploy
+    group=deploy
+    mode=755
+
+- name: Create self signed certificates
+  command:
+    cmd: /home/deploy/ssl-self-signed.sh
+  notify: restart apache
+
+- name: Modify permissions to allow ssl-cert group access to live
+  file: path=/etc/letsencrypt/live owner=root group=ssl-cert mode=0750 recurse=yes
+
+- name: Retrieve the self signing CA to remove warning in users browser
+  fetch: src=/etc/letsencrypt/live/fritz.box/chain.pem
+         dest="{{ secret }}/sovereign-self-signed-cert"
+         fail_on_missing=yes

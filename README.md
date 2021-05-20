@@ -84,6 +84,13 @@ Authorize your ssh key if you want passwordless ssh login (optional):
     nano /home/deploy/.ssh/authorized_keys
     chmod 400 /home/deploy/.ssh/authorized_keys
     chown deploy:deploy /home/deploy -R
+
+Or, in short:
+
+    ssh-copy-id -i ~/.ssh/id_ecdsa deploy@hostname
+
+Also, enable passwordless sudo for the deploy user:
+
     echo 'deploy ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/deploy
 
 Your new account will be automatically set up for passwordless `sudo`.

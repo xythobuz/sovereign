@@ -2,3 +2,4 @@
 secret
 *.pyc
 site.retry
+.directory

@@ -24,7 +24,6 @@
   ufw: rule=allow port={{ item }} proto=tcp
   with_items:
     - http
-    - https
     - ssh
   tags: ufw
 

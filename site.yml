@@ -9,6 +9,7 @@
   # This is what I'm using on my minimal web & mail server
   roles:
     - common
+    - sslletsencrypt
     - blog
     - mailserver
     - webmail

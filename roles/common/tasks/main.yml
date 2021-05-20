@@ -1,7 +1,7 @@
 ---
 
 - name: Set hostname
-  hostname: name="{{ server_fqdn }}"
+  hostname: name="{{ server_hostname }}"
 
 - name: Replace /etc/hosts
   template: src=etc_hosts.j2 dest=/etc/hosts
@@ -83,8 +83,6 @@
 
 - include: users.yml tags=users
 - include: apache.yml tags=apache
-- include: ssl.yml tags=ssl
-- include: letsencrypt.yml tags=letsencrypt
 - include: ufw.yml tags=ufw
 - include: security.yml tags=security
 - include: ntp.yml tags=ntp

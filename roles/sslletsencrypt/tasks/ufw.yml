@@ -1,0 +1,7 @@
+---
+
+- name: Set firewall rules for SSL web traffic
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+    - https
+  tags: ufw

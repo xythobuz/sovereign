@@ -1,0 +1,35 @@
+#!/bin/bash
+
+echo generating CA key
+openssl genrsa -out /etc/letsencrypt/rootCA.key 4096
+
+echo generating CA certificate
+openssl req -x509 -new -nodes -sha256 -days 7300 \
+    -key /etc/letsencrypt/rootCA.key \
+    -subj "/C=DE/ST=BW/O={{ domain }}/CN={{ domain }}" \
+    -out /etc/letsencrypt/rootCA.crt
+
+echo generating server key
+openssl genrsa -out /etc/letsencrypt/{{ domain }}.key 2048
+
+echo generating signing request
+openssl req -new -sha256 \
+    -key /etc/letsencrypt/{{ domain }}.key \
+    -subj "/C=DE/ST=BW/O={{ domain }}/CN=*.{{ domain }}" \
+    -out /etc/letsencrypt/{{ domain }}.csr
+
+echo generating server certificate
+openssl x509 -req -CAcreateserial -days 7300 -sha256 \
+    -in /etc/letsencrypt/{{ domain }}.csr \
+    -CA /etc/letsencrypt/rootCA.crt \
+    -CAkey /etc/letsencrypt/rootCA.key \
+    -out /etc/letsencrypt/{{ domain }}.crt
+
+echo copy to proper locations
+cp /etc/letsencrypt/{{ domain }}.key /etc/letsencrypt/live/{{ domain }}/privkey.pem
+cp /etc/letsencrypt/rootCA.crt /etc/letsencrypt/live/{{ domain }}/chain.pem
+cp /etc/letsencrypt/{{ domain }}.crt /etc/letsencrypt/live/{{ domain }}/cert.pem
+
+echo generate full chain certificate
+cat /etc/letsencrypt/live/{{ domain }}/cert.pem > /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+cat /etc/letsencrypt/live/{{ domain }}/chain.pem >> /etc/letsencrypt/live/{{ domain }}/fullchain.pem
