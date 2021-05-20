@@ -12,6 +12,9 @@
 
 - name: add stretch-backport for fail2ban with IPv6 support
   apt_repository: repo='deb http://deb.debian.org/debian stretch-backports main' state=present update_cache=yes
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '9'
 
 - name: Install newer fail2ban with IPv6 support
   apt:
@@ -20,6 +23,15 @@
     default_release: stretch-backports
   tags:
     - dependencies
+  when: ansible_distribution_version == '9'
+
+- name: Install fail2ban
+  apt:
+    name: "fail2ban"
+    state: present
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
 
 - name: Copy fail2ban configuration into place
   template: src=etc_fail2ban_jail.local.j2 dest=/etc/fail2ban/jail.local

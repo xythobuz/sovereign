@@ -11,6 +11,19 @@
     - python-psycopg2
   tags:
     - dependencies
+  when: ansible_distribution_version == '9'
+
+- name: Install Postgres
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - postgresql
+    - python-psycopg2
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
 
 - name: Set password for PostgreSQL admin user
   become: true
