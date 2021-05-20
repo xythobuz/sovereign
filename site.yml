@@ -14,8 +14,9 @@
     - mailserver
     - webmail
     - gitea
-  #  - vpn
-    - monitoring
+    - vpn
+    - backup
+    - monitoring # Monitoring role should be last. See roles/monitoring/README.md
 
   # These are all roles in one
   #roles:

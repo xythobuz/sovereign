@@ -1,8 +1,6 @@
 # Notes about security: https://blog.g3rt.nl/openvpn-security-tips.html
 # Check privacy: http://witch.valdikss.org.ru/
 
-openvpn_ip_start: "10.8.0"
-
 openvpn_key_country:  "US"
 openvpn_key_province: "California"
 openvpn_key_city: "Beverly Hills"
@@ -26,3 +24,9 @@ openvpn_verb: "3" # "0" for anonymity
 openvpn_tls_version_min: "tls-version-min 1.2"
 openvpn_tls_cipher: "tls-cipher TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256:TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256:TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-256-CBC-SHA256"
 openvpn_clients: []
+openvpn_ip_start: "10.8.0" # VPN Net XX.XX.XX.ZZ, server is always XX.XX.XX.1. Enter XX.XX.XX here. using /24
+openvpn_enable_sub_routing: 0
+openvpn_sub_routing_client: "nas"
+openvpn_sub_routing_network: "192.168.0.0"
+openvpn_enable_custom_dns: 0
+openvpn_custom_dns: ""

@@ -146,6 +146,15 @@
   template: src=etc_openvpn_server.conf.j2 dest=/etc/openvpn/server.conf
   notify: restart openvpn
 
+- name: Create client specific config directory
+  file: state=directory path=/etc/openvpn/ccd owner=root group=root
+  when: openvpn_enable_sub_routing == 1
+
+- name: Copy OpenVPN configuration file into place
+  template: src=etc_openvpn_ccd_{{ openvpn_sub_routing_client }}.j2 dest=/etc/openvpn/ccd/{{ openvpn_sub_routing_client }} owner=root group=root mode=0666
+  notify: restart openvpn
+  when: openvpn_enable_sub_routing == 1
+
 - name: Enable OpenVPN server systemd service unit
   service: name=openvpn@server enabled=yes
 
@@ -172,7 +181,3 @@
   with_nested:
     - "{{ openvpn_clients }}"
     - ["client.crt", "client.key", "ca.crt", "ta.key", "{{ openvpn_server }}.ovpn"]
-
-- name: Pause 5s seconds for OpenVPN ready
-  pause: seconds=5
-         prompt="You are ready to set up your OpenVPN clients. The files that you need are in {{ secret }}/sovereign-openvpn-files. Make sure LZO compression is enabled and that you provide the ta.key file for the TLS-Auth option with a direction of '1'. Press any key to continue..."
