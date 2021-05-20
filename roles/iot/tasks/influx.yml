@@ -51,14 +51,21 @@
     group=root
   notify: restart telegraf
 
+- name: Set firewall rules for InfluxDB
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+    - 8086  # http
+    - 8088  # rpc
+  tags: ufw
+
 - name: Register new InfluxDB and Telegraf service
-  systemd: name={{ item }} daemon_reload=yes enabled=yes
+  systemd: name={{ item }} daemon_reload=yes enabled=yes
   with_items:
     - influxdb
     - telegraf
 
 - name: Start new InfluxDB and Telegraf instance
-  service: name={{ item }} state=started
+  service: name={{ item }} state=started
   with_items:
     - influxdb
     - telegraf
