@@ -1,0 +1,28 @@
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
+backup_vpn_net: "10.8.0.0/24"
+backup_vpn_bridge: "10.8.0.2"
+backup_host: "192.168.0.10"
+backup_share: "/mnt/data/backups"
+backup_borg_passphrase: "{{ lookup('password', secret + '/' + 'backup_borg_passphrase length=20') }}"
+backup_daily: "7"
+backup_weekly: "4"
+backup_monthly: "6"
+backup_source: "/"
+backup_repo_dir: "/mnt/nas_backups"
+backup_repo_name: "borg-linux-{{ server_name }}"
+backup_destination: "{{ backup_repo_dir }}/{{ backup_repo_name }}"
+backup_excludes:
+  - "/home/*/.cache/*"
+  - "/var/cache/*"
+  - "/var/tmp/*"
+  - "/media/*"
+  - "/mnt/*"
+  - "/dev/*"
+  - "/proc/*"
+  - "/sys/*"
+  - "/tmp/*"
+  - "/run/*"
+  - "/lost+found/*"

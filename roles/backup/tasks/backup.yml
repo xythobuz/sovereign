@@ -1,0 +1,88 @@
+
+- name: Install Borg-Backup, NFS Tools and their dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - borgbackup
+    - nfs-common
+    - python-pexpect
+  tags:
+    - dependencies
+
+- name: Remove static route over VPN on shutdown
+  lineinfile:
+    path: /etc/network/interfaces.d/50-cloud-init.cfg
+    insertafter: "iface eth0 inet dhcp"
+    line: "pre-down ip route del {{ backup_vpn_net }} via {{ backup_vpn_bridge }} || true"
+
+- name: Add static route over VPN on boot
+  lineinfile:
+    path: /etc/network/interfaces.d/50-cloud-init.cfg
+    insertafter: "iface eth0 inet dhcp"
+    line: "post-up ip route add {{ backup_vpn_net }} via {{ backup_vpn_bridge }} || true"
+
+- name: Apply static route for current session
+  command: "ip route add {{ backup_vpn_net }} via {{ backup_vpn_bridge }}"
+  ignore_errors: yes
+
+- name: Creates directory for NFS mount
+  file:
+    path: "{{ backup_repo_dir }}"
+    state: directory
+    owner: root
+    group: root
+  ignore_errors: yes
+
+- name: Add NFS mount to /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    line: "{{ backup_host }}:{{ backup_share }} {{ backup_repo_dir }} nfs rw,async,hard,intr,noexec 0 0"
+
+- name: Mount NFS share
+  mount:
+    path: "{{ backup_repo_dir }}"
+    src: "{{ backup_host }}:{{ backup_share }}"
+    fstype: "nfs"
+    state: mounted
+
+- name: Create Borg Repo
+  expect:
+    chdir: "{{ backup_repo_dir }}"
+    creates: "{{ backup_destination }}"
+    command: "borg init --encryption=repokey {{ backup_repo_name }}"
+    responses:
+      "Enter new passphrase": "{{ backup_borg_passphrase }}"
+      "Enter same passphrase again": "{{ backup_borg_passphrase }}"
+      "Do you want your passphrase to be displayed for verification": "y"
+
+- name: Dump Borg Repo Key
+  command: borg key export {{ backup_destination }} /home/deploy/borg_repo_key
+
+- name: Dump Borg Repo Key
+  fetch:
+    src: /home/deploy/borg_repo_key
+    dest: "{{ secret }}/borg_repo_key"
+    fail_on_missing: yes
+
+- name: Remove Borg Repo Key dump
+  command: rm -rf /home/deploy/borg_repo_key
+
+- name: Unmount NFS share
+  command: "umount -l {{ backup_repo_dir }}"
+
+- name: Copy backup script
+  template:
+    src: home_deploy_backup-root_sh.j2
+    dest: /home/deploy/backup-root.sh
+    owner: root
+    group: root
+    mode: 0500
+
+- name: Configure daily backup cronjob
+  cron:
+    hour: "1"
+    minute: "0"
+    job: /home/deploy/backup-root.sh
+    name: "nas-backup"
