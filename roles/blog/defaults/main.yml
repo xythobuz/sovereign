@@ -12,8 +12,8 @@ fathom_subdomain: 'stats'
 fathom_internal_port: '9000'
 fathom_secret: "{{ lookup('password', secret + '/' + 'fathom_secret length=32') }}"
 
-commento_version: '1.6.2'
-commento_release: "https://commento-release.s3.amazonaws.com/commento-linux-amd64-v{{ commento_version }}.tar.gz"
+commento_version: '1.8.0'
+commento_release: "https://dl.commento.io/release/commento-v{{ commento_version }}-linux-glibc-amd64.tar.gz"
 
 commento_subdomain: 'comments'
 commento_internal_port: '9100'

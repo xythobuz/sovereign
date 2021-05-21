@@ -85,7 +85,7 @@
 - name: Create gitea admin user account
   become: true
   become_user: git
-  shell: /usr/local/bin/gitea admin create-user --admin --config /etc/gitea/app.ini --name {{ gitea_admin_username }} --password {{ gitea_admin_password }} --email {{ admin_email }}
+  shell: /usr/local/bin/gitea admin user create --admin --config /etc/gitea/app.ini --username {{ gitea_admin_username }} --password {{ gitea_admin_password }} --email {{ admin_email }}
   args:
     chdir: /data/gitea
   ignore_errors: True

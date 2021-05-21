@@ -10,6 +10,7 @@ RestartSec=3
 WorkingDirectory=/home/{{ main_user_name }}/commento
 ExecStart=/home/{{ main_user_name }}/commento/commento
 Environment=COMMENTO_ORIGIN=https://{{ commento_subdomain }}.{{ domain }}
+Environment=COMMENTO_CDN_PREFIX=https://{{ commento_subdomain }}.{{ domain }}
 Environment=COMMENTO_PORT={{ commento_internal_port }}
 Environment=COMMENTO_POSTGRES=postgres://{{ commento_db_username }}:{{ commento_db_password }}@localhost:5432/{{ commento_db_database }}?sslmode=disable
 Environment=COMMENTO_STATIC=/home/{{ main_user_name }}/commento
