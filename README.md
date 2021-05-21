@@ -1,57 +1,13 @@
 # Sovereign
-# Introduction
 
-Sovereign is a set of [Ansible](http://ansible.com) playbooks that you can use to build and maintain your own [personal cloud](http://www.urbandictionary.com/define.php?term=clown%20computing) based entirely on open source software, so you’re in control.
-
-If you’ve never used Ansible before, you might find these playbooks useful to learn from, since they show off a fair bit of what the tool can do.
-
-The original author's [background and motivations](https://github.com/sovereign/sovereign/wiki/Background-and-Motivations) might be of interest.
-tl;dr: frustrations with Google Apps and concerns about privacy and long-term support.
-
-Sovereign offers useful cloud services while being reasonably secure and low-maintenance.
-Use it to set up your server, SSH in every couple weeks, but mostly forget about it.
-
-## Services Provided
-
-What do you get if you point Sovereign at a server? All kinds of good stuff!
-
--   [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) over SSL via [Dovecot](http://dovecot.org/), complete with full text search provided by [Solr](https://lucene.apache.org/solr/).
--   [POP3](https://en.wikipedia.org/wiki/Post_Office_Protocol) over SSL, also via Dovecot
--   [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) over SSL via Postfix, including a nice set of [DNSBLs](https://en.wikipedia.org/wiki/DNSBL) to discard spam before it ever hits your filters.
--   Virtual domains for your email, backed by [PostgreSQL](http://www.postgresql.org/).
--   Spam fighting via [Rspamd](https://www.rspamd.com/).
--   Mail server verification using [DKIM](http://www.dkim.org/) and [DMARC](http://www.dmarc.org/) so the Internet knows your mailserver is legit.
--   Webmail via [Roundcube](http://www.roundcube.net/).
--   Mobile push notifications and autodiscovery via [Z-Push](http://z-push.sourceforge.net/soswp/index.php?pages_id=1&t=home).
--   Email client [automatic configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
--   Jabber/[XMPP](http://xmpp.org/) instant messaging via [Prosody](http://prosody.im/).
--   [Matrix](https://matrix.org/) via [Riot.im](https://about.riot.im) and [Synapse](https://matrix.org/docs/projects/server/synapse.html).
--   The [Mastodon](https://mastodon.social/about) social network.
--   An RSS Reader via [Selfoss](http://selfoss.aditu.de/).
--   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and contacts in sync, via [NextCloud](http://nextcloud.com/).
--   Your own VPN server via [OpenVPN](http://openvpn.net/index.php/open-source.html).
--   An IRC bouncer via [ZNC](http://wiki.znc.in/ZNC).
--   Git Repo hosting via [gitea](https://gitea.io/en-us/).
--   IoT Dashboard via [Grafana](https://grafana.com) with [InfluxDB](https://www.influxdata.com/time-series-platform/influxdb/) and [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/).
--   [Mosquitto](https://mosquitto.org) and [mqtt-admin](https://github.com/hobbyquaker/mqtt-admin) on `iot.domain/mqtt`.
--   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and alert you when it’s not).
--   Web hosting (ex: for your blog) via [Apache](https://www.apache.org/).
--   Statistics for the website using [Fathom](https://github.com/usefathom/fathom).
--   Comments for the website using [Commento](https://gitlab.com/commento/commento).
--   Firewall management via [Uncomplicated Firewall (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
--   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit detection via [rkhunter](http://rkhunter.sourceforge.net).
--   SSH configuration preventing root login and insecure password authentication
--   A bunch of nice-to-have tools like [mosh](http://mosh.mit.edu) and [htop](http://htop.sourceforge.net) that make life with a server a little easier.
-
-Don’t want one or more of the above services? Comment out the relevant role in `site.yml`.
-Or get more granular and comment out the associated `include:` directive in one of the playbooks.
+Forked from [Sovereign on GitHub](https://github.com/sovereign/sovereign).
 
 # Usage
 
 ## What You’ll Need
 
 1.  A VPS (or bare-metal server if you wanna ball hard). My VPS is hosted at [Linode](http://www.linode.com/?r=45405878277aa04ee1f1d21394285da6b43f963b). You’ll probably want at least 512 MB of RAM between Apache, Solr, and PostgreSQL. Mine has 1024.
-2.  [64-bit Debian 9](http://www.debian.org/). (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
+2.  [64-bit Debian 9 or 10](http://www.debian.org/). (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
 
 You do not need to acquire an SSL certificate.  The SSL certificates you need will be obtained from [Let's Encrypt](https://letsencrypt.org/) automatically when you deploy your server.
 
@@ -61,11 +17,11 @@ You do not need to acquire an SSL certificate.  The SSL certificates you need wi
 
 The following steps are done on the remote server by `ssh`ing into it and running these commands.
 
-#### 1. Install required packages
+#### Install required packages
 
     apt-get install sudo python
 
-#### 2. Prep the server
+#### Prep the server
 
 For goodness sake, change the root password:
 
@@ -102,7 +58,7 @@ Or you can just add your `deploy` user to the sudo group.
 
 Ansible (the tool setting up your server) runs locally on your computer and sends commands to the remote server.
 
-#### 3. Software
+#### Software
 
 Download this repository somewhere on your machine, either through `Clone or Download > Download ZIP` above, `wget`, or `git` as below.
 Also install the dependencies for password generation as well as ansible itself.
@@ -115,7 +71,7 @@ Or, if you're on Arch, instead of using pip, install the required stuff manually
 
     sudo pacman -Syu ansible python-jmespath python-passlib
 
-#### 4. Configure your installation
+#### Configure your installation
 
 Modify the settings in the `group_vars/sovereign` folder to your liking.
 If you want to see how they’re used in context, just search for the corresponding string.
@@ -125,13 +81,13 @@ Finally, replace the `host.example.net` in the file `hosts`.
 If your SSH daemon listens on a non-standard port, add a colon and the port number after the IP address.
 In that case you also need to add your custom port to the task `Set firewall rules for web traffic and SSH` in the file `roles/common/tasks/ufw.yml`.
 
-#### 5. Set up DNS
+#### Set up DNS
 
 If you’ve just bought a new domain name, point it at [Linode’s DNS Manager](https://library.linode.com/dns-manager) or similar.
 Most VPS services (and even some domain registrars) offer a managed DNS service that you can use for this at no charge.
 If you’re using an existing domain that’s already managed elsewhere, you can probably just modify a few records.
 
-Create `A` or `CNAME` records which point to your server's IP address:
+Create `A` and `AAAA` or `CNAME` records which point to your server's IP address:
 
 * `example.com`
 * `mail.example.com`
@@ -147,7 +103,7 @@ Create `A` or `CNAME` records which point to your server's IP address:
 * `comments.example.com` (for commento)
 * `iot.example.com` (for grafana)
 
-#### 6. Run the Ansible Playbooks
+#### Run the Ansible Playbooks
 
 First, make sure you’ve [got Ansible installed](http://docs.ansible.com/intro_installation.html#getting-ansible).
 This should already be done by running the pip requirements.txt from above.
@@ -158,24 +114,7 @@ To run the whole dang thing:
     
 If you chose to make a passwordless sudo deploy user, you can omit the `--ask-sudo-pass` argument.
 
-To run just one or more piece, use tags.
-I try to tag all my includes for easy isolated development.
-For example, to focus in on your firewall setup:
-
-    ansible-playbook -i ./hosts --tags=ufw site.yml
-
-You might find that it fails at one point or another.
-This is probably because something needs to be done manually, usually because there’s no good way of automating it,
-or because something changed in the upstream packages or you're not using Debian 9.
-Fortunately, all the tasks are clearly named so you should be able to find out where it stopped.
-I’ve tried to add comments where manual intervention is necessary.
-In the best case scenario, no manual steps should be needed, everything is done via the sovereign config vars.
-
-The `dependencies` tag just installs dependencies, performing no other operations.
-The tasks associated with the `dependencies` tag do not rely on the user-provided settings that live in `group_vars/sovereign`.
-Running the playbook with the `dependencies` tag is particularly convenient for working with Docker images.
-
-#### 7. Finish DNS set-up
+#### Finish DNS set-up
 
 Create an `MX` record for `example.com` which assigns `mail.example.com` as the domain’s mail server.
 To ensure your emails pass DKIM checks you need to add a `txt` record.
@@ -197,12 +136,16 @@ Correctly set up reverse DNS for your server and make sure to validate that it�
 for example by sending an email to <a href="mailto:check-auth@verifier.port25.com">check-auth@verifier.port25.com</a>
 and reviewing the report that will be emailed back to you.
 
-#### 8. Miscellaneous Configuration
+#### Miscellaneous Configuration
 
 Sign in to the ZNC web interface and set things up to your liking.
 It isn’t exposed through the firewall, so you must first set up an SSH tunnel:
 
-	ssh deploy@example.com -L 6643:localhost:6643
+    ssh deploy@example.com -L 6643:localhost:6643
 
 Then proceed to http://localhost:6643 in your web browser.
 The same goes for the RSpamD web interface on port 11334.
+
+To access the gitea admin CLI, execute it like this:
+
+    sudo -u git /usr/local/bin/gitea admin create-user --admin --config /etc/gitea/app.ini --name USERNAME --password PASSWORD --email MAIL

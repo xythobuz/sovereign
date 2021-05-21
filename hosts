@@ -1,4 +1,9 @@
+# hosts in the 'sovereign' group use vars defined in 'group_vars/sovereign'
+# all hosts use vars defined in 'host_vars/HOST'
+# define common settings in the sovereign group_vars,
+# server-specific ones in the host_vars
+# create custom groups here to control which roles are
+# installed on which host within site.yml.
+
 [sovereign]
-# hosts in the `sovereign` group  use vars defined in `group_vars/sovereign`
-# put your host's IP address or domain name below
 host.example.net
