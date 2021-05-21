@@ -1,0 +1,22 @@
+<VirtualHost *:80>
+    ServerName {{ dokuwiki_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ dokuwiki_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ dokuwiki_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            /var/www/dokuwiki
+    Options                 -Indexes
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/dokuwiki.info-error_log
+    CustomLog               /var/log/apache2/dokuwiki.info-access_log common
+
+    <Directory /var/www/dokuwiki>
+        AllowOverride All
+        Require all granted
+        DirectoryIndex index.php
+    </Directory>
+</VirtualHost>

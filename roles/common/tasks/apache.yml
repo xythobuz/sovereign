@@ -9,6 +9,10 @@
   command: a2enmod headers creates=/etc/apache2/mods-enabled/headers.load
   notify: restart apache
 
+- name: Enable Apache rewrite module
+  command: a2enmod rewrite creates=/etc/apache2/mods-enabled/rewrite.load
+  notify: restart apache
+
 - name: Enable Apache proxy module
   command: a2enmod proxy creates=/etc/apache2/mods-enabled/proxy.load
   notify: restart apache

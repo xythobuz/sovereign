@@ -1,0 +1,100 @@
+- name: Install DokuWiki dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - php
+    - libapache2-mod-php
+  tags:
+    - dependencies
+
+- name: Create temporary DokuWiki directory
+  file: state=directory path=/root/dokuwiki
+
+- name: Download DokuWiki {{ dokuwiki_version }} release
+  get_url:
+    url="{{ dokuwiki_release }}"
+    dest=/root/dokuwiki/dokuwiki-{{ dokuwiki_version }}.tar.gz
+
+- name: Extract DokuWiki {{ dokuwiki_version }} release
+  shell: tar xzvf /root/dokuwiki/dokuwiki-{{ dokuwiki_version }}.tar.gz
+  args:
+    chdir: /root/dokuwiki
+    creates: /root/dokuwiki/dokuwiki-release_{{ dokuwiki_version }}
+
+- name: Copy DokuWiki to web server directory
+  shell: cp -R /root/dokuwiki/dokuwiki-release_{{ dokuwiki_version }}/. /var/www/dokuwiki/
+
+- name: Copy DokuWiki initial data to out data directory
+  shell: cp -R /var/www/dokuwiki/data/. /data/dokuwiki/
+
+- name: Ensure proper DokuWiki data directory permissions
+  file:
+    state: directory
+    path: "/data/dokuwiki"
+    owner: www-data
+    group: www-data
+    mode: 0750
+    recurse: yes
+
+- name: Ensure proper DokuWiki permissions
+  file:
+    path=/var/www/dokuwiki
+    state=directory
+    recurse=yes
+    owner=www-data
+    group=www-data
+
+- name: Add DokuWiki htaccess
+  copy:
+    src=var_www_dokuwiki_htaccess
+    dest=/var/www/dokuwiki/.htaccess
+    owner=www-data
+    group=www-data
+    mode=0644
+
+- name: Remove DokuWiki installer
+  file:
+    path=/var/www/dokuwiki/install.php
+    state=absent
+
+- name: Add initial DokuWiki ACL config
+  copy:
+    src=var_www_dokuwiki_conf_acl_auth.php
+    dest=/var/www/dokuwiki/conf/acl.auth.php
+    owner=www-data
+    group=www-data
+    mode=0644
+    force=no
+
+- name: Add initial DokuWiki config file
+  template:
+    src=var_www_dokuwiki_conf_local.j2
+    dest=/var/www/dokuwiki/conf/local.php
+    owner=www-data
+    group=www-data
+    mode=0644
+    force=no
+
+- name: Add initial DokuWiki admin user
+  template:
+    src=var_www_dokuwiki_conf_users_auth.j2
+    dest=/var/www/dokuwiki/conf/users.auth.php
+    owner=www-data
+    group=www-data
+    mode=0644
+    force=no
+
+- name: Create the Apache dokuwiki sites config files
+  template:
+    src=etc_apache2_sites-available_dokuwiki.j2
+    dest=/etc/apache2/sites-available/dokuwiki_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite dokuwiki_{{ item }}.conf creates=/etc/apache2/sites-enabled/dokuwiki_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"

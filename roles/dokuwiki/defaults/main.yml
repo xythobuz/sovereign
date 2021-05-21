@@ -1,0 +1,10 @@
+dokuwiki_subdomain: "wiki"
+dokuwiki_domain: "{{ dokuwiki_subdomain }}.{{ domain }}"
+
+# see https://github.com/splitbrain/dokuwiki/releases
+dokuwiki_version: "stable_2020-07-29"
+dokuwiki_release: "https://github.com/splitbrain/dokuwiki/archive/refs/tags/release_{{ dokuwiki_version }}.tar.gz"
+
+dokuwiki_admin_username: "{{ main_user_name }}"
+dokuwiki_admin_email: "{{ admin_email }}"
+dokuwiki_admin_password: "{{ lookup('password', secret + '/' + 'dokuwiki_admin_password length=32') }}"

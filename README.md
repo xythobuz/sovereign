@@ -102,6 +102,7 @@ Create `A` and `AAAA` or `CNAME` records which point to your server's IP address
 * `social.example.com` (for mastodon)
 * `comments.example.com` (for commento)
 * `iot.example.com` (for grafana)
+* `wiki.example.com` (for dokuwiki)
 
 #### Run the Ansible Playbooks
 

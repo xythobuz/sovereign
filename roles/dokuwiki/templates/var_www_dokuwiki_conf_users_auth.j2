@@ -1,0 +1,11 @@
+# users.auth.php
+# <?php exit()?>
+# Don't modify the lines above
+#
+# Userfile
+#
+# Format:
+#
+# login:passwordhash:Real Name:email:groups,comma,separated
+
+{{ dokuwiki_admin_username }}:{{ dokuwiki_admin_password | password_hash('ldap_salted_md5') }}:{{ dokuwiki_admin_username }}:{{ dokuwiki_admin_email }}:admin,user
