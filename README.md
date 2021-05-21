@@ -149,3 +149,9 @@ The same goes for the RSpamD web interface on port 11334.
 To access the gitea admin CLI, execute it like this:
 
     sudo -u git /usr/local/bin/gitea admin create-user --admin --config /etc/gitea/app.ini --name USERNAME --password PASSWORD --email MAIL
+
+To re-new the LetsEncrypt certificates, for example after adding a new role that needs another subdomain, call:
+
+    sudo certbot -c /etc/letsencrypt/cli.conf --cert-name DOMAIN
+
+Then re-run the whole sovereign playbook, or at least the letsencrypt part of it.

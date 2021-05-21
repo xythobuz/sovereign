@@ -6,3 +6,7 @@ keep = True
 expand = True
 agree-tos = True
 non-interactive = True
+
+# Because we are using logrotate for greater flexibility, disable the
+# internal certbot logrotation.
+max-log-backups = 0

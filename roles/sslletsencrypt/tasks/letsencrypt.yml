@@ -3,11 +3,28 @@
     name: ssl-cert
     state: present
 
-- name: Download LetsEncrypt release
-  git: repo=https://github.com/letsencrypt/letsencrypt
-       dest=/root/letsencrypt
-       version=master
-       force=yes
+- name: add stretch-backport for Certbot
+  apt_repository: repo='deb http://deb.debian.org/debian stretch-backports main' state=present update_cache=yes
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '9'
+
+- name: Install Certbot
+  apt:
+    name: "certbot"
+    state: present
+    default_release: stretch-backports
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '9'
+
+- name: Install Certbot
+  apt:
+    name: "certbot"
+    state: present
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
 
 - name: Create directory for LetsEncrypt configuration and certificates
   file: state=directory path=/etc/letsencrypt group=root owner=root
@@ -18,11 +35,6 @@
     dest=/etc/letsencrypt/cli.conf
     owner=root
     group=root
-
-- name: Install LetsEncrypt package dependencies
-  command: /root/letsencrypt/letsencrypt-auto --help
-  register: le_deps_result
-  changed_when: "'Bootstrapping dependencies' in le_deps_result.stdout"
 
 - name: Create directory for pre-renewal scripts
   file: state=directory path=/etc/letsencrypt/prerenew group=root owner=root
