@@ -34,6 +34,9 @@
     - iotop
     - molly-guard
     - mosh
+    - php
+    - php-pgsql
+    - php-gd
     - python3-software-properties
     - ruby
     - screen

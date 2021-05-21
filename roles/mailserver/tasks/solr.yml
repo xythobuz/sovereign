@@ -26,6 +26,16 @@
     owner=root
     group=tomcat8
   notify: restart solr
+  when: ansible_distribution_version == '9'
+
+- name: Copy tweaked Tomcat config file into place
+  copy:
+    src=etc_tomcat9_server.xml
+    dest=/etc/tomcat9/server.xml
+    owner=root
+    group=tomcat
+  notify: restart solr
+  when: ansible_distribution_version == '10'
 
 - name: Copy tweaked Solr config file into place
   copy:
@@ -42,3 +52,13 @@
     owner=tomcat8
     group=tomcat8
   notify: restart solr
+  when: ansible_distribution_version == '9'
+
+- name: Create Solr index directory
+  file:
+    state=directory
+    path=/data/solr
+    owner=tomcat
+    group=tomcat
+  notify: restart solr
+  when: ansible_distribution_version == '10'

@@ -1,0 +1,6 @@
+check process tomcat matching tomcat9
+  group mail
+  start program = "/bin/systemctl start tomcat9"
+  stop program = "/bin/systemctl stop tomcat9"
+  if failed port 8080 then alert
+  if failed port 8080 for 5 cycles then restart

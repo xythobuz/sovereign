@@ -152,11 +152,25 @@
   with_items:
     - apache2
     - dovecot
-    - pgsql
     - postfix
     - sshd
-    - tomcat
   notify: restart monit
+
+- name: Copy monit service config files into place
+  copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
+  with_items:
+    - pgsql_deb9
+    - tomcat_deb9
+  notify: restart monit
+  when: ansible_distribution_version == '9'
+
+- name: Copy monit service config files into place
+  copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
+  with_items:
+    - pgsql_deb10
+    - tomcat_deb10
+  notify: restart monit
+  when: ansible_distribution_version == '10'
 
 # TODO add to fail2ban when monit_page_public == 1
 

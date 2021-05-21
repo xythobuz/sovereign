@@ -7,12 +7,14 @@
     state=present
   tags:
     - dependencies
+  when: ansible_distribution_version == '9'
 
 - name: Add Z-Push repository
   apt_repository:
     repo="deb http://repo.z-hub.io/z-push:/final/Debian_9.0/ /"
   tags:
     - dependencies
+  when: ansible_distribution_version == '9'
 
 - name: Install Z-Push
   apt:
@@ -30,6 +32,23 @@
     - z-push-autodiscover
   tags:
     - dependencies
+  when: ansible_distribution_version == '9'
+
+- name: Install Z-Push
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - z-push
+    - z-push-common
+    - z-push-backend-combined
+    - z-push-backend-imap
+    - z-push-backend-carddav
+    - z-push-backend-caldav
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
 
 - name: Ensure Z-Push state and log directories are in place
   file:
