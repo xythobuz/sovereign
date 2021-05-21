@@ -1,7 +1,3 @@
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'
-
 # must match values in roles/common
 db_admin_username: 'postgres'
 db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

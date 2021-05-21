@@ -1,7 +1,3 @@
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'
-
 gitea_subdomain: "git"
 gitea_domain: "{{ gitea_subdomain }}.{{ domain }}"
 

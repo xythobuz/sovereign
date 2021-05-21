@@ -2,7 +2,3 @@
 webmail_subdomain: "mail"
 webmail_domain: "{{ webmail_subdomain }}.{{ domain }}"
 webmail_language: "en_US"
-
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'

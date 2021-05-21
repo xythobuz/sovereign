@@ -1,7 +1,3 @@
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'
-
 backup_vpn_net: "10.8.0.0/24"
 backup_vpn_bridge: "10.8.0.2"
 backup_host: "192.168.0.10"

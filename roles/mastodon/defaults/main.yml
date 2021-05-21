@@ -5,10 +5,6 @@ ruby_version: 2.6.0
 rbenv_version: v1.1.1
 ruby_build_version: v20181225
 
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'
-
 mastodon_db_username: mastodonuser
 mastodon_db_password: "{{ lookup('password', secret + '/' + 'mastodon_db_password length=32') }}"
 mastodon_db_database: mastodon

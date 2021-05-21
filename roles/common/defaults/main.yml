@@ -5,11 +5,6 @@ server_hostname: "{{ server_fqdn }}"
 friendly_networks:
   - ""
 
-# pass
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'
-
 db_admin_username: 'postgres'
 db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
 

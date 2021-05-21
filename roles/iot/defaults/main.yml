@@ -6,10 +6,6 @@ grafana_internal_port: '2942'
 mqtt_admin_version: '1.0.0'
 mqtt_admin_release: "https://github.com/hobbyquaker/mqtt-admin/releases/download/v{{ mqtt_admin_version }}/mqtt-admin_{{ mqtt_admin_version }}.zip"
 
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'
-
 grafana_main_user: "{{ main_user_name }}"
 grafana_main_user_password: "{{ lookup('password', secret + '/' + 'grafana_main_user_password length=20 chars=hexdigits') }}"
 

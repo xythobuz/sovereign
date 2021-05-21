@@ -1,8 +1,3 @@
-# pass
-secret_root: '{{ inventory_dir | realpath }}'
-secret_name: 'secret'
-secret: '{{ secret_root + "/" + secret_name }}'
-
 fathom_admin_username: "{{ admin_email }}"
 fathom_admin_password: "{{ lookup('password', secret + '/' + 'fathom_admin_password length=32') }}"
 
