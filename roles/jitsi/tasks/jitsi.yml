@@ -1,0 +1,111 @@
+- name: Ensure repository key for Jitsi is in place
+  apt_key: url=https://download.jitsi.org/jitsi-key.gpg.key state=present
+  tags:
+    - dependencies
+
+- name: Add Jitsi repository
+  apt_repository: repo="deb https://download.jitsi.org stable/"
+  tags:
+    - dependencies
+
+- name: Set firewall rules for Jitsi TCP
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+    - 80
+    - 443
+    - 22
+    - 5349
+  tags: ufw
+
+- name: Set firewall rules for Jitsi UDP
+  ufw: rule=allow port={{ item }} proto=udp
+  with_items:
+    - 10000
+    - 3478
+  tags: ufw
+
+- name: Set Jitsi Certificate Selection
+  debconf:
+    name: jitsi-meet
+    question: jitsi-meet/cert-choice
+    value: I want to use my own certificate
+    vtype: select
+
+- name: Set Jitsi Certificate Key
+  debconf:
+    name: jitsi-meet
+    question: jitsi-meet/cert-path-key
+    value: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
+    vtype: string
+
+- name: Set Jitsi Certificate
+  debconf:
+    name: jitsi-meet
+    question: jitsi-meet/cert-path-crt
+    value: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+    vtype: string
+
+- name: Set Jitsi Hostname
+  debconf:
+    name: "{{ item }}"
+    question: "{{ item }}/jvb-hostname"
+    value: "{{ jitsi_domain }}"
+    vtype: string
+  with_items:
+    - jitsi-meet
+    - jitsi-meet-prosody
+    - jitsi-videobridge
+
+- name: Install Jitsi and dependencies from official repository
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - jitsi-meet
+  tags:
+    - dependencies
+
+- name: Create the Jitsi Prosody Config
+  template:
+    src=etc_prosody_conf.avail_jitsi_domain.cfg.lua.j2
+    dest=/etc/prosody/conf.avail/{{ jitsi_domain }}.cfg.lua
+    owner=root
+    group=root
+  notify: restart jitsi
+
+- name: Create the Jitsi Config
+  template:
+    src=etc_jitsi_meet_jitsi_domain-config.js.j2
+    dest=/etc/jitsi/meet/{{ jitsi_domain }}-config.js
+    owner=root
+    group=root
+  notify: restart jitsi
+
+- name: Create the Jicofo Config
+  template:
+    src=etc_jitsi_jicofo_sip-communicator.properties.j2
+    dest=/etc/jitsi/jicofo/sip-communicator.properties
+    owner=root
+    group=root
+  notify: restart jitsi
+
+- name: Create the Apache Jitsi sites config files
+  template:
+    src=etc_apache2_sites-available_jitsi.j2
+    dest=/etc/apache2/sites-available/jitsi_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+  notify: restart apache
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite jitsi_{{ item }}.conf creates=/etc/apache2/sites-enabled/jitsi_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
+
+- name: Create Jitsi accounts
+  command: prosodyctl register {{ item.name }} {{ jitsi_domain }} {{ item.password }}
+  with_items: "{{ jitsi_accounts }}"
+  ignore_errors: True

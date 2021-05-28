@@ -72,6 +72,10 @@
   stat: path=/etc/openvpn/server.conf
   register: openvpn_config_file
 
+- name: Determine if Jitsi is installed
+  stat: path=/etc/jitsi/jicofo/config
+  register: jitsi_config_file
+
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
   notify: restart monit
@@ -81,6 +85,11 @@
   copy: src=etc_monit_conf.d_prosody dest=/etc/monit/conf.d/prosody
   notify: restart monit
   when: prosody_config_file.stat.exists == True
+
+- name: Copy Jitsi monit service config files into place
+  copy: src=etc_monit_conf.d_jitsi dest=/etc/monit/conf.d/jitsi
+  notify: restart monit
+  when: jitsi_config_file.stat.exists == True
 
 - name: Copy Fathom monit service config files into place
   copy: src=etc_monit_conf.d_fathom dest=/etc/monit/conf.d/fathom

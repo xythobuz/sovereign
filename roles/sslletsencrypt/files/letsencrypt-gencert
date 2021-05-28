@@ -18,7 +18,7 @@ for domain in "$@"; do
 
   # subdomains - www.foo.com mail.foo.com ...
   # TODO includes servername (eddie / stage)!
-  for sub in stage www mail autoconfig stats news cloud git matrix status social comments iot wiki; do
+  for sub in stage www mail autoconfig stats news cloud git matrix status social comments iot wiki jitsi; do
     # only add if the DNS entry for the subdomain does actually exist
     if (getent hosts $sub.$domain > /dev/null); then
       if [ -z "$d" ]; then

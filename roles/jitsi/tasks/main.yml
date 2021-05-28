@@ -1,0 +1,2 @@
+---
+- include: jitsi.yml tags=jitsi

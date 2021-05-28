@@ -1,5 +1,0 @@
-prosody_admin: "{{ admin_email }}"
-prosody_accounts:
-  - name: "{{ main_user_name }}"
-    domain: "{{ domain }}"
-    password: "{{ lookup('password', secret + '/' + 'xmpp_main_user_password length=32') }}"

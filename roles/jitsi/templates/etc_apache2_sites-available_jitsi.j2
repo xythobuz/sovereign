@@ -1,0 +1,53 @@
+<VirtualHost *:80>
+    ServerName {{ jitsi_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ jitsi_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ jitsi_subdomain }}.{{ item.name }}
+
+    # enable HTTP/2, if available
+    Protocols h2 http/1.1
+
+    SSLEngine               On
+    SSLProxyEngine          On
+
+    Header always set Strict-Transport-Security "max-age=63072000"
+
+    DocumentRoot "/usr/share/jitsi-meet"
+    <Directory "/usr/share/jitsi-meet">
+        Options Indexes MultiViews Includes FollowSymLinks
+        AddOutputFilter Includes html
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    ErrorDocument 404 /static/404.html
+
+    Alias "/config.js" "/etc/jitsi/meet/{{ jitsi_domain }}-config.js"
+    <Location /config.js>
+        Require all granted
+    </Location>
+
+    Alias "/external_api.js" "/usr/share/jitsi-meet/libs/external_api.min.js"
+    <Location /external_api.js>
+        Require all granted
+    </Location>
+
+    ProxyPreserveHost on
+    ProxyPass /http-bind http://localhost:5280/http-bind
+    ProxyPassReverse /http-bind http://localhost:5280/http-bind
+    ProxyPass /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPassReverse /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPass /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
+    ProxyPassReverse /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
+
+    RewriteEngine on
+    RewriteRule ^/([a-zA-Z0-9]+)$ /index.html
+
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/jitsi.info-error_log
+    CustomLog               /var/log/apache2/jitsi.info-access_log common
+</VirtualHost>

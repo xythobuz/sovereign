@@ -1,0 +1,13 @@
+check process jicofo matching jicofo
+  group social
+  start program = "/bin/systemctl start jicofo"
+  stop program = "/bin/systemctl stop jicofo"
+  if does not exist then restart
+  if 5 restarts within 5 cycles then timeout
+
+check process jitsi-videobridge2 matching jitsi-videobridge
+  group social
+  start program = "/bin/systemctl start jitsi-videobridge2"
+  stop program = "/bin/systemctl stop jitsi-videobridge2"
+  if does not exist then restart
+  if 5 restarts within 5 cycles then timeout
