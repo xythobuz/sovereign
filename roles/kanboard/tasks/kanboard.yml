@@ -1,0 +1,92 @@
+- name: Install kanboard dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - php-cli
+    - php-mbstring
+    - php-sqlite3
+    - php-opcache
+    - php-json
+    - php-ldap
+    - php-gd
+    - php-xml
+    - php-mysql
+    - php-pgsql
+    - php-curl
+    - php-zip
+  tags:
+    - dependencies
+
+- name: Create temporary kanboard directory
+  file: state=directory path=/root/kanboard
+
+- name: Download kanboard {{ kanboard_version }} release
+  get_url:
+    url="{{ kanboard_release }}"
+    dest=/root/kanboard/kanboard-{{ kanboard_version }}.tar.gz
+
+- name: Unpack kanboard {{ kanboard_version }} source
+  shell: tar xzvf /root/kanboard/kanboard-{{ kanboard_version }}.tar.gz
+  args:
+    chdir: /root/kanboard
+    creates: /root/kanboard/kanboard-{{ kanboard_version }}
+
+- name: Copy kanboard to web server directory
+  shell: cp -R /root/kanboard/kanboard-{{ kanboard_version }}/. /var/www/kanboard/
+
+- name: Add kanboard postgres user
+  postgresql_user:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ kanboard_db_username }}
+    password="{{ kanboard_db_password }}"
+    encrypted=yes
+    state=present
+
+- name: Create kanboard database
+  postgresql_db:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ kanboard_db_database }}
+    state=present
+    owner={{ kanboard_db_username }}
+
+- name: Copy kanboard config file
+  template:
+    src=var_www_kanboard_config.j2
+    dest=/var/www/kanboard/config.php
+    owner=root
+    group=root
+
+- name: Ensure proper directory rights for kanboard data
+  shell: chown -R www-data:www-data /var/www/kanboard/data
+
+- name: Ensure proper directory rights for kanboard plugins
+  shell: chown -R www-data:www-data /var/www/kanboard/plugins
+
+- name: Enable kanboard cron job
+  cron:
+    name: "kanboard"
+    minute: "0"
+    hour: "2"
+    user: www-data
+    job: "cd /var/www/kanboard && ./cli cronjob >/dev/null 2>&1"
+
+- name: Create the Apache kanboard sites config files
+  template:
+    src=etc_apache2_sites-available_kanboard.j2
+    dest=/etc/apache2/sites-available/kanboard_{{ item.name }}.conf
+    owner=root
+    group=root
+  notify: restart apache
+  with_items: "{{ virtual_domains }}"
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite kanboard_{{ item }}.conf creates=/etc/apache2/sites-enabled/kanboard_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"

@@ -1,0 +1,2 @@
+---
+- include: kanboard.yml tags=kanboard

@@ -1,0 +1,13 @@
+kanboard_subdomain: "kanboard"
+kanboard_domain: "{{ kanboard_subdomain }}.{{ domain }}"
+
+kanboard_version: "1.2.20"
+kanboard_release: "https://github.com/kanboard/kanboard/archive/refs/tags/v{{ kanboard_version }}.tar.gz"
+
+kanboard_db_username: kanboarduser
+kanboard_db_password: "{{ lookup('password', secret + '/' + 'kanboard_db_password length=32') }}"
+kanboard_db_database: kanboard
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

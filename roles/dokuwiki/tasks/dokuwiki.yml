@@ -26,7 +26,7 @@
 - name: Copy DokuWiki to web server directory
   shell: cp -R /root/dokuwiki/dokuwiki-release_{{ dokuwiki_version }}/. /var/www/dokuwiki/
 
-- name: Copy DokuWiki initial data to out data directory
+- name: Copy DokuWiki initial data to our data directory
   shell: cp -R /var/www/dokuwiki/data/. /data/dokuwiki/
 
 - name: Ensure proper DokuWiki data directory permissions

@@ -104,6 +104,7 @@ Create `A` and `AAAA` or `CNAME` records which point to your server's IP address
 * `iot.example.com` (for grafana)
 * `wiki.example.com` (for dokuwiki)
 * `jitsi.example.com` (for jitsi)
+* `kanboard.example.com` (for kanboard)
 
 #### Run the Ansible Playbooks
 
@@ -154,6 +155,6 @@ To access the gitea admin CLI, execute it like this:
 
 To re-new the LetsEncrypt certificates, for example after adding a new role that needs another subdomain, call:
 
-    sudo certbot -c /etc/letsencrypt/cli.conf --cert-name DOMAIN
+    sudo certbot delete -c /etc/letsencrypt/cli.conf --cert-name DOMAIN
 
 Then re-run the whole sovereign playbook, or at least the letsencrypt part of it.

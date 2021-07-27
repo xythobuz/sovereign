@@ -1,0 +1,33 @@
+<VirtualHost *:80>
+    ServerName {{ kanboard_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ kanboard_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ kanboard_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "/var/www/kanboard"
+    DirectoryIndex          index.php
+    HostnameLookups         Off
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/kanboard.info-error_log
+    CustomLog               /var/log/apache2/kanboard.info-access_log common
+
+    <Directory /var/www/kanboard>
+        Options -Indexes
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+        Require all granted
+        DirectoryIndex index.php
+    </Directory>
+
+    <Directory /var/www/kanboard/data>
+        Options -Indexes
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    </Directory>
+</VirtualHost>
