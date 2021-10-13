@@ -50,6 +50,22 @@
     - dependencies
   when: ansible_distribution_version == '10'
 
+- name: Install Z-Push
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - z-push
+    - z-push-common
+    - z-push-backend-combined
+    - z-push-backend-imap
+    - z-push-backend-carddav
+    - z-push-backend-caldav
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '11'
+
 - name: Ensure Z-Push state and log directories are in place
   file:
     state=directory

@@ -26,6 +26,14 @@
     - dependencies
   when: ansible_distribution_version == '10'
 
+- name: Install Certbot
+  apt:
+    name: "certbot"
+    state: present
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '11'
+
 - name: Create directory for LetsEncrypt configuration and certificates
   file: state=directory path=/etc/letsencrypt group=root owner=root
 
@@ -69,8 +77,19 @@
 - name: Create live directory for LetsEncrypt cron job
   file: state=directory path=/etc/letsencrypt/live group=ssl-cert owner=root
 
-- name: Get an SSL certificate for {{ virtual_domains | json_query('[*].name') | join(' ') }} from Let's Encrypt
-  script: letsencrypt-gencert {{ virtual_domains | json_query('[*].name') | join(' ') }} creates=/etc/letsencrypt/live/{{ domain }}/privkey.pem
+- name: Copy script to generate initial certificate
+  template:
+    src=root_letsencrypt_gencert.j2
+    dest=/root/letsencrypt-gencert
+    owner=root
+    group=root
+    mode=0755
+
+- name: Get an SSL certificate for all specified domains and subdomains from Let's Encrypt
+  command: /root/letsencrypt-gencert creates=/etc/letsencrypt/live/{{ domain }}/privkey.pem
+
+- name: Remove certificate script
+  file: path=/root/letsencrypt-gencert state=absent
 
 - name: Modify permissions to allow ssl-cert group access to archive
   file: path=/etc/letsencrypt/archive owner=root group=ssl-cert mode=0750 recurse=yes

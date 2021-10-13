@@ -25,7 +25,22 @@
     - dependencies
   when: ansible_distribution_version == '10'
 
+- name: Install Postgres
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - postgresql
+    - python3-psycopg2
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '11'
+
 - name: Set password for PostgreSQL admin user
   become: true
   become_user: postgres
   postgresql_user: name={{ db_admin_username }} password={{ db_admin_password }} encrypted=yes
+
+- name: Copy PostgreSQL configuration into place
+  copy: src=etc_postgresql_11_main_postgresql.conf dest=/etc/postgresql/11/main/postgresql.conf owner=postgres group=postgres mode=0644

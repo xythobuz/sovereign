@@ -63,7 +63,7 @@
   notify: restart znc
 
 - name: Copy expect script for znc password generation
-  template: src=root_znc_pw.j2 dest=/root/znc_pw mode=0777
+  template: src=root_znc_pw.j2 dest=/root/znc_pw mode=0755
   when: znc_config.rc != 0
 
 - name: Run script to generate znc hash and salt

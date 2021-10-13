@@ -30,6 +30,8 @@
     question: jitsi-meet/cert-choice
     value: I want to use my own certificate
     vtype: select
+  tags:
+    - dependencies
 
 - name: Set Jitsi Certificate Key
   debconf:
@@ -37,6 +39,8 @@
     question: jitsi-meet/cert-path-key
     value: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
     vtype: string
+  tags:
+    - dependencies
 
 - name: Set Jitsi Certificate
   debconf:
@@ -44,6 +48,8 @@
     question: jitsi-meet/cert-path-crt
     value: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
     vtype: string
+  tags:
+    - dependencies
 
 - name: Set Jitsi Hostname
   debconf:
@@ -55,6 +61,8 @@
     - jitsi-meet
     - jitsi-meet-prosody
     - jitsi-videobridge
+  tags:
+    - dependencies
 
 - name: Install Jitsi and dependencies from official repository
   apt:

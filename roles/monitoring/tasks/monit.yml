@@ -181,6 +181,14 @@
   notify: restart monit
   when: ansible_distribution_version == '10'
 
+- name: Copy monit service config files into place
+  copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
+  with_items:
+    - pgsql_deb10
+    - tomcat_deb10
+  notify: restart monit
+  when: ansible_distribution_version == '11'
+
 # TODO add to fail2ban when monit_page_public == 1
 
 - name: Create the Apache monit sites config files

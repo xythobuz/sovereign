@@ -12,7 +12,6 @@
     - postfix-pcre
     - postfix-pgsql
     - postgrey
-    - python-psycopg2
     - sasl2-bin
   tags:
     - dependencies

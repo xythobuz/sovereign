@@ -35,6 +35,15 @@
   notify: restart apache
   when: ansible_distribution_version == '10'
 
+- name: Setup PHP config
+  template:
+    src=etc_php_7.4_apache2_php.ini.j2
+    dest=/etc/php/7.4/apache2/php.ini
+    owner=root
+    group=root
+  notify: restart apache
+  when: ansible_distribution_version == '11'
+
 - name: Add custom postgres user
   postgresql_user:
     login_host=localhost

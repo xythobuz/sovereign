@@ -11,6 +11,19 @@
     - solr-tomcat
   tags:
     - dependencies
+  when: ansible_distribution_version == '9'
+
+- name: Install Solr and related packages
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - dovecot-solr
+    - solr-tomcat
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
 
 - name: Work around Debian bug and copy Solr schema file into place
   copy:
@@ -62,3 +75,12 @@
     group=tomcat
   notify: restart solr
   when: ansible_distribution_version == '10'
+
+- name: Create Solr index directory
+  file:
+    state=directory
+    path=/data/solr
+    owner=tomcat
+    group=tomcat
+  notify: restart solr
+  when: ansible_distribution_version == '11'

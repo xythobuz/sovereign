@@ -24,11 +24,13 @@
     packages:
     - acl
     - apache2
+    - apt-listchanges
     - apt-transport-https
     - apticron
     - build-essential
     - debian-goodies
     - git
+    - gnupg
     - htop
     - iftop
     - iotop
