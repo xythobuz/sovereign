@@ -8,3 +8,5 @@ monit_alert_emails:
 
 monit_page_public: 1
 monit_subdomain: status
+
+default_http_redirect: true

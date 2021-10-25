@@ -1,9 +1,27 @@
 - name: Add monitoring vhost to apache
   template: src=etc_apache2_sites-available_00-status.conf dest=/etc/apache2/sites-available/00-status.conf
+  notify: restart apache
+  when: default_http_redirect
 
 - name: Enable the status vhost
   command: a2ensite 00-status.conf creates=/etc/apache2/sites-enabled/00-status.conf
   notify: restart apache
+  when: default_http_redirect
+
+- name: add buster-backport for Monit
+  apt_repository: repo='deb http://deb.debian.org/debian buster-backports main' state=present update_cache=yes
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
+
+- name: Install monit
+  apt:
+    name: monit
+    state: present
+    default_release: buster-backports
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
 
 - name: Install monit
   apt:
@@ -11,10 +29,13 @@
     state: present
   tags:
     - dependencies
+  when: ansible_distribution_version != '10'
 
 - name: Copy monit master config file into place
   template: src=etc_monit_monitrc.j2 dest=/etc/monit/monitrc
   notify: restart monit
+
+# ---------------------------------------
 
 - name: Determine if ZNC is installed
   stat: path=/usr/lib/znc/configs/znc.conf
@@ -75,6 +96,52 @@
 - name: Determine if Jitsi is installed
   stat: path=/etc/jitsi/jicofo/config
   register: jitsi_config_file
+
+- name: Determine if MongoDB is installed
+  stat: path=/etc/mongod.conf
+  register: mongodb_config_file
+
+- name: Determine if Rocket.Chat is installed
+  stat: path=/usr/local/bin/Rocket.Chat/main.js
+  register: rocketchat_config_file
+
+- name: Determine if Apache2 is installed
+  stat: path=/etc/apache2/apache2.conf
+  register: apache2_config_file
+
+- name: Determine if Dovecot is installed
+  stat: path=/etc/dovecot/dovecot.conf
+  register: dovecot_config_file
+
+- name: Determine if Postfix is installed
+  stat: path=/etc/postfix/main.cf
+  register: postfix_config_file
+
+- name: Determine if sshd is installed
+  stat: path=/etc/ssh/sshd_config
+  register: sshd_config_file
+
+- name: Determine if pgsql_deb9 is installed
+  stat: path=/etc/postgresql/9.6/main/pg_ctl.conf
+  register: pgsql9_config_file
+
+- name: Determine if pgsql_deb10 is installed
+  stat: path=/etc/postgresql/11/main/pg_ctl.conf
+  register: pgsql10_config_file
+
+- name: Determine if pgsql_deb11 is installed
+  stat: path=/etc/postgresql/13/main/pg_ctl.conf
+  register: pgsql11_config_file
+
+- name: Determine if tomcat_deb9 is installed
+  stat: path=/etc/tomcat8/server.xml
+  register: tomcat9_config_file
+
+- name: Determine if tomcat_deb10 is installed
+  stat: path=/etc/tomcat9/server.xml
+  register: tomcat10_config_file
+
+# ---------------------------------------
 
 - name: Copy ZNC monit service config files into place
   copy: src=etc_monit_conf.d_znc dest=/etc/monit/conf.d/znc
@@ -156,38 +223,62 @@
   notify: restart monit
   when: openvpn_config_file.stat.exists == True
 
-- name: Copy monit service config files into place
-  copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
-  with_items:
-    - apache2
-    - dovecot
-    - postfix
-    - sshd
+- name: Copy MongoDB monit service config files into place
+  copy: src=etc_monit_conf.d_mongodb dest=/etc/monit/conf.d/mongodb
   notify: restart monit
+  when: mongodb_config_file.stat.exists == True
 
-- name: Copy monit service config files into place
-  copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
-  with_items:
-    - pgsql_deb9
-    - tomcat_deb9
+- name: Copy Rocket.Chat monit service config files into place
+  copy: src=etc_monit_conf.d_rocketchat dest=/etc/monit/conf.d/rocketchat
   notify: restart monit
-  when: ansible_distribution_version == '9'
+  when: rocketchat_config_file.stat.exists == True
 
-- name: Copy monit service config files into place
-  copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
-  with_items:
-    - pgsql_deb10
-    - tomcat_deb10
+- name: Copy apache2 monit service config files into place
+  copy: src=etc_monit_conf.d_apache2 dest=/etc/monit/conf.d/apache2
   notify: restart monit
-  when: ansible_distribution_version == '10'
+  when: apache2_config_file.stat.exists == True
 
-- name: Copy monit service config files into place
-  copy: src=etc_monit_conf.d_{{ item }} dest=/etc/monit/conf.d/{{ item }}
-  with_items:
-    - pgsql_deb10
-    - tomcat_deb10
+- name: Copy dovecot monit service config files into place
+  copy: src=etc_monit_conf.d_dovecot dest=/etc/monit/conf.d/dovecot
   notify: restart monit
-  when: ansible_distribution_version == '11'
+  when: dovecot_config_file.stat.exists == True
+
+- name: Copy postfix monit service config files into place
+  copy: src=etc_monit_conf.d_postfix dest=/etc/monit/conf.d/postfix
+  notify: restart monit
+  when: postfix_config_file.stat.exists == True
+
+- name: Copy sshd monit service config files into place
+  copy: src=etc_monit_conf.d_sshd dest=/etc/monit/conf.d/ssh
+  notify: restart monit
+  when: sshd_config_file.stat.exists == True
+
+- name: Copy pgsql deb9 monit service config files into place
+  copy: src=etc_monit_conf.d_pgsql_deb9 dest=/etc/monit/conf.d/pgsql_deb9
+  notify: restart monit
+  when: pgsql9_config_file.stat.exists == True
+
+- name: Copy tomcat deb9 monit service config files into place
+  copy: src=etc_monit_conf.d_tomcat_deb9 dest=/etc/monit/conf.d/tomcat_deb9
+  notify: restart monit
+  when: tomcat9_config_file.stat.exists == True
+
+- name: Copy pgsql deb10 monit service config files into place
+  copy: src=etc_monit_conf.d_pgsql_deb10 dest=/etc/monit/conf.d/pgsql_deb10
+  notify: restart monit
+  when: pgsql10_config_file.stat.exists == True
+
+- name: Copy tomcat deb10 monit service config files into place
+  copy: src=etc_monit_conf.d_tomcat_deb10 dest=/etc/monit/conf.d/tomcat_deb10
+  notify: restart monit
+  when: tomcat10_config_file.stat.exists == True
+
+- name: Copy pgsql deb11 monit service config files into place
+  copy: src=etc_monit_conf.d_pgsql_deb11 dest=/etc/monit/conf.d/pgsql_deb11
+  notify: restart monit
+  when: pgsql11_config_file.stat.exists == True
+
+# ---------------------------------------
 
 # TODO add to fail2ban when monit_page_public == 1
 

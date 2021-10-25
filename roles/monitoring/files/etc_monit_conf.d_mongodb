@@ -1,0 +1,8 @@
+check process mongodb matching "mongod"
+  group database
+  start program = "/bin/systemctl start mongod"
+  stop program = "/bin/systemctl stop mongod"
+  if failed port 27017 type tcp
+    with timeout 10 seconds
+    then restart
+  if 5 restarts within 5 cycles then timeout

@@ -1,16 +1,6 @@
 ---
 # Installs Mosquitto MQTT Broker
 
-- name: Ensure repository key for Mosquitto is in place
-  apt_key: url=https://repo.mosquitto.org/debian/mosquitto-repo.gpg.key state=present
-  tags:
-    - dependencies
-
-- name: Add Mosquitto repository
-  apt_repository: repo="deb https://repo.mosquitto.org/debian {{ ansible_distribution_release }} main"
-  tags:
-    - dependencies
-
 - name: Install Mosquitto from official repository
   apt:
     name: "{{ packages }}"
@@ -46,8 +36,9 @@
 - name: Set firewall rules for Mosquitto
   ufw: rule=allow port={{ item }} proto=tcp
   with_items:
-    - 8883  # mqtts (+ ssl)
-    - 8083  # mqtt websocket
+    - 1883 # mqtt (only enable in private networks!)
+    - 8883 # mqtts (+ ssl)
+    - 8083 # mqtt websocket
   tags: ufw
 
 - name: Register new Mosquitto service

@@ -8,6 +8,7 @@
 <VirtualHost *:443>
     ServerName {{ grafana_subdomain }}.{{ item.name }}
     ServerAlias {{ grafana_subdomain }}
+    ServerAlias {{ domain }}
 
     SSLEngine               On
     DocumentRoot            "{{ item.doc_root }}"
@@ -23,6 +24,13 @@
 
     ProxyRequests           Off
     ProxyPreserveHost       On
+
+    ProxyPass               /nodered/ http://localhost:1880/
+    ProxyPassReverse        /nodered/ http://localhost:1880/
+
+    ProxyPass               /monit/ http://localhost:2812/
+    ProxyPassReverse        /monit/ http://localhost:2812/
+
     ProxyPass               / http://localhost:{{ grafana_internal_port }}/
     ProxyPassReverse        / http://localhost:{{ grafana_internal_port }}/
 </VirtualHost>

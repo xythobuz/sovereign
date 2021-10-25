@@ -1,0 +1,18 @@
+- name: Create temporary Node-Red directory
+  file: state=directory path=/root/nodered
+
+- name: Download Node-Red install script
+  get_url:
+    url="https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered"
+    dest=/root/nodered/update-nodejs-and-nodered
+    owner=root
+    mode=0755
+
+- name: Run Node-Red install script
+  shell: /root/nodered/update-nodejs-and-nodered --confirm-root --confirm-install --skip-pi --restart --update-nodes
+
+- name: Register new Node-Red service
+  systemd: name=nodered daemon_reload=yes enabled=yes
+
+- name: Start new Node-Red instance
+  service: name=nodered state=started
