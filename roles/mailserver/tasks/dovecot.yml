@@ -105,10 +105,16 @@
     - 10-mail.conf
     - 10-master.conf
     - 90-antispam.conf
-    - 90-plugin.conf
     - 90-sieve.conf
     - auth-sql.conf.ext
   notify: restart dovecot
+
+- name: Copy additional Dovecot SOLR configuration file in place
+  copy:
+    src=etc_dovecot_conf.d_90-plugin.conf
+    dest=/etc/dovecot/conf.d/90-plugin.conf
+  notify: restart dovecot
+  when: ansible_distribution_version != '11'
 
 - name: Template additional Dovecot configuration files
   template:

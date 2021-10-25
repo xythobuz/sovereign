@@ -50,22 +50,6 @@
     - dependencies
   when: ansible_distribution_version == '10'
 
-- name: Install Z-Push
-  apt:
-    name: "{{ packages }}"
-    state: present
-  vars:
-    packages:
-    - z-push
-    - z-push-common
-    - z-push-backend-combined
-    - z-push-backend-imap
-    - z-push-backend-carddav
-    - z-push-backend-caldav
-  tags:
-    - dependencies
-  when: ansible_distribution_version == '11'
-
 - name: Ensure Z-Push state and log directories are in place
   file:
     state=directory
@@ -77,36 +61,43 @@
     - /data/zpush-state
     - /var/log/z-push
   notify: restart apache
+  when: ansible_distribution_version != '11'
 
 - name: Copy Z-Push common config.php into place
   template:
     src=usr_share_z-push_config.php.j2
     dest=/usr/share/z-push/config.php
+  when: ansible_distribution_version != '11'
 
 - name: Copy Z-Push combined backend config.php into place
   template:
     src=usr_share_z-push_backend_combined_config.php.j2
     dest=/usr/share/z-push/backend/combined/config.php
+  when: ansible_distribution_version != '11'
 
 - name: Copy Z-Push IMAP backend config.php into place
   template:
     src=usr_share_z-push_backend_imap_config.php.j2
     dest=/usr/share/z-push/backend/imap/config.php
+  when: ansible_distribution_version != '11'
 
 - name: Copy Z-Push CardDAV backend config.php into place
   template:
     src=usr_share_z-push_backend_carddav_config.php.j2
     dest=/usr/share/z-push/backend/carddav/config.php
+  when: ansible_distribution_version != '11'
 
 - name: Copy Z-Push CalDAV backend config.php into place
   template:
     src=usr_share_z-push_backend_caldav_config.php.j2
     dest=/usr/share/z-push/backend/caldav/config.php
+  when: ansible_distribution_version != '11'
 
 - name: Copy Z-Push autodiscover config.php into place
   template:
     src=usr_share_z-push_autodiscover_config.php.j2
     dest=/usr/share/z-push/autodiscover/config.php
+  when: ansible_distribution_version != '11'
 
 - name: Add Z-Push autodiscover to Apache config
   lineinfile:
@@ -114,10 +105,12 @@
     line: '    AliasMatch (?i)/Autodiscover/Autodiscover.xml$ "/usr/share/z-push/autodiscover/autodiscover.php"'
     insertafter: 'Microsoft-Server-ActiveSync'
   notify: restart apache
+  when: ansible_distribution_version != '11'
 
 - name: Enable z-push Apache alias and PHP configuration file
   command: a2enconf z-push creates=/etc/apache2/conf-enabled/z-push.conf
   notify: restart apache
+  when: ansible_distribution_version != '11'
 
 - name: Configure z-push logrotate
   copy:
@@ -126,3 +119,4 @@
     owner=root
     group=root
     mode=0644
+  when: ansible_distribution_version != '11'
