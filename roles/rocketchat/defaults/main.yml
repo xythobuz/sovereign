@@ -1,0 +1,7 @@
+rocketchat_subdomain: "chat"
+rocketchat_domain: "{{ rocketchat_subdomain }}.{{ domain }}"
+
+rocketchat_internal_port: "3042"
+
+rocketchat_version: "3.15.0"
+rocketchat_release: "https://cdn-download.rocket.chat/build/rocket.chat-{{ rocketchat_version }}.tgz"

@@ -1,0 +1,29 @@
+<VirtualHost *:80>
+    ServerName {{ rocketchat_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ rocketchat_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ rocketchat_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    Options                 -Indexes
+    HostnameLookups         Off
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/rocketchat.info-error_log
+    CustomLog               /var/log/apache2/rocketchat.info-access_log common
+
+
+    RewriteEngine On
+    RewriteCond %{HTTP:CONNECTION} Upgrade [NC]
+    RewriteCond %{HTTP:Upgrade} =websocket [NC]
+    RewriteRule /(.*)           ws://localhost:{{ rocketchat_internal_port }}/$1 [P,L]
+    RewriteCond %{HTTP:Upgrade} !=websocket [NC]
+    RewriteRule /(.*)           http://localhost:{{ rocketchat_internal_port }}/$1 [P,L]
+
+    ProxyRequests           Off
+    ProxyPreserveHost       On
+    ProxyPass               / http://localhost:{{ rocketchat_internal_port }}/
+    ProxyPassReverse        / http://localhost:{{ rocketchat_internal_port }}/
+</VirtualHost>

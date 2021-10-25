@@ -1,0 +1,140 @@
+- name: Ensure repository key for MongoDB is in place for Rocket.Chat
+  apt_key: url=https://www.mongodb.org/static/pgp/server-4.4.asc state=present
+  tags:
+    - dependencies
+
+- name: Add MongoDB repository for Rocket.Chat
+  apt_repository: repo="deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.4 main"
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '9'
+
+- name: Add MongoDB repository for Rocket.Chat
+  apt_repository: repo="deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main"
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '10'
+
+- name: Check if Node.js is installed
+  command: dpkg-query -l nodejs
+  register: nodejs_deb_check
+
+- name: Add Node.js repository for Rocket.Chat
+  shell: curl -fsSL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+  when: nodejs_deb_check.stdout.find('no packages found') != -1
+
+- name: Install MongoDB and other Rocket.Chat dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - build-essential
+    - mongodb-org
+    - nodejs
+    - fontconfig
+    - graphicsmagick
+  tags:
+    - dependencies
+
+- name: Install proper Node.js version and dependencies for Rocket.Chat
+  shell: sudo npm install -g inherits n && sudo n 12.18.4
+
+- name: Create temporary Rocket.Chat directory
+  file: state=directory path=/root/rocketchat
+
+- name: Download Rocket.Chat {{ rocketchat_version }} release
+  get_url:
+    url="{{ rocketchat_release }}"
+    dest=/root/rocketchat/rocketchat-{{ rocketchat_version }}.tar.gz
+
+- name: Check if temporary Rocket.Chat {{ rocketchat_version }} directory already exists
+  stat:
+    path: /root/rocketchat/{{ rocketchat_version }}
+  register: rocketchat_unpack_check
+
+- name: Create temporary Rocket.Chat {{ rocketchat_version }} directory
+  file: state=directory path=/root/rocketchat/{{ rocketchat_version }}
+
+- name: Unpack Rocket.Chat {{ rocketchat_version }} source
+  shell: tar xzvf /root/rocketchat/rocketchat-{{ rocketchat_version }}.tar.gz -C /root/rocketchat/{{ rocketchat_version }}
+  args:
+    chdir: /root/rocketchat
+    creates: /root/rocketchat/{{ rocketchat_version }}/bundle
+
+- name: Install Rocket.Chat {{ rocketchat_version }} source
+  shell: cd /root/rocketchat/{{ rocketchat_version }}/bundle/programs/server && npm install --unsafe-perm
+  when: not rocketchat_unpack_check.stat.exists
+
+- name: Create /usr/local/bin/Rocket.Chat
+  file: state=directory path=/usr/local/bin/Rocket.Chat
+
+- name: Stop old Rocket.Chat instance
+  service: name=rocketchat state=stopped
+  ignore_errors: True
+
+- name: Copy Rocket.Chat to /usr/local/bin/Rocket.Chat
+  shell: cp -R /root/rocketchat/{{ rocketchat_version }}/bundle/. /usr/local/bin/Rocket.Chat/
+
+- name: Add rocketchat group
+  group:
+    name: rocketchat
+    state: present
+
+- name: Add rocketchat user
+  user:
+    name: rocketchat
+    create_home: no
+    shell: /bin/bash
+    password_lock: yes
+    state: present
+    system: yes
+    group: rocketchat
+
+- name: Fix Rocket.Chat permissions
+  shell: sudo chown -R rocketchat:rocketchat /usr/local/bin/Rocket.Chat
+
+- name: Create the Rocket.Chat service file
+  template:
+    src=lib_systemd_system_rocketchat.j2
+    dest=/lib/systemd/system/rocketchat.service
+    owner=root
+    group=root
+
+- name: Add modified MongoDB config file for Rocket.Chat
+  copy:
+    src=etc_mongod.conf
+    dest=/etc/mongod.conf
+    owner=root
+    group=root
+  notify: restart mongod
+
+- name: Register new MongoDB service for Rocket.Chat
+  systemd: name=mongod daemon_reload=yes enabled=yes
+
+- name: Start new MongoDB instance for Rocket.Chat
+  service: name=mongod state=restarted
+
+- name: Initiate MongoDB replication set for Rocket.Chat
+  shell: sudo mongo --eval "if (rs.status().codeName == \"NotYetInitialized\") printjson(rs.initiate())"
+
+- name: Register new Rocket.Chat service
+  systemd: name=rocketchat daemon_reload=yes enabled=yes
+
+- name: Start new Rocket.Chat instance
+  service: name=rocketchat state=started
+
+- name: Create the Apache Rocket.Chat sites config files
+  template:
+    src=etc_apache2_sites-available_rocketchat.j2
+    dest=/etc/apache2/sites-available/rocketchat_{{ item.name }}.conf
+    owner=root
+    group=root
+  notify: restart apache
+  with_items: "{{ virtual_domains }}"
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite rocketchat_{{ item }}.conf creates=/etc/apache2/sites-enabled/rocketchat_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"
