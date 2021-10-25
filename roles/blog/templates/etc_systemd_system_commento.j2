@@ -15,12 +15,12 @@ Environment=COMMENTO_PORT={{ commento_internal_port }}
 Environment=COMMENTO_POSTGRES=postgres://{{ commento_db_username }}:{{ commento_db_password }}@localhost:5432/{{ commento_db_database }}?sslmode=disable
 Environment=COMMENTO_STATIC=/home/{{ main_user_name }}/commento
 Environment=COMMENTO_BIND_ADDRESS=127.0.0.1
-Environment=COMMENTO_SMTP_HOST=localhost
-Environment=COMMENTO_SMTP_PORT=25
-Environment=COMMENTO_SMTP_USERNAME=example@gmail.com
-Environment=COMMENTO_SMTP_PASSWORD=hunter2
-Environment=COMMENTO_SMTP_FROM_ADDRESS=no-reply@{{ commento_subdomain }}.{{ domain }}
-Environment=COMMENTO_FORBID_NEW_OWNERS=true
+Environment=COMMENTO_SMTP_HOST={{ domain }}
+Environment=COMMENTO_SMTP_PORT=587
+Environment=COMMENTO_SMTP_USERNAME=noreply@{{ domain }}
+Environment=COMMENTO_SMTP_PASSWORD={{ lookup('password', secret + '/' + 'mail_noreply_password length=20') }}
+Environment=COMMENTO_SMTP_FROM_ADDRESS=noreply@{{ domain }}
+Environment=COMMENTO_FORBID_NEW_OWNERS=false
 
 [Install]
 WantedBy=multi-user.target
