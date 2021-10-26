@@ -1,0 +1,9 @@
+- name: restart jitsi
+  command: systemctl restart {{ item }}
+  with_items:
+    - prosody
+    - jicofo
+    - jitsi-videobridge2
+
+- name: restart apache
+  service: name=apache2 state=restarted

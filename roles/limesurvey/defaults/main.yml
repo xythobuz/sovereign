@@ -1,0 +1,13 @@
+limesurvey_subdomain: "survey"
+limesurvey_domain: "{{ limesurvey_subdomain }}.{{ domain }}"
+
+limesurvey_version: "5.1.17+211025"
+limesurvey_url: "https://download.limesurvey.org/latest-stable-release/limesurvey{{ limesurvey_version }}.zip"
+
+limesurvey_db_username: limesurveyuser
+limesurvey_db_password: "{{ lookup('password', secret + '/' + 'limesurvey_db_password length=32') }}"
+limesurvey_db_database: limesurvey
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

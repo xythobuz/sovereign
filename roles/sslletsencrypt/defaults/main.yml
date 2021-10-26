@@ -35,6 +35,7 @@ subdomains:
   - "kanboard"
   - "chat"
   - "users"
+  - "survey"
 
 # ntp
 ntp_servers:

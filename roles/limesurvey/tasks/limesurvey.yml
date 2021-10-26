@@ -1,0 +1,71 @@
+- name: Install LimeSurvey dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - php
+    - libapache2-mod-php
+  tags:
+    - dependencies
+
+- name: Create temporary LimeSurvey directory
+  file: state=directory path=/root/limesurvey
+
+- name: Create temporary LimeSurvey extract directory
+  file: state=directory path=/root/limesurvey/limesurvey-{{ limesurvey_version }}
+
+- name: Download LimeSurvey {{ limesurvey_version }} release
+  get_url:
+    url="{{ limesurvey_url }}"
+    dest=/root/limesurvey/limesurvey-{{ limesurvey_version }}.zip
+
+- name: Extract LimeSurvey {{ limesurvey_version }} release
+  unarchive:
+    src: /root/limesurvey/limesurvey-{{ limesurvey_version }}.zip
+    dest: /root/limesurvey/limesurvey-{{ limesurvey_version }}
+    remote_src: yes
+
+- name: Copy LimeSurvey to web server directory
+  shell: cp -R /root/limesurvey/limesurvey-{{ limesurvey_version }}/limesurvey/. /var/www/limesurvey/
+
+- name: Ensure proper LimeSurvey permissions
+  file:
+    path=/var/www/limesurvey
+    state=directory
+    recurse=yes
+    owner=www-data
+    group=www-data
+
+- name: Add LimeSurvey postgres user
+  postgresql_user:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ limesurvey_db_username }}
+    password="{{ limesurvey_db_password }}"
+    encrypted=yes
+    state=present
+
+- name: Create LimeSurvey database
+  postgresql_db:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ limesurvey_db_database }}
+    state=present
+    owner={{ limesurvey_db_username }}
+
+- name: Create the Apache LimeSurvey sites config files
+  template:
+    src=etc_apache2_sites-available_limesurvey.j2
+    dest=/etc/apache2/sites-available/limesurvey_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+  notify: restart apache
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite limesurvey_{{ item }}.conf creates=/etc/apache2/sites-enabled/limesurvey_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"

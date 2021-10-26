@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+    ServerName {{ limesurvey_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ limesurvey_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ limesurvey_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            /var/www/limesurvey
+    Options                 -Indexes
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/gitea.info-error_log
+    CustomLog               /var/log/apache2/gitea.info-access_log common
+</VirtualHost>
