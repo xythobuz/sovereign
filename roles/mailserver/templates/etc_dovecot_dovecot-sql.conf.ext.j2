@@ -103,7 +103,7 @@ default_pass_scheme = SHA512-CRYPT
 #  SELECT username, domain, password \
 #  FROM users WHERE username = '%n' AND domain = '%d'
 
-password_query = SELECT username AS user, domain, password FROM virtual_users WHERE username = '%n' AND domain = '%d' and sendonly = false;
+password_query = SELECT username AS user, domain, password FROM virtual_users WHERE username = '%n' AND domain = '%d';
 
 # userdb query to retrieve the user information. It can return fields:
 #   uid - System UID (overrides mail_uid setting)

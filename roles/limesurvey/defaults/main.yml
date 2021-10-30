@@ -7,7 +7,3 @@ limesurvey_url: "https://download.limesurvey.org/latest-stable-release/limesurve
 limesurvey_db_username: limesurveyuser
 limesurvey_db_password: "{{ lookup('password', secret + '/' + 'limesurvey_db_password length=32') }}"
 limesurvey_db_database: limesurvey
-
-# must match values in roles/common
-db_admin_username: 'postgres'
-db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

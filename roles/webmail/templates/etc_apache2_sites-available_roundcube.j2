@@ -14,23 +14,23 @@
     ErrorLog                /var/log/apache2/roundcube.info-error_log
     CustomLog               /var/log/apache2/roundcube.info-access_log common
 
-    <Directory /var/www/roundcube>
+    <Directory /var/lib/roundcube>
         AllowOverride All
         Require all granted
         DirectoryIndex index.php
     </Directory>
 
-    <Directory /opt/roundcube/config>
+    <Directory /var/lib/roundcube/config>
         AllowOverride None
         Require all denied
     </Directory>
 
-    <Directory /opt/roundcube/temp>
+    <Directory /var/lib/roundcube/temp>
         AllowOverride None
         Require all denied
     </Directory>
 
-    <Directory /opt/roundcube/logs>
+    <Directory /var/lib/roundcube/logs>
         AllowOverride None
         Require all denied
     </Directory>

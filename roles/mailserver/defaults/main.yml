@@ -23,6 +23,10 @@ mail_virtual_users:
     domain: "{{ domain }}"
     password: "{{ lookup('password', secret + '/' + 'mail_main_user_password length=20') | doveadm_pw_hash }}"
     sendonly: 0
+  - account: "noreply"
+    domain: "{{ domain }}"
+    password: "{{ lookup('password', secret + '/' + 'mail_noreply_password length=20 chars=ascii_lowercase,ascii_uppercase,digits') | doveadm_pw_hash }}"
+    sendonly: 1
 
 mail_virtual_aliases:
   - source: "root@{{ domain }}"
