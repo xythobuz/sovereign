@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+    ServerName {{ ldap_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ ldap_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ ldap_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            /usr/share/fusiondirectory/html
+    Options                 -Indexes
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/ldap.info-error_log
+    CustomLog               /var/log/apache2/ldap.info-access_log common
+</VirtualHost>

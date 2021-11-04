@@ -1,0 +1,77 @@
+- name: Set slapd admin password
+  debconf:
+    name: slapd
+    question: "{{ item }}"
+    value: "{{ slapd_admin_password }}"
+    vtype: string
+  with_items:
+    - slapd/password1
+    - slapd/password2
+  tags:
+    - dependencies
+
+- name: Set slapd domain
+  debconf:
+    name: slapd
+    question: slapd/domain
+    value: "{{ ldap_domain }}"
+    vtype: string
+  tags:
+    - dependencies
+
+- name: Set slapd orga
+  debconf:
+    name: slapd
+    question: slapd/organization
+    value: "{{ ldap_orga }}"
+    vtype: string
+  tags:
+    - dependencies
+
+- name: Set some slapd defaults (no_configuration)
+  debconf:
+    name: slapd
+    question: slapd/no_configuration
+    value: false
+    vtype: boolean
+  tags:
+    - dependencies
+
+- name: Set some slapd defaults (dump_database)
+  debconf:
+    name: slapd
+    question: slapd/dump_database
+    value: always
+    vtype: select
+  tags:
+    - dependencies
+
+- name: Set some slapd defaults (move_old_database)
+  debconf:
+    name: slapd
+    question: slapd/move_old_database
+    value: true
+    vtype: boolean
+  tags:
+    - dependencies
+
+- name: Set some slapd defaults (purge_database)
+  debconf:
+    name: slapd
+    question: slapd/purge_database
+    value: false
+    vtype: boolean
+  tags:
+    - dependencies
+
+- name: Install slapd and utilities from Debian repository
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - slapd
+    - ldap-utils
+  tags:
+    - dependencies

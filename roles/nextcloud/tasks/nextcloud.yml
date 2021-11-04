@@ -104,7 +104,7 @@
   command: php occ app:install contacts
   args:
     chdir: /var/www/nextcloud
-    creates: /var/www/nextcloud/apps/contacts/COPYING
+  ignore_errors: True
 
 - name: Install NextCloud calendar app
   become: true
@@ -112,7 +112,22 @@
   command: php occ app:install calendar
   args:
     chdir: /var/www/nextcloud
-    creates: /var/www/nextcloud/apps/calendar/COPYING
+  ignore_errors: True
+
+- name: Install NextCloud LDAP app
+  become: true
+  become_user: www-data
+  command: php occ app:install user_ldap
+  args:
+    chdir: /var/www/nextcloud
+  ignore_errors: True
+
+#- name: Update installed Nextcloud apps
+#  become: true
+#  become_user: www-data
+#  command: php occ app:update
+#  args:
+#    chdir: /var/www/nextcloud
 
 - name: Add our domains to the NextCloud trusted domains
   lineinfile:

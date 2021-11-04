@@ -1,0 +1,8 @@
+ldap_domain: "{{ domain }}"
+ldap_subdomain: 'users'
+ldap_orga: "{{ ldap_domain }}"
+
+# TODO split auto
+ldap_domain_string: "dc=shagohod,dc=de"
+
+slapd_admin_password: "{{ lookup('password', secret + '/' + 'slapd_admin_password length=32') }}"

@@ -1,0 +1,40 @@
+- name: Install FusionDirectory from Debian repository
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - fusiondirectory
+    - fusiondirectory-schema
+    - expect
+  tags:
+    - dependencies
+
+- name: Create the FusionDirectory config file
+  template:
+    src=etc_fusiondirectory_fusiondirectory.conf.j2
+    dest=/etc/fusiondirectory/fusiondirectory.conf.bak
+    owner=root
+    group=www-data
+    mode=0640
+
+- name: Install FusionDirectory LDAP schema
+  command: fusiondirectory-insert-schema
+
+- name: Disable default Apache FusionDirectory config
+  command: a2disconf fusiondirectory.conf removes=/etc/apache2/conf-enabled/fusiondirectory.conf
+  notify: restart apache
+
+- name: Create the Apache LDAP sites config files
+  template:
+    src=etc_apache2_sites-available_ldap.j2
+    dest=/etc/apache2/sites-available/ldap_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite ldap_{{ item }}.conf creates=/etc/apache2/sites-enabled/ldap_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"

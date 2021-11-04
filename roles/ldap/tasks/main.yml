@@ -1,0 +1,2 @@
+- include: slapd.yml tags=ldap
+- include: fusiondirectory.yml tags=ldap

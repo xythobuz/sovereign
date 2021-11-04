@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<conf>
+  <!-- Main section **********************************************************
+       The main section defines global settings, which might be overridden by
+       each location definition inside.
+
+       For more information about the configuration parameters, take a look at
+       the FusionDirectory.conf(5) manual page.
+  -->
+  <main default="default"
+        logging="TRUE"
+        displayErrors="FALSE"
+        forceSSL="TRUE"
+        templateCompileDirectory="/var/spool/fusiondirectory/"
+        debugLevel="0"
+    >
+
+    <!-- Location definition -->
+    <location name="default"
+    >
+        <referral URI="ldap://localhost:389" base="{{ ldap_domain_string }}"
+                        adminDn="cn=admin,{{ ldap_domain_string }}"
+                        adminPassword="{{ slapd_admin_password }}" />
+    </location>
+  </main>
+</conf>

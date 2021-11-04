@@ -121,6 +121,10 @@
   stat: path=/etc/ssh/sshd_config
   register: sshd_config_file
 
+- name: Determine if slapd is installed
+  stat: path=/usr/sbin/slapd
+  register: slapd_config_file
+
 - name: Determine if pgsql_deb9 is installed
   stat: path=/etc/postgresql/9.6/main/pg_ctl.conf
   register: pgsql9_config_file
@@ -252,6 +256,11 @@
   copy: src=etc_monit_conf.d_sshd dest=/etc/monit/conf.d/sshd
   notify: restart monit
   when: sshd_config_file.stat.exists == True
+
+- name: Copy slapd monit service config files into place
+  copy: src=etc_monit_conf.d_slapd dest=/etc/monit/conf.d/slapd
+  notify: restart monit
+  when: slapd_config_file.stat.exists == True
 
 - name: Copy pgsql deb9 monit service config files into place
   copy: src=etc_monit_conf.d_pgsql_deb9 dest=/etc/monit/conf.d/pgsql_deb9
