@@ -14,7 +14,6 @@
     - php-imap
     - php-imagick
     - php-redis
-    - php-mcrypt
     - php-mysql
     - php-xml
     - php-zip
@@ -27,6 +26,17 @@
     - unzip
   tags:
     - dependencies
+
+- name: Install NextCloud dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - php-mcrypt
+  tags:
+    - dependencies
+  when: ansible_distribution_version == '9'
 
 - name: Create NextCloud temp directory
   file: path=/root/nextcloud state=directory
@@ -108,7 +118,7 @@
   lineinfile:
     path: /var/www/nextcloud/config/config.php
     insertafter: 'instanceid'
-    line: "  'trusted_domains' => array ('localhost', {{ virtual_domains | json_query('[*].name') | map('regex_replace', '(.*)', \"'cloud.\\1'\") | join(', ') }}),"
+    line: "  'trusted_domains' => array ('localhost', {{ virtual_domains | json_query('[*].name') | map('regex_replace', '^(.*)$', \"'\" + nextcloud_subdomain + \".\\1'\") | join(', ') }}),"
 
 - name: Create the Apache sites config files
   template:

@@ -6,6 +6,7 @@
     packages:
     - php
     - libapache2-mod-php
+    - unzip
   tags:
     - dependencies
 

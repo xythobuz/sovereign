@@ -249,7 +249,7 @@
   when: postfix_config_file.stat.exists == True
 
 - name: Copy sshd monit service config files into place
-  copy: src=etc_monit_conf.d_sshd dest=/etc/monit/conf.d/ssh
+  copy: src=etc_monit_conf.d_sshd dest=/etc/monit/conf.d/sshd
   notify: restart monit
   when: sshd_config_file.stat.exists == True
 
