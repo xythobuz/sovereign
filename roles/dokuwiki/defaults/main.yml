@@ -5,6 +5,12 @@ dokuwiki_domain: "{{ dokuwiki_subdomain }}.{{ domain }}"
 dokuwiki_version: "stable_2020-07-29"
 dokuwiki_release: "https://github.com/splitbrain/dokuwiki/archive/refs/tags/release_{{ dokuwiki_version }}.tar.gz"
 
+dokuwiki_enable_ldap: false
+
 dokuwiki_admin_username: "{{ main_user_name }}"
 dokuwiki_admin_email: "{{ admin_email }}"
 dokuwiki_admin_password: "{{ lookup('password', secret + '/' + 'dokuwiki_admin_password length=32') }}"
+
+# TODO
+ldap_domain_string: "dc=shagohod,dc=de"
+slapd_admin_password: "{{ lookup('password', secret + '/' + 'slapd_admin_password length=32') }}"

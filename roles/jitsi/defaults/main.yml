@@ -4,3 +4,9 @@ jitsi_domain: "{{ jitsi_subdomain }}.{{ domain }}"
 jitsi_accounts:
   - name: "{{ main_user_name }}"
     password: "{{ lookup('password', secret + '/' + 'jitsi_main_user_password length=32') }}"
+
+jitsi_enable_ldap: false
+
+# TODO
+ldap_domain_string: "dc=shagohod,dc=de"
+slapd_admin_password: "{{ lookup('password', secret + '/' + 'slapd_admin_password length=32') }}"

@@ -99,6 +99,37 @@ define('DB_VERIFY_SERVER_CERT', null);
 // Timeout value for PDO attribute
 define('DB_TIMEOUT', null);
 
+{% if kanboard_enable_ldap == true %}
+
+define('LDAP_AUTH', true);
+define('LDAP_SERVER', 'ldap://localhost:389');
+define('LDAP_SSL_VERIFY', true);
+define('LDAP_START_TLS', false);
+define('LDAP_USERNAME_CASE_SENSITIVE', false);
+define('LDAP_BIND_TYPE', 'proxy');
+define('LDAP_USERNAME', 'uid=admin,ou=people,{{ ldap_domain_string }}');
+define('LDAP_PASSWORD', '{{ slapd_admin_password }}');
+define('LDAP_USER_BASE_DN', 'ou=people,{{ ldap_domain_string }}');
+define('LDAP_USER_FILTER', 'uid=%s');
+define('LDAP_USER_ATTRIBUTE_USERNAME', 'uid');
+define('LDAP_USER_ATTRIBUTE_FULLNAME', 'cn');
+define('LDAP_USER_ATTRIBUTE_EMAIL', 'mail');
+define('LDAP_USER_ATTRIBUTE_GROUPS', 'memberof');
+define('LDAP_USER_ATTRIBUTE_PHOTO', '');
+define('LDAP_USER_ATTRIBUTE_LANGUAGE', '');
+define('LDAP_USER_CREATION', true);
+define('LDAP_USER_DEFAULT_ROLE_MANAGER', false);
+define('LDAP_GROUP_ADMIN_DN', '');
+define('LDAP_GROUP_MANAGER_DN', '');
+define('LDAP_GROUP_PROVIDER', false);
+define('LDAP_GROUP_BASE_DN', '');
+define('LDAP_GROUP_FILTER', '');
+define('LDAP_GROUP_USER_FILTER', '');
+define('LDAP_GROUP_USER_ATTRIBUTE', 'username');
+define('LDAP_GROUP_ATTRIBUTE_NAME', 'cn');
+
+{% else %}
+
 // Enable LDAP authentication (false by default)
 define('LDAP_AUTH', false);
 
@@ -194,6 +225,8 @@ define('LDAP_GROUP_USER_ATTRIBUTE', 'username');
 
 // LDAP attribute for the group name
 define('LDAP_GROUP_ATTRIBUTE_NAME', 'cn');
+
+{% endif %}
 
 // Enable/disable the reverse proxy authentication
 define('REVERSE_PROXY_AUTH', false);

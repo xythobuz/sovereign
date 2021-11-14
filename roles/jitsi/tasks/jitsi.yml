@@ -75,6 +75,20 @@
   tags:
     - dependencies
 
+- name: Install Jitsi LDAP dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - prosody-modules
+    - lua-ldap
+  tags:
+    - dependencies
+  when: jitsi_enable_ldap
+  notify: restart jitsi
+
 - name: Create the Jitsi Prosody Config
   template:
     src=etc_prosody_conf.avail_jitsi_domain.cfg.lua.j2
@@ -99,6 +113,10 @@
     group=root
   notify: restart jitsi
 
+- name: Enable Apache include module
+  command: a2enmod include creates=/etc/apache2/mods-enabled/include.load
+  notify: restart apache
+
 - name: Create the Apache Jitsi sites config files
   template:
     src=etc_apache2_sites-available_jitsi.j2
@@ -117,3 +135,4 @@
   command: prosodyctl register {{ item.name }} {{ jitsi_domain }} {{ item.password }}
   with_items: "{{ jitsi_accounts }}"
   ignore_errors: True
+  when: not jitsi_enable_ldap

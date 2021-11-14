@@ -1,30 +1,52 @@
 # Sovereign
 
 Forked from [Sovereign on GitHub](https://github.com/sovereign/sovereign).
+This is a set of ansible roles to setup your own little private Cloud on a VPS.
+
+I removed a bunch of roles from the upstream version, added new ones, and made it compatible with more recent versions of Debian.
+Ubuntu is no longer supported, simply because I just use Debian.
+
+I also added the ability for full-fledged user-management using OpenLDAP and FusionDirectory.
+This is optional, however.
+You can also use statically configured credentials, which is enough for single-user setups.
+
+| Program       | Domain     | Status | Debian 9 | Debian 10 | Debian 11 | LDAP Auth |
+| ------------- | ---------- | ------ | -------- | --------- | --------- | --------- |
+| Website       | www        | ✔️      | ✔️        | ✔️         | ✔️         | N/A       |
+| Lets Encrypt  | -          | ✔️      | ✔️        | ✔️         | ✔️         | N/A       |
+| Webmail       | mail       | ✔️      | ✔️        | ✔️         | ✔️         | ❓        |
+| E-Mail Config | autoconfig | ✔️      | ✔️        | ✔️         | ✔️         | N/A       |
+| monit         | status     | ✔️      | ✔️        | ✔️         | ✔️         | ❌        |
+| OpenVPN       | -          | ✔️      | ✔️        | ❓        | ❓        | ❓        |
+| Fathom        | stats      | ✔️      | ✔️        | ✔️         | ✔️         | ❌        |
+| commento      | comments   | ✔️      | ✔️        | ✔️         | ✔️         | ❓        |
+| ZNC           | -          | ✔️      | ✔️        | ❓        | ❓        | ❓        |
+| gitea         | git        | ✔️      | ✔️        | ✔️         | ✔️         | ❓        |
+| dokuwiki      | wiki       | ✔️      | ❓       | ✔️         | ✔️         | ✔️         |
+| kanboard      | kanboard   | ✔️      | ❓       | ✔️         | ✔️         | ✔️         |
+| jitsi         | jitsi      | ✔️      | ❓       | ✔️         | ✔️         | ✔️         |
+| rocket.chat   | chat       | ❓     | ❓       | ✔️         | ❓        | ❓        |
+| NextCloud     | cloud      | ✔️      | ✔️        | (❓)      | ✔️         | ✔️         |
+| LimeSurvey    | survey     | ✔️      | (❓)     | ✔️         | ✔️         | ❓        |
+| matrix / riot | matrix     | ❌     | ✔️        | ❓        | ❓        | ❓        |
+| mastodon      | social     | ❌     | ✔️        | ❓        | ❓        | ❓        |
+| LDAP          | users      | ❓     | ❓       | ❓        | ✔️         | ✔️         |
+| Self-Signed   | -          | ✔️      | ❓       | ✔️         | ❓        | N/A       |
+| grafana       | iot        | ✔️      | ❓       | ✔️         | ❓        | ❓        |
+| Selfoss       | news       | ❌     | ✔️        | ❓        | ❓        | ❓        |
+
+You don't have to setup all roles, simply select the subset you require.
+Please take a look inside the respective folders of the roles, they often contain a `DESIGN.md` file explaining the intricacies of the specific software or its configuration.
 
 # Usage
-
-## What You’ll Need
-
-1.  A VPS (or bare-metal server if you wanna ball hard). My VPS is hosted at [Linode](http://www.linode.com/?r=45405878277aa04ee1f1d21394285da6b43f963b). You’ll probably want at least 512 MB of RAM between Apache, Solr, and PostgreSQL. Mine has 1024.
-2.  [64-bit Debian 9 or 10](http://www.debian.org/). (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
-
-You do not need to acquire an SSL certificate.  The SSL certificates you need will be obtained from [Let's Encrypt](https://letsencrypt.org/) automatically when you deploy your server.
 
 ## Installation
 
 ### On the remote server
 
-The following steps are done on the remote server by `ssh`ing into it and running these commands.
-
-#### Install required packages
+Install dependencies and change the root password:
 
     apt-get install sudo python
-
-#### Prep the server
-
-For goodness sake, change the root password:
-
     passwd
 
 Create a user account for Ansible to do its thing through:
@@ -56,8 +78,6 @@ Or you can just add your `deploy` user to the sudo group.
 
 ### On your local machine
 
-Ansible (the tool setting up your server) runs locally on your computer and sends commands to the remote server.
-
 #### Software
 
 Download this repository somewhere on your machine, either through `Clone or Download > Download ZIP` above, `wget`, or `git` as below.
@@ -83,39 +103,17 @@ In that case you also need to add your custom port to the task `Set firewall rul
 
 #### Set up DNS
 
-If you’ve just bought a new domain name, point it at [Linode’s DNS Manager](https://library.linode.com/dns-manager) or similar.
-Most VPS services (and even some domain registrars) offer a managed DNS service that you can use for this at no charge.
-If you’re using an existing domain that’s already managed elsewhere, you can probably just modify a few records.
-
-Create `A` and `AAAA` or `CNAME` records which point to your server's IP address:
-
-* `example.com`
-* `mail.example.com`
-* `www.example.com` (for Web hosting)
-* `autoconfig.example.com` (for email client automatic configuration)
-* `stats.example.com` (for web stats)
-* `news.example.com` (for Selfoss)
-* `cloud.example.com` (for NextCloud)
-* `git.example.com` (for gitea)
-* `status.example.com` (for monit)
-* `matrix.example.com` (for riot)
-* `social.example.com` (for mastodon)
-* `comments.example.com` (for commento)
-* `iot.example.com` (for grafana)
-* `wiki.example.com` (for dokuwiki)
-* `jitsi.example.com` (for jitsi)
-* `kanboard.example.com` (for kanboard)
+Create `A` and `AAAA` or `CNAME` records which point to your server's IP address for the subdomains used with the programs you selected.
 
 #### Run the Ansible Playbooks
 
-First, make sure you’ve [got Ansible installed](http://docs.ansible.com/intro_installation.html#getting-ansible).
-This should already be done by running the pip requirements.txt from above.
+To run the whole thing:
 
-To run the whole dang thing:
-
-    ansible-playbook -i ./hosts --ask-sudo-pass site.yml
+    ansible-playbook -i ./hosts --ask-sudo-pass --key-file KEY site.yml
     
 If you chose to make a passwordless sudo deploy user, you can omit the `--ask-sudo-pass` argument.
+If you don't need to specify an ssh key to connect to the host, leave out `--key-file KEY` part, otherwise replace `KEY` with the path to the key you want to use.
+Append eg. `-l testing` to only run for the hosts in the testing group.
 
 #### Finish DNS set-up
 
@@ -158,3 +156,9 @@ To re-new the LetsEncrypt certificates, for example after adding a new role that
     sudo certbot delete -c /etc/letsencrypt/cli.conf --cert-name DOMAIN
 
 Then re-run the whole sovereign playbook, or at least the letsencrypt part of it.
+
+To access your Postgres database, use:
+
+    sudo -u postgres psql
+
+Then use commands like `\l`, `\c database`, `\dt` or SQL statements.

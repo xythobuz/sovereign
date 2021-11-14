@@ -75,7 +75,7 @@
     owner=www-data
     group=www-data
     mode=0644
-    force=no
+#    force=no
 
 - name: Add initial DokuWiki admin user
   template:

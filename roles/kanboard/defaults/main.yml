@@ -4,6 +4,8 @@ kanboard_domain: "{{ kanboard_subdomain }}.{{ domain }}"
 kanboard_version: "1.2.20"
 kanboard_release: "https://github.com/kanboard/kanboard/archive/refs/tags/v{{ kanboard_version }}.tar.gz"
 
+kanboard_enable_ldap: false
+
 kanboard_db_username: kanboarduser
 kanboard_db_password: "{{ lookup('password', secret + '/' + 'kanboard_db_password length=32') }}"
 kanboard_db_database: kanboard
@@ -11,3 +13,7 @@ kanboard_db_database: kanboard
 # must match values in roles/common
 db_admin_username: 'postgres'
 db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
+
+# TODO
+ldap_domain_string: "dc=shagohod,dc=de"
+slapd_admin_password: "{{ lookup('password', secret + '/' + 'slapd_admin_password length=32') }}"

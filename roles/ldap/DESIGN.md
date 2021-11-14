@@ -15,10 +15,14 @@
 
 - You can now login as the admin user you created.
 
-To setup eg. Nextcloud LDAP login, give it the following credentials:
-Username: uid=admin,ou=people,dc=DOMAIN,dc=TLD
-Password: {{ slapd_admin_password }}
-Base DN: dc=DOMAIN,dc=TLD
+To setup Nextcloud LDAP login, give it the following credentials:
+
+    Username: uid=admin,ou=people,dc=DOMAIN,dc=TLD
+    Password: {{ slapd_admin_password }}
+    Base DN: dc=DOMAIN,dc=TLD
+
+Dokuwiki, Jitsi and Kanboard can be configured to use LDAP automatically.
+See their defaults.
 
 ## ToDo
 
@@ -29,7 +33,7 @@ These two steps are currently missing for full automation of the FusionDirectory
 Add required object classes to the LDAP base
 Current
 
-dn: dc=shagohod,dc=de
+dn: dc=DOMAIN,dc=TLD
 objectClass: top
 objectClass: dcObject
 objectClass: organization
@@ -37,13 +41,13 @@ objectClass: organization
 
 After migration
 
-dn: dc=shagohod,dc=de
+dn: dc=DOMAIN,dc=TLD
 objectClass: top
 objectClass: dcObject
 objectClass: organization
 xxx  objectClass: gosaDepartment
-xxx  ou: shagohod
-xxx  description: shagohod
+xxx  ou: DOMAIN
+xxx  description: DOMAIN
 
 -----
 

@@ -10,3 +10,6 @@ https://jitsi.github.io/handbook/docs/devops-guide/secure-domain
 
 This was used for the Apache config:
 https://github.com/jitsi/jitsi-meet/blob/master/doc/debian/jitsi-meet/jitsi-meet.example-apache
+
+LDAP login setup as described in:
+https://github.com/jitsi/jitsi-meet/wiki/LDAP-Authentication

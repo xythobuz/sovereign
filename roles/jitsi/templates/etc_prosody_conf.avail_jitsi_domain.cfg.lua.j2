@@ -20,10 +20,34 @@ ssl = {
     ciphers = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 }
 
+{% if jitsi_enable_ldap == true %}
+-- https://modules.prosody.im/mod_lib_ldap.html
+-- https://modules.prosody.im/mod_auth_ldap2.html
+authentication = 'ldap2'
+
+ldap = {
+    hostname = 'localhost',
+    bind_dn = 'cn=admin,{{ ldap_domain_string }}',
+    bind_password = '{{ slapd_admin_password }}',
+    use_tls = false,
+    user = {
+        usernamefield = 'uid',
+        basedn = 'ou=people,{{ ldap_domain_string }}',
+        filter = '(objectClass=*)',
+        -- admin?
+        --namefield = 'cn',
+    },
+}
+{% endif %}
+
 VirtualHost "{{ jitsi_domain }}"
     -- enabled = false -- Remove this line to enable this host
     -- authentication = "anonymous"
+{% if jitsi_enable_ldap == true %}
+    authentication = "ldap2"
+{% else %}
     authentication = "internal_hashed"
+{% endif %}
     -- Properties below are modified by jitsi-meet-tokens package config
     -- and authentication above is switched to "token"
     --app_id="example_app_id"

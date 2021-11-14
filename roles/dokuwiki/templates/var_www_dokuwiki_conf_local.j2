@@ -23,3 +23,16 @@ $conf['disableactions'] = 'register';
 
 $conf['userewrite'] = 1;
 $conf['useslash'] = 1;
+
+{% if dokuwiki_enable_ldap == true %}
+
+$conf['authtype'] = 'authldap';
+
+$conf['plugin']['authldap']['server']   = 'localhost';
+$conf['plugin']['authldap']['port']     = 389;
+$conf['plugin']['authldap']['version']  = 3;
+$conf['plugin']['authldap']['binddn']   = 'uid=admin,ou=people,{{ ldap_domain_string }}';
+$conf['plugin']['authldap']['bindpw']   = '{{ slapd_admin_password }}';
+$conf['plugin']['authldap']['usertree'] = 'uid=%{user},ou=people,{{ ldap_domain_string }}';
+
+{% endif %}
