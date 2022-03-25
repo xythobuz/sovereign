@@ -23,3 +23,10 @@ ntp_servers:
   - 1.pool.ntp.org
   - 2.pool.ntp.org
   - 3.pool.ntp.org
+
+# swap, size in mb, times count. defaults to 1GB.
+# using multiple swapfiles gives some flexibility
+# about resizing/adding/removing them in future.
+swap_file_size: 1024
+swap_file_count: 1
+swap_file_path: '/swapfile'
