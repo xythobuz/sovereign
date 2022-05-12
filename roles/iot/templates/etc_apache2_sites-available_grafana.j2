@@ -11,6 +11,7 @@
     ServerAlias {{ domain }}
 
     SSLEngine               On
+    SSLProxyEngine          On
     DocumentRoot            "{{ item.doc_root }}"
     DirectoryIndex          index.html
     Options                 -Indexes
@@ -24,6 +25,9 @@
 
     ProxyRequests           Off
     ProxyPreserveHost       On
+
+    ProxyPass               /nodered/comms ws://localhost:1880/comms
+    ProxyPassReverse        /nodered/comms ws://localhost:1880/comms
 
     ProxyPass               /nodered/ http://localhost:1880/
     ProxyPassReverse        /nodered/ http://localhost:1880/

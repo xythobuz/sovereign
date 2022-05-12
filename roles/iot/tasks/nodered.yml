@@ -11,6 +11,10 @@
 - name: Run Node-Red install script
   shell: /root/nodered/update-nodejs-and-nodered --confirm-root --confirm-install --skip-pi --restart --update-nodes
 
+- name: Enable Apache wstunnel module
+  command: a2enmod proxy_wstunnel creates=/etc/apache2/mods-enabled/proxy_wstunnel.load
+  notify: restart apache
+
 - name: Register new Node-Red service
   systemd: name=nodered daemon_reload=yes enabled=yes
 
