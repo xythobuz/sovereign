@@ -4,25 +4,25 @@
 - name: Create swap files
   command: dd if=/dev/zero of={{ '%s%d' | format(swap_file_path, item) }} bs=1024 count={{ swap_file_size }}K
            creates="{{ '%s%d' | format(swap_file_path, item) }}"
-  loop: "{{ range(1, swap_file_count + 1) }}"
+  loop: "{{ range(1, ( swap_file_count | int ) + 1) | list }}"
 
 - name: Change swap file permissions
   file: path="{{ '%s%d' | format(swap_file_path, item) }}"
         owner=root
         group=root
         mode=0600
-  loop: "{{ range(1, swap_file_count + 1) }}"
+  loop: "{{ range(1, ( swap_file_count | int ) + 1) | list }}"
 
 - name: Check swap file types
   command: file {{ '%s%d' | format(swap_file_path, item) }}
   register: swapfile
-  loop: "{{ range(1, swap_file_count + 1) }}"
+  loop: "{{ range(1, ( swap_file_count | int ) + 1) | list }}"
 
 - name: Make swap files
   command: "mkswap {{ '%s%d' | format(swap_file_path, item) }}"
   become: true
   when: swapfile.results[item - 1].stdout.find('swap file') == -1
-  loop: "{{ range(1, swap_file_count + 1) }}"
+  loop: "{{ range(1, ( swap_file_count | int ) + 1) | list }}"
 
 - name: Write swap entries in fstab
   mount: name=none
@@ -32,7 +32,7 @@
          passno=0
          dump=0
          state=present
-  loop: "{{ range(1, swap_file_count + 1) }}"
+  loop: "{{ range(1, ( swap_file_count | int )+ 1) |list }}"
 
 - name: Mount swap
   command: "swapon --all"
