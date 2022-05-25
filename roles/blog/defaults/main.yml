@@ -12,8 +12,8 @@ fathom_subdomain: 'stats'
 fathom_internal_port: '9000'
 fathom_secret: "{{ lookup('password', secret + '/' + 'fathom_secret length=32') }}"
 
-commento_version: '1.8.6'
-commento_release: "https://github.com/souramoo/commentoplusplus/releases/download/v{{ commento_version }}/release_{{ commento_version }}.tar.gz"
+commento_version: '1.8.7-wildcard-fix'
+commento_release: "https://github.com/xythobuz/commentoplusplus/releases/download/v{{ commento_version }}/release.tar.gz"
 
 commento_subdomain: 'comments'
 commento_internal_port: '9100'

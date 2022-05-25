@@ -20,7 +20,8 @@ Environment=COMMENTO_SMTP_PORT=587
 Environment=COMMENTO_SMTP_USERNAME=noreply@{{ domain }}
 Environment=COMMENTO_SMTP_PASSWORD={{ lookup('password', secret + '/' + 'mail_noreply_password length=20 chars=ascii_lowercase,ascii_uppercase,digits') }}
 Environment=COMMENTO_SMTP_FROM_ADDRESS=noreply@{{ domain }}
-Environment=COMMENTO_FORBID_NEW_OWNERS=false
+Environment=COMMENTO_FORBID_NEW_OWNERS=true
+Environment=COMMENTO_ENABLE_LOGGING=false
 
 [Install]
 WantedBy=multi-user.target
