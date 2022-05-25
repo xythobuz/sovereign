@@ -72,3 +72,7 @@
   command: a2ensite commento_{{ item }}.conf creates=/etc/apache2/sites-enabled/commento_{{ item }}.conf
   notify: restart apache
   with_items: "{{ virtual_domains | json_query('[*].name') }}"
+
+- name: Enable Apache wstunnel module
+  command: a2enmod proxy_wstunnel creates=/etc/apache2/mods-enabled/proxy_wstunnel.load
+  notify: restart apache

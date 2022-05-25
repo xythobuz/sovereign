@@ -18,6 +18,8 @@
 
     ProxyRequests           On
     ProxyPreserveHost       On
+    ProxyPass               /ws ws://localhost:{{ commento_internal_port }}/ws
+    ProxyPassReverse        /ws ws://localhost:{{ commento_internal_port }}/ws
     ProxyPass               / http://localhost:{{ commento_internal_port }}/
     ProxyPassReverse        / http://localhost:{{ commento_internal_port }}/
 </VirtualHost>
