@@ -1,2 +1,3 @@
+# prevent mass generation of repo archives
 User-agent: *
-Disallow:
+Disallow: /*/archive/*
