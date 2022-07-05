@@ -68,6 +68,15 @@
     mode=0644
     force=no
 
+- name: Add initial DokuWiki MIME config
+  copy:
+    src=var_www_dokuwiki_conf_mime.local.conf
+    dest=/var/www/dokuwiki/conf/mime.local.conf
+    owner=www-data
+    group=www-data
+    mode=0644
+    force=no
+
 - name: Add initial DokuWiki config file
   template:
     src=var_www_dokuwiki_conf_local.j2
