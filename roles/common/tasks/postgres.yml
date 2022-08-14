@@ -21,6 +21,7 @@
     packages:
     - postgresql
     - python-psycopg2
+    - python3-psycopg2
   tags:
     - dependencies
   when: ansible_distribution_version == '10'
