@@ -37,6 +37,6 @@
   file: path=/etc/letsencrypt/live owner=root group=ssl-cert mode=0750 recurse=yes
 
 - name: Retrieve the self signing CA to remove warning in users browser
-  fetch: src=/etc/letsencrypt/live/fritz.box/chain.pem
+  fetch: src=/etc/letsencrypt/live/{{ domain }}/chain.pem
          dest="{{ secret }}/sovereign-self-signed-cert"
          fail_on_missing=yes

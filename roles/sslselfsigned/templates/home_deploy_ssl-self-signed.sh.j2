@@ -6,7 +6,7 @@ openssl genrsa -out /etc/letsencrypt/rootCA.key 4096
 echo generating CA certificate
 openssl req -x509 -new -nodes -sha256 -days 7300 \
     -key /etc/letsencrypt/rootCA.key \
-    -subj "/C=DE/ST=BW/O={{ domain }}/CN={{ domain }}" \
+    -subj "/C=DE/ST=BW/O={{ domain }}/CN={{ server_fqdn }}" \
     -out /etc/letsencrypt/rootCA.crt
 
 echo generating server key
@@ -15,11 +15,16 @@ openssl genrsa -out /etc/letsencrypt/{{ domain }}.key 2048
 echo generating signing request
 openssl req -new -sha256 \
     -key /etc/letsencrypt/{{ domain }}.key \
-    -subj "/C=DE/ST=BW/O={{ domain }}/CN=*.{{ domain }}" \
+    -subj "/C=DE/ST=BW/O={{ domain }}/CN={{ server_fqdn }}" \
+    -reqexts SAN \
+    -extensions SAN \
+    -config <(cat /etc/ssl/openssl.cnf \
+        <(printf "\n[SAN]\nsubjectAltName=DNS:{{ server_fqdn }}")) \
     -out /etc/letsencrypt/{{ domain }}.csr
 
 echo generating server certificate
 openssl x509 -req -CAcreateserial -days 7300 -sha256 \
+    -extfile <(printf "subjectAltName=DNS:{{ server_fqdn }}") \
     -in /etc/letsencrypt/{{ domain }}.csr \
     -CA /etc/letsencrypt/rootCA.crt \
     -CAkey /etc/letsencrypt/rootCA.key \
