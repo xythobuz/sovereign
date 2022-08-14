@@ -3,3 +3,4 @@
 - include: mosquitto.yml tags=iot
 - include: mqtt_admin.yml tags=iot
 - include: nodered.yml tags=iot
+- include: lights.yml tags=iot

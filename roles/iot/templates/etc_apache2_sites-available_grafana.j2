@@ -23,6 +23,9 @@
     Alias                   /mqtt /var/www/mqtt-admin
     ProxyPassMatch          ^/mqtt !
 
+    Alias                   /lights /var/www/lights-web/lights
+    ProxyPassMatch          ^/lights !
+
     ProxyRequests           Off
     ProxyPreserveHost       On
 

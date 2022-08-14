@@ -22,3 +22,8 @@ grafana_db_database: grafana
 # must match values in roles/common
 db_admin_username: 'postgres'
 db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"
+
+lights_web_release: "https://git.xythobuz.de/thomas/lights-web/archive/master.zip"
+
+lights_web_username: "{{ main_user_name }}"
+lights_web_password: "{{ lookup('password', secret + '/' + 'mosquitto_main_user_password length=20 chars=hexdigits') }}"

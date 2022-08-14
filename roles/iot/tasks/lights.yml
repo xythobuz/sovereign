@@ -1,0 +1,28 @@
+- name: Create temporary lights-web directory
+  file: state=directory path=/root/lights-web
+
+- name: Download lights-web source
+  get_url:
+    url="{{ lights_web_release }}"
+    dest=/root/lights-web/lights-web.zip
+
+- name: Remove old lights-web decompressed source
+  shell: rm -rf /root/lights-web/lights-web
+
+- name: Decompress lights-web release
+  unarchive: src=/root/lights-web/lights-web.zip
+             dest=/root/lights-web/ copy=no
+             creates=/root/lights-web/lights-web
+
+- name: Create lights-web webserver directory
+  file: state=directory path=/var/www/lights-web
+
+- name: Copy lights-web to webserver directory
+  shell: cp -R /root/lights-web/lights-web/* /var/www/lights-web
+
+- name: Create config file with lights-web credentials
+  template:
+    src=var_www_lights_web_lights_credentials.j2
+    dest=/var/www/lights-web/lights/credentials.js
+    owner=root
+    group=root
