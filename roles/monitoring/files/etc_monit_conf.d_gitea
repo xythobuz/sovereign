@@ -4,5 +4,6 @@ check process gitea matching gitea
   stop program = "/bin/systemctl stop gitea"
   if failed port 3000 protocol http
     with timeout 10 seconds
+    with retry 2
     then restart
   if 5 restarts within 5 cycles then timeout

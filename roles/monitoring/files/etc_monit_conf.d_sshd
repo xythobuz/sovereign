@@ -2,5 +2,8 @@ check process sshd with pidfile /var/run/sshd.pid
   group system
   start program = "/bin/systemctl start ssh"
   stop program = "/bin/systemctl stop ssh"
-  if failed host 127.0.0.1 port 22 protocol ssh then restart
+  if failed port 22 protocol ssh
+    with timeout 10 seconds
+    with retry 2
+    then restart
   if 5 restarts within 5 cycles then timeout

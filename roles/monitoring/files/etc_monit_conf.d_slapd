@@ -4,5 +4,6 @@ check process slapd with pidfile /var/run/slapd/slapd.pid
   stop program = "/bin/systemctl stop slapd"
   if failed port 389 protocol LDAP3
     with timeout 10 seconds
+    with retry 2
     then restart
   if 5 restarts within 5 cycles then timeout

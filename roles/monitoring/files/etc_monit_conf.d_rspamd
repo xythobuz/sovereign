@@ -4,5 +4,6 @@ check process rspamd matching rspamd
   stop program = "/bin/systemctl stop rspamd"
   if failed port 11333 type tcp
     with timeout 10 seconds
+    with retry 2
     then restart
   if 5 restarts within 5 cycles then timeout

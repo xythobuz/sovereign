@@ -2,5 +2,8 @@ check process openvpn with pidfile "/run/openvpn/server.pid"
   group system
   start program = "/bin/systemctl start openvpn@server"
   stop program = "/bin/systemctl stop openvpn@server"
-  if failed port 1194 type udp then alert
-  if failed port 1194 type udp for 5 cycles then restart
+  if failed port 1194 type udp
+    with timeout 10 seconds
+    with retry 2
+    then restart
+  if 5 restarts within 5 cycles then timeout

@@ -2,5 +2,8 @@ check process tomcat with pidfile "/var/run/tomcat8.pid"
   group mail
   start program = "/bin/systemctl start tomcat8"
   stop program = "/bin/systemctl stop tomcat8"
-  if failed port 8080 then alert
-  if failed port 8080 for 5 cycles then restart
+  if failed port 8080
+    with timeout 10 seconds
+    with retry 2
+    then restart
+  if 5 restarts within 5 cycles then timeout
