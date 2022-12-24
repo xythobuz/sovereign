@@ -38,5 +38,10 @@
 
 - name: Retrieve the self signing CA to remove warning in users browser
   fetch: src=/etc/letsencrypt/live/{{ domain }}/chain.pem
-         dest="{{ secret }}/sovereign-self-signed-cert"
+         dest="{{ secret }}/sovereign-self-signed-ca"
+         fail_on_missing=yes
+
+- name: Retrieve the self signing CA and Cert to remove warning in users browser
+  fetch: src=/etc/letsencrypt/live/{{ domain }}/fullchain.pem
+         dest="{{ secret }}/sovereign-self-signed-chain"
          fail_on_missing=yes

@@ -1,0 +1,18 @@
+gpodder_subdomain: "gpodder"
+gpodder_domain: "{{ gpodder_subdomain }}.{{ domain }}"
+
+gpodder_version: "80c41dc0c9a58dc0e85f6ef56662cdfd0d6e3b16"
+gpodder_release: "https://github.com/gpodder/mygpo/archive/{{ gpodder_version }}.zip"
+
+gpodder_internal_port: '2873'
+
+gpodder_db_username: gpodderuser
+gpodder_db_password: "{{ lookup('password', secret + '/' + 'gpodder_db_password length=32') }}"
+gpodder_db_database: gpodder
+
+gpodder_secret: "{{ lookup('password', secret + '/' + 'gpodder_secret length=16') }}"
+gpodder_staff_token: "{{ lookup('password', secret + '/' + 'gpodder_staff_token length=8 chars=ascii_lowercase,ascii_uppercase,digits') }}"
+
+# must match values in roles/common
+db_admin_username: 'postgres'
+db_admin_password: "{{ lookup('password', secret + '/' + 'db_admin_password length=32') }}"

@@ -1,0 +1,32 @@
+<VirtualHost *:80>
+    ServerName {{ gpodder_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ gpodder_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ gpodder_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "{{ item.doc_root }}"
+    DirectoryIndex          index.html
+    Options                 -Indexes
+    HostnameLookups         Off
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/gpodder.info-error_log
+    CustomLog               /var/log/apache2/gpodder.info-access_log common
+
+    ProxyRequests           Off
+    ProxyPreserveHost       On
+
+    <Directory /home/gpodder/gpodder/static>
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    Alias                   /static /home/gpodder/gpodder/static
+    ProxyPassMatch          ^/static !
+
+    ProxyPass               / http://localhost:{{ gpodder_internal_port }}/
+    ProxyPassReverse        / http://localhost:{{ gpodder_internal_port }}/
+</VirtualHost>

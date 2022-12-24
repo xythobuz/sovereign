@@ -1,0 +1,30 @@
+[Unit]
+Description=Starts the gPodder server
+Requires=network.target
+After=network.target
+After=syslog.target
+
+[Service]
+Type=simple
+User=gpodder
+Restart=always
+RestartSec=3
+WorkingDirectory=/home/gpodder/gpodder
+ExecStart=bash -c 'source venv/bin/activate && python manage.py runserver 127.0.0.1:{{ gpodder_internal_port }}'
+Environment=DATABASE_URL=postgres://{{ gpodder_db_username }}:{{ gpodder_db_password }}@localhost:5432/{{ gpodder_db_database }}?sslmode=disable
+Environment=DEFAULT_BASE_URL=https://{{ gpodder_subdomain }}.{{ domain }}
+Environment=SECRET_KEY={{ gpodder_secret }}
+Environment=MEDIA_ROOT=/data/gpodder
+Environment=DEBUG=False
+Environment=MAINTENANCE=False
+Environment=STAFF_TOKEN={{ gpodder_staff_token }}
+Environment=DEFAULT_FROM_EMAIL=noreply@{{ domain }}
+Environment=EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+Environment=EMAIL_HOST={{ domain }}
+Environment=EMAIL_PORT=587
+Environment=EMAIL_HOST_USER=noreply@{{ domain }}
+Environment=EMAIL_HOST_PASSWORD={{ lookup('password', secret + '/' + 'mail_noreply_password length=20 chars=ascii_lowercase,ascii_uppercase,digits') }}
+Environment=EMAIL_USE_TLS=True
+
+[Install]
+WantedBy=multi-user.target

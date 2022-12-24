@@ -36,6 +36,7 @@ subdomains:
   - "chat"
   - "users"
   - "survey"
+  - "gpodder"
 
 # ntp
 ntp_servers:

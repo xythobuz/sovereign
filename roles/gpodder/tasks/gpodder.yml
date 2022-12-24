@@ -1,0 +1,131 @@
+- name: Install gpodder dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - libpq-dev
+    - libjpeg-dev
+    - zlib1g-dev
+    - libwebp-dev
+    - build-essential
+    - python3-dev
+    - virtualenv
+    - libffi-dev
+  tags:
+    - dependencies
+
+- name: Add gpodder user
+  user:
+    name: gpodder
+    home: /home/gpodder
+    create_home: yes
+    shell: /bin/bash
+    password_lock: yes
+    state: present
+    system: yes
+
+- name: Add gpodder postgres user
+  postgresql_user:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ gpodder_db_username }}
+    password="{{ gpodder_db_password }}"
+    encrypted=yes
+    state=present
+
+- name: Create gpodder database
+  postgresql_db:
+    login_host=localhost
+    login_user={{ db_admin_username }}
+    login_password="{{ db_admin_password }}"
+    name={{ gpodder_db_database }}
+    state=present
+    owner={{ gpodder_db_username }}
+
+- name: Download gpodder {{ gpodder_version }} release
+  get_url:
+    url="{{ gpodder_release }}"
+    dest=/home/gpodder/gpodder-{{ gpodder_version }}.zip
+
+- name: Stop old gpodder instance
+  service: name=gpodder state=stopped
+  ignore_errors: True
+
+- name: Remove old gpodder directory
+  shell: rm -rf /home/gpodder/gpodder
+
+- name: Create gpodder directory
+  file: state=directory path=/home/gpodder/gpodder
+
+- name: Extract gpodder sources
+  unarchive:
+    src: /home/gpodder/gpodder-{{ gpodder_version }}.zip
+    dest: /home/gpodder/gpodder
+    remote_src: yes
+
+- name: Move sources in correct place
+  shell: mv mygpo-{{ gpodder_version }}/* . chdir=/home/gpodder/gpodder
+
+- name: Remove empty directory
+  shell: rm -rf /home/gpodder/gpodder/mygpo-{{ gpodder_version }}
+
+- name: Create virtualenv
+  shell: virtualenv venv chdir=/home/gpodder/gpodder
+
+- name: Install generic dependencies in virtualenv
+  shell: bash -c 'source venv/bin/activate && pip install -r requirements.txt' chdir=/home/gpodder/gpodder
+
+- name: Install dependencies for production in virtualenv
+  shell: bash -c 'source venv/bin/activate && pip install -r requirements-setup.txt' chdir=/home/gpodder/gpodder
+
+- name: Create gpodder media directory
+  file:
+    state: directory
+    path: "/data/gpodder"
+    owner: gpodder
+    group: gpodder
+    mode: 0750
+
+# TODO put env somewhere so we can use it for systemd unit, migration and cron
+
+- name: Run database migration script
+  shell: bash -c 'source venv/bin/activate && DATABASE_URL=postgres://{{ gpodder_db_username }}:{{ gpodder_db_password }}@localhost:5432/{{ gpodder_db_database }}?sslmode=disable SECRET_KEY={{ gpodder_secret }} python manage.py migrate' chdir=/home/gpodder/gpodder
+
+- name: Add systemd service to start gpodder automatically
+  template:
+    src=etc_systemd_system_gpodder.j2
+    dest=/etc/systemd/system/gpodder.service
+    owner=root
+    group=root
+
+- name: Register new gpodder service
+  systemd: name=gpodder daemon_reload=yes enabled=yes
+
+- name: Start new gpodder instance
+  service: name=gpodder state=started
+
+# TODO cron jobs
+# envdir envs/dev python manage.py update-toplist
+# envdir envs/dev python manage.py update-episode-toplist
+
+# envdir envs/dev python manage.py feed-downloader
+# envdir envs/dev python manage.py feed-downloader <feed-url> [...]
+# envdir envs/dev python manage.py feed-downloader --max <max-updates>
+# envdir envs/dev python manage.py feed-downloader --random --max <max-updates>
+# envdir envs/dev python manage.py feed-downloader --toplist --max <max-updates>
+# envdir envs/dev python manage.py feed-downloader --update-new --max <max-updates>
+
+- name: Create the Apache gpodder sites config files
+  template:
+    src=etc_apache2_sites-available_gpodder.j2
+    dest=/etc/apache2/sites-available/gpodder_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite gpodder_{{ item }}.conf creates=/etc/apache2/sites-enabled/gpodder_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"

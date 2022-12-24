@@ -145,6 +145,10 @@
   stat: path=/etc/tomcat9/server.xml
   register: tomcat10_config_file
 
+- name: Determine if gpodder is installed
+  stat: path=/home/gpodder/gpodder/manage.py
+  register: gpodder_config_file
+
 # ---------------------------------------
 
 - name: Copy ZNC monit service config files into place
@@ -286,6 +290,11 @@
   copy: src=etc_monit_conf.d_pgsql_deb11 dest=/etc/monit/conf.d/pgsql_deb11
   notify: restart monit
   when: pgsql11_config_file.stat.exists == True
+
+- name: Copy gpodder monit service config files into place
+  copy: src=etc_monit_conf.d_gpodder dest=/etc/monit/conf.d/gpodder
+  notify: restart monit
+  when: gpodder_config_file.stat.exists == True
 
 # ---------------------------------------
 
