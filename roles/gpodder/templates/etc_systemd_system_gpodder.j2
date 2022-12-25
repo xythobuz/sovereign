@@ -9,22 +9,10 @@ Type=simple
 User=gpodder
 Restart=always
 RestartSec=3
-WorkingDirectory=/home/gpodder/gpodder
-ExecStart=bash -c 'source venv/bin/activate && python manage.py runserver 127.0.0.1:{{ gpodder_internal_port }}'
-Environment=DATABASE_URL=postgres://{{ gpodder_db_username }}:{{ gpodder_db_password }}@localhost:5432/{{ gpodder_db_database }}?sslmode=disable
-Environment=DEFAULT_BASE_URL=https://{{ gpodder_subdomain }}.{{ domain }}
-Environment=SECRET_KEY={{ gpodder_secret }}
-Environment=MEDIA_ROOT=/data/gpodder
-Environment=DEBUG=False
-Environment=MAINTENANCE=False
-Environment=STAFF_TOKEN={{ gpodder_staff_token }}
-Environment=DEFAULT_FROM_EMAIL=noreply@{{ domain }}
-Environment=EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-Environment=EMAIL_HOST={{ domain }}
-Environment=EMAIL_PORT=587
-Environment=EMAIL_HOST_USER=noreply@{{ domain }}
-Environment=EMAIL_HOST_PASSWORD={{ lookup('password', secret + '/' + 'mail_noreply_password length=20 chars=ascii_lowercase,ascii_uppercase,digits') }}
-Environment=EMAIL_USE_TLS=True
+WorkingDirectory=/home/gpodder
+ExecStart=bash -c './env.sh gunicorn mygpo.wsgi:application --bind=127.0.0.1:{{ gpodder_internal_port }} --workers=2 --access-logfile -'
+StandardOutput=append:/home/gpodder/gpodder_out.log
+StandardError=append:/home/gpodder/gpodder_err.log
 
 [Install]
 WantedBy=multi-user.target

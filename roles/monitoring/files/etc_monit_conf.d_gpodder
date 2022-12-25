@@ -1,4 +1,4 @@
-check process gpodder matching "python manage.py runserver"
+check process gpodder matching "gunicorn mygpo.wsgi:application"
   group www
   start program = "/bin/systemctl start gpodder"
   stop program = "/bin/systemctl stop gpodder"
@@ -6,4 +6,16 @@ check process gpodder matching "python manage.py runserver"
     with timeout 10 seconds
     with retry 2
     then restart
+  if 5 restarts within 5 cycles then timeout
+
+check process gpodder_worker matching "celery -A mygpo worker"
+  group www
+  start program = "/bin/systemctl start gpodder_worker"
+  stop program = "/bin/systemctl stop gpodder_worker"
+  if 5 restarts within 5 cycles then timeout
+
+check process gpodder_beat with pidfile /tmp/celerybeat.pid
+  group www
+  start program = "/bin/systemctl start gpodder_beat"
+  stop program = "/bin/systemctl stop gpodder_beat"
   if 5 restarts within 5 cycles then timeout

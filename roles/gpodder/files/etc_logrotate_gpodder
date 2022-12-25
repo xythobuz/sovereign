@@ -1,0 +1,8 @@
+/home/gpodder/*.log {
+        daily
+        missingok
+        rotate 5
+        compress
+        notifempty
+	su gpodder gpodder
+}

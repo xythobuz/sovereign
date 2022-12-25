@@ -1,0 +1,18 @@
+[Unit]
+Description=Starts the gPodder worker server
+Requires=network.target
+After=network.target
+After=syslog.target
+
+[Service]
+Type=simple
+User=gpodder
+Restart=always
+RestartSec=3
+WorkingDirectory=/home/gpodder
+ExecStart=bash -c './env.sh celery -A mygpo worker --concurrency=3 -l info -Ofair'
+StandardOutput=append:/home/gpodder/gpodder_worker_out.log
+StandardError=append:/home/gpodder/gpodder_worker_err.log
+
+[Install]
+WantedBy=multi-user.target

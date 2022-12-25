@@ -27,6 +27,20 @@
     Alias                   /static /home/gpodder/gpodder/static
     ProxyPassMatch          ^/static !
 
+    Alias                   /favicon.ico /home/gpodder/gpodder/static/favicon.ico
+    ProxyPassMatch          ^/favicon.ico !
+
+    Alias                   /favicon.png /home/gpodder/gpodder/static/favicon.png
+    ProxyPassMatch          ^/favicon.png !
+
+    <Directory /data/gpodder>
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    Alias                   /media /data/gpodder
+    ProxyPassMatch          ^/media !
+
     ProxyPass               / http://localhost:{{ gpodder_internal_port }}/
     ProxyPassReverse        / http://localhost:{{ gpodder_internal_port }}/
 </VirtualHost>

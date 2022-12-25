@@ -53,6 +53,14 @@
   service: name=gpodder state=stopped
   ignore_errors: True
 
+- name: Stop old gpodder worker instance
+  service: name=gpodder_worker state=stopped
+  ignore_errors: True
+
+- name: Stop old gpodder beat instance
+  service: name=gpodder_beat state=stopped
+  ignore_errors: True
+
 - name: Remove old gpodder directory
   shell: rm -rf /home/gpodder/gpodder
 
@@ -80,6 +88,9 @@
 - name: Install dependencies for production in virtualenv
   shell: bash -c 'source venv/bin/activate && pip install -r requirements-setup.txt' chdir=/home/gpodder/gpodder
 
+- name: Create gpodder logs directory
+  file: state=directory path=/home/gpodder/logs owner=gpodder group=gpodder
+
 - name: Create gpodder media directory
   file:
     state: directory
@@ -88,10 +99,31 @@
     group: gpodder
     mode: 0750
 
-# TODO put env somewhere so we can use it for systemd unit, migration and cron
+- name: Add gpodder wrapper script
+  template:
+    src=home_gpodder_env.j2
+    dest=/home/gpodder/env.sh
+    owner=gpodder
+    group=gpodder
+    mode=0750
+
+- name: Fix ownership of installed files
+  shell: chown -R gpodder:gpodder /home/gpodder/gpodder
+
+- name: Run collecting script for static files
+  become: true
+  become_user: gpodder
+  shell: ./env.sh python manage.py collectstatic --no-input chdir=/home/gpodder
+
+#- name: Run compiling script for messages
+#  become: true
+#  become_user: gpodder
+#  shell: ./env.sh python manage.py compilemessages chdir=/home/gpodder
 
 - name: Run database migration script
-  shell: bash -c 'source venv/bin/activate && DATABASE_URL=postgres://{{ gpodder_db_username }}:{{ gpodder_db_password }}@localhost:5432/{{ gpodder_db_database }}?sslmode=disable SECRET_KEY={{ gpodder_secret }} python manage.py migrate' chdir=/home/gpodder/gpodder
+  become: true
+  become_user: gpodder
+  shell: ./env.sh python manage.py migrate chdir=/home/gpodder
 
 - name: Add systemd service to start gpodder automatically
   template:
@@ -100,11 +132,37 @@
     owner=root
     group=root
 
+- name: Add systemd service to start gpodder worker automatically
+  template:
+    src=etc_systemd_system_gpodder_worker.j2
+    dest=/etc/systemd/system/gpodder_worker.service
+    owner=root
+    group=root
+
+- name: Add systemd service to start gpodder beat automatically
+  template:
+    src=etc_systemd_system_gpodder_beat.j2
+    dest=/etc/systemd/system/gpodder_beat.service
+    owner=root
+    group=root
+
 - name: Register new gpodder service
   systemd: name=gpodder daemon_reload=yes enabled=yes
 
+- name: Register new gpodder worker service
+  systemd: name=gpodder_worker daemon_reload=yes enabled=yes
+
+- name: Register new gpodder beat service
+  systemd: name=gpodder_beat daemon_reload=yes enabled=yes
+
 - name: Start new gpodder instance
   service: name=gpodder state=started
+
+- name: Start new gpodder worker instance
+  service: name=gpodder_worker state=started
+
+- name: Start new gpodder beat instance
+  service: name=gpodder_beat state=started
 
 # TODO cron jobs
 # envdir envs/dev python manage.py update-toplist
@@ -116,6 +174,14 @@
 # envdir envs/dev python manage.py feed-downloader --random --max <max-updates>
 # envdir envs/dev python manage.py feed-downloader --toplist --max <max-updates>
 # envdir envs/dev python manage.py feed-downloader --update-new --max <max-updates>
+
+- name: Configure gpodder logrotate
+  copy:
+    src=etc_logrotate_gpodder
+    dest=/etc/logrotate.d/gpodder
+    owner=root
+    group=root
+    mode=0644
 
 - name: Create the Apache gpodder sites config files
   template:

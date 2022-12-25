@@ -34,6 +34,7 @@ You can also use statically configured credentials, which is enough for single-u
 | Self-Signed   | -          | ✔️      | ❓       | ✔️         | ❓        | N/A       |
 | grafana       | iot        | ✔️      | ❓       | ✔️         | ❓        | ❓        |
 | Selfoss       | news       | ❌     | ✔️        | ❓        | ❓        | ❓        |
+| gPodder       | gpodder    | ✔️     | ❓        | ❓        | ✔️        | ❌        |
 
 You don't have to setup all roles, simply select the subset you require.
 Please take a look inside the respective folders of the roles, they often contain a `DESIGN.md` file explaining the intricacies of the specific software or its configuration.
