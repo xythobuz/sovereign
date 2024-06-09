@@ -1,10 +1,10 @@
 ---
 
-- include: basics.yml tags=basics
-- include: users.yml tags=users
-- include: apache.yml tags=apache
-- include: ufw.yml tags=ufw
-- include: security.yml tags=security
-- include: ntp.yml tags=ntp
-- include: postgres.yml
-- include: swap.yml
+- include_tasks: basics.yml
+- include_tasks: users.yml
+- include_tasks: apache.yml
+- include_tasks: ufw.yml
+- include_tasks: security.yml
+- include_tasks: ntp.yml
+- include_tasks: postgres.yml
+- include_tasks: swap.yml

@@ -1,2 +1,2 @@
-- include: slapd.yml tags=ldap
-- include: fusiondirectory.yml tags=ldap
+- include_tasks: slapd.yml
+- include_tasks: fusiondirectory.yml

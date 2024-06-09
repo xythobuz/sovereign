@@ -1,1 +1,1 @@
-- include: znc.yml tags=znc
+- include_tasks: znc.yml

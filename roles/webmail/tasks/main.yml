@@ -1,1 +1,1 @@
-- include: roundcube.yml tags=roundcube
+- include_tasks: roundcube.yml

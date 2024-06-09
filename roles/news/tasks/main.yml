@@ -1,1 +1,1 @@
-- include: selfoss.yml tags=selfoss
+- include_tasks: selfoss.yml

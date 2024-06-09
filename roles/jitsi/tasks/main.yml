@@ -1,2 +1,2 @@
 ---
-- include: jitsi.yml tags=jitsi
+- include_tasks: jitsi.yml

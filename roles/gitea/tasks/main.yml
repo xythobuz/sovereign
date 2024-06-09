@@ -1,1 +1,1 @@
-- include: gitea.yml tags=gitea
+- include_tasks: gitea.yml

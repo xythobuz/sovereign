@@ -1,1 +1,1 @@
-- include: nextcloud.yml tags=nextcloud
+- include_tasks: nextcloud.yml

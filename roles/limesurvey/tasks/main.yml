@@ -1,2 +1,2 @@
 ---
-- include: limesurvey.yml tags=limesurvey
+- include_tasks: limesurvey.yml

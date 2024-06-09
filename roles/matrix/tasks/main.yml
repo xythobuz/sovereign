@@ -1,5 +1,5 @@
 ---
 # Provides the Synapse Matrix homeserver and the Riot.im client
 #
-- include: riot.yml tags=matrix
-- include: synapse.yml tags=matrix
+- include_tasks: riot.yml
+- include_tasks: synapse.yml

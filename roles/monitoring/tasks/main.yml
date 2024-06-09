@@ -1,2 +1,2 @@
-- include: monit.yml tags=monit
-- include: logwatch.yml tags=logwatch
+- include_tasks: monit.yml
+- include_tasks: logwatch.yml

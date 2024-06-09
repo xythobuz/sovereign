@@ -1,6 +1,6 @@
-- include: grafana.yml tags=iot
-- include: influx.yml tags=iot
-- include: mosquitto.yml tags=iot
-- include: mqtt_admin.yml tags=iot
-- include: nodered.yml tags=iot
-- include: lights.yml tags=iot
+- include_tasks: grafana.yml
+- include_tasks: influx.yml
+- include_tasks: mosquitto.yml
+- include_tasks: mqtt_admin.yml
+- include_tasks: nodered.yml
+- include_tasks: lights.yml

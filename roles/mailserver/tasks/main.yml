@@ -1,18 +1,11 @@
 ---
 # Installs and configures the mail system.
 
-- include: postfix.yml
-  tags: postfix
-- include: dovecot.yml
-  tags: dovecot
-- include: rspamd.yml
-  tags: rspamd
-- include: solr.yml
-  tags: solr
-- include: checkrbl.yml
-  tags: checkrbl
-- include: z-push.yml
-  tags: zpush
-- include: autoconfig.yml
-  tags: autoconfig
+- include_tasks: postfix.yml
+- include_tasks: dovecot.yml
+- include_tasks: rspamd.yml
+- include_tasks: solr.yml
+- include_tasks: checkrbl.yml
+- include_tasks: z-push.yml
+- include_tasks: autoconfig.yml
 

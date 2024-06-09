@@ -1,2 +1,2 @@
 ---
-- include: rocketchat.yml tags=rocketchat
+- include_tasks: rocketchat.yml

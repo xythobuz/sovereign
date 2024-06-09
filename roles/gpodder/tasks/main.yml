@@ -1,1 +1,1 @@
-- include: gpodder.yml tags=gpodder
+- include_tasks: gpodder.yml

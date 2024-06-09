@@ -1,5 +1,5 @@
 ---
 
-- include: ssl.yml tags=ssl
-- include: selfsigned.yml
-- include: ufw.yml tags=ufw
+- include_tasks: ssl.yml
+- include_tasks: selfsigned.yml
+- include_tasks: ufw.yml

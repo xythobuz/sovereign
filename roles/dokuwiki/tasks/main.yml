@@ -1,1 +1,1 @@
-- include: dokuwiki.yml tags=dokuwiki
+- include_tasks: dokuwiki.yml

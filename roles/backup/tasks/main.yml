@@ -1,1 +1,1 @@
-- include: backup.yml tags=backup
+- include_tasks: backup.yml
