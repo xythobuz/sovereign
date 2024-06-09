@@ -90,6 +90,17 @@
     chdir: /data/gitea
   ignore_errors: True
 
+# check if ldap already enabled
+#gitea admin auth list
+
+# remove ldap auth if it exists
+#gitea admin auth delete
+
+# add ldap auth, if configured
+#gitea admin auth add-ldap --name customldap --security-protocol unencrypted --host localhost --port 389 --bind-dn "uid=admin,ou=people,dc=shagohod,dc=de" --bind-password "xS3Lbd.PuHdmEjAYxQn.JRmaXbuo_2-h" --user-search-base "ou=people,dc=shagohod,dc=de" --user-filter "uid=%s,ou=people,dc=shagohod,dc=de" --email-attribute mail
+
+# --admin-filter --username-attribute
+
 - name: Add fail2ban script for gitea
   copy:
     src=etc_fail2ban_filter.d_gitea.conf

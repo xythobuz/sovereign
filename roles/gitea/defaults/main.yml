@@ -7,6 +7,8 @@ gitea_release: "https://github.com/go-gitea/gitea/releases/download/v{{ gitea_ve
 gitea_admin_username: "{{ main_user_name }}"
 gitea_admin_password: "{{ lookup('password', secret + '/' + 'gitea_admin_password length=32') }}"
 
+gitea_enable_ldap: false
+
 gitea_db_username: giteauser
 gitea_db_password: "{{ lookup('password', secret + '/' + 'gitea_db_password length=32') }}"
 gitea_db_database: gitea

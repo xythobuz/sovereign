@@ -7,6 +7,7 @@ I removed a bunch of roles from the upstream version, added new ones, and made i
 Ubuntu is no longer supported, simply because I just use Debian.
 
 I also added the ability for full-fledged user-management using OpenLDAP and FusionDirectory.
+It automatically creates E-Mail inboxes for LDAP users, as well as allowing login using LDAP credentials on most roles / services.
 This is optional, however.
 You can also use statically configured credentials, which is enough for single-user setups.
 
@@ -83,7 +84,7 @@ Or you can just add your `deploy` user to the sudo group.
 
 Download this repository somewhere on your machine, either through `Clone or Download > Download ZIP` above, `wget`, or `git` as below.
 Also install the dependencies for password generation as well as ansible itself.
-    
+
     git clone https://github.com/xythobuz/sovereign.git
     cd sovereign
     sudo pip install -r ./requirements.txt
@@ -111,7 +112,7 @@ Create `A` and `AAAA` or `CNAME` records which point to your server's IP address
 To run the whole thing:
 
     ansible-playbook -i ./hosts --ask-sudo-pass --key-file KEY site.yml
-    
+
 If you chose to make a passwordless sudo deploy user, you can omit the `--ask-sudo-pass` argument.
 If you don't need to specify an ssh key to connect to the host, leave out `--key-file KEY` part, otherwise replace `KEY` with the path to the key you want to use.
 Append eg. `-l testing` to only run for the hosts in the testing group.

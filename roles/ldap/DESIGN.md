@@ -21,7 +21,11 @@ To setup Nextcloud LDAP login, give it the following credentials:
     Password: {{ slapd_admin_password }}
     Base DN: dc=DOMAIN,dc=TLD
 
-Dokuwiki, Jitsi and Kanboard can be configured to use LDAP automatically.
+For LimeSurvey, use these settings:
+
+
+
+Dokuwiki, Gitea, Jitsi and Kanboard can be configured to use LDAP automatically.
 See their defaults.
 
 ## ToDo
