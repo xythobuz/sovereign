@@ -15,25 +15,26 @@
   tags:
     - dependencies
 
-- name: Install InfluxDB and Telegraf from official repository
-  apt:
-    name: "{{ packages }}"
-    state: present
-    update_cache: yes
-  vars:
-    packages:
-    - influxdb
-    - telegraf
-  tags:
-    - dependencies
-
-- name: Configure InfluxDB
-  template:
-    src=etc_influxdb_influxdb.j2
-    dest=/etc/influxdb/influxdb.conf
-    owner=root
-    group=root
-  notify: restart influxdb
+# TODO can no longer run this!
+#- name: Install InfluxDB and Telegraf from official repository
+#  apt:
+#    name: "{{ packages }}"
+#    state: present
+#    update_cache: yes
+#  vars:
+#    packages:
+#    - influxdb
+#    - telegraf
+#  tags:
+#    - dependencies
+#
+#- name: Configure InfluxDB
+#  template:
+#    src=etc_influxdb_influxdb.j2
+#    dest=/etc/influxdb/influxdb.conf
+#    owner=root
+#    group=root
+#  notify: restart influxdb
 
 - name: Create InfluxDB data directories
   file: state=directory path={{ item }} owner=influxdb group=influxdb
@@ -57,6 +58,12 @@
     - 8086  # http
     - 8088  # rpc
   tags: ufw
+
+# TODO influxdb should get following set in
+# /etc/systemd/system/influxdb.service.d/override.conf
+#
+# [Service]
+# TimeoutStartSec=60m
 
 - name: Register new InfluxDB and Telegraf service
   systemd: name={{ item }} daemon_reload=yes enabled=yes
